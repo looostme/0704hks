@@ -36,4 +36,38 @@ describe("community MVP interface", () => {
 
     expect(screen.getByText("已加入低压散步小队")).toBeInTheDocument();
   });
+
+  it("switches task square tabs into browsable sections", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "快闪" }));
+
+    expect(screen.getByText("当前浏览：快闪")).toBeInTheDocument();
+    expect(screen.getByText("平台快闪：周六低压散步")).toBeInTheDocument();
+  });
+
+  it("opens detail browsing for community posts and recommended tasks", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getAllByRole("button", { name: "浏览帖子详情" })[0]);
+    expect(screen.getByRole("dialog", { name: "想整理桌面 10 分钟，有人看见就好详情" })).toBeInTheDocument();
+    expect(screen.getByText("浏览入口详情")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "关闭详情" }));
+
+    fireEvent.click(screen.getAllByRole("button", { name: "浏览推荐任务" })[0]);
+    expect(screen.getByRole("dialog", { name: "咖啡馆安静共坐详情" })).toBeInTheDocument();
+  });
+
+  it("opens detail browsing from personality island tasks and team cards", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "人格岛" }));
+    fireEvent.click(screen.getByRole("button", { name: "浏览岛屿任务：20 分钟低压散步" }));
+    expect(screen.getByRole("dialog", { name: "20 分钟低压散步详情" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "关闭详情" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "浏览小队详情" })[0]);
+    expect(screen.getByRole("dialog", { name: "低压散步小队详情" })).toBeInTheDocument();
+  });
 });

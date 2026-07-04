@@ -46,10 +46,28 @@ type EnhancedPost = CommunityPost & {
   recommendationReasons?: string[];
 };
 
+type DetailItem = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  meta: string[];
+  tags: string[];
+  primaryAction: string;
+  secondaryAction: string;
+};
+
 const navItems: Section[] = ["任务广场", "人格岛", "搭子 / 小队"];
 const feedTabs: FeedTab[] = ["推荐", "同城", "附近", "任务", "帖子", "快闪"];
 const publishTypes: PostType[] = ["任务帖", "普通帖子", "复盘帖", "求见证", "快闪"];
 const boundaryTags = ["不私聊", "不拍照", "可线下公共地点", "不接受建议", "可随时退出"];
+const tabDescriptions: Record<FeedTab, string> = {
+  推荐: "按任务相似、状态、距离与 MBTI 沟通节奏综合排序。",
+  同城: "展示上海范围内可以参与的任务、帖子和活动。",
+  附近: "优先展示徐汇附近公共地点可参与的内容。",
+  任务: "只看带明确目标、边界和参与动作的任务帖。",
+  帖子: "浏览社区讨论、求见证和轻回应内容。",
+  快闪: "查看平台组织的短时、公共地点、可退出活动。"
+};
 
 const defaultDraft: PublishDraft = {
   type: "任务帖",
@@ -71,6 +89,7 @@ export default function App() {
   const [covenantOpen, setCovenantOpen] = useState(false);
   const [draft, setDraft] = useState<PublishDraft>(defaultDraft);
   const [selectedIsland, setSelectedIsland] = useState("NF");
+  const [detail, setDetail] = useState<DetailItem | null>(null);
   const [toast, setToast] = useState("");
 
   const taskRecommendations = useMemo(() => recommendTasksForUser(currentUser, tasks), [tasks]);
@@ -150,6 +169,11 @@ export default function App() {
   }
 
   function handleAction(label: string) {
+    setToast(label);
+  }
+
+  function handleDetailAction(label: string) {
+    setDetail(null);
     setToast(label);
   }
 
@@ -251,6 +275,7 @@ export default function App() {
           <TaskSquare
             activeTab={activeTab}
             onAction={handleAction}
+            onOpenDetail={setDetail}
             onPublish={() => setPublishOpen(true)}
             posts={visiblePosts}
             recommendations={taskRecommendations}
@@ -260,14 +285,14 @@ export default function App() {
 
         {activeSection === "人格岛" && (
           <PersonalityIslands
-            onAction={handleAction}
+            onOpenDetail={setDetail}
             selectedIsland={selectedIsland}
             selectedIslandData={selectedIslandData}
             setSelectedIsland={setSelectedIsland}
           />
         )}
 
-        {activeSection === "搭子 / 小队" && <PartnerTeams onAction={handleAction} />}
+        {activeSection === "搭子 / 小队" && <PartnerTeams onAction={handleAction} onOpenDetail={setDetail} />}
       </main>
 
       {toast ? (
@@ -285,6 +310,7 @@ export default function App() {
           setDraft={setDraft}
         />
       )}
+      {detail && <DetailModal detail={detail} onAction={handleDetailAction} onClose={() => setDetail(null)} />}
       {profileOpen && <ProfileDrawer onClose={() => setProfileOpen(false)} />}
       {covenantOpen && <CovenantModal onClose={() => setCovenantOpen(false)} />}
     </div>
@@ -294,6 +320,7 @@ export default function App() {
 function TaskSquare({
   activeTab,
   onAction,
+  onOpenDetail,
   onPublish,
   posts,
   recommendations,
@@ -301,6 +328,7 @@ function TaskSquare({
 }: {
   activeTab: FeedTab;
   onAction: (label: string) => void;
+  onOpenDetail: (detail: DetailItem) => void;
   onPublish: () => void;
   posts: EnhancedPost[];
   recommendations: ReturnType<typeof recommendTasksForUser>;
@@ -324,6 +352,10 @@ function TaskSquare({
             {tab}
           </button>
         ))}
+      </div>
+      <div className="browse-summary" aria-live="polite">
+        <strong>当前浏览：{activeTab}</strong>
+        <span>{tabDescriptions[activeTab]}</span>
       </div>
       <div className="dashboard-grid">
         <div className="feed-list">
@@ -353,6 +385,7 @@ function TaskSquare({
                 </div>
               ) : null}
               <div className="card-actions">
+                <button onClick={() => onOpenDetail(createPostDetail(post))} type="button">浏览帖子详情</button>
                 <button onClick={() => onAction(`已加入：${post.title}`)} type="button">加入</button>
                 <button onClick={() => onAction("看见你了")} type="button">看见你了</button>
                 <button onClick={() => onAction(`已收藏：${post.title}`)} type="button">收藏</button>
@@ -371,7 +404,10 @@ function TaskSquare({
             <div className="mini-card" key={result.task.id}>
               <strong>{result.task.title}</strong>
               <span>{result.explanations.slice(0, 3).join(" · ")}</span>
-              <button onClick={() => onAction(`已加入任务：${result.task.title}`)} type="button">我也在做</button>
+              <div className="mini-actions">
+                <button onClick={() => onOpenDetail(createTaskDetail(result.task, result.explanations))} type="button">浏览推荐任务</button>
+                <button onClick={() => onAction(`已加入任务：${result.task.title}`)} type="button">我也在做</button>
+              </div>
             </div>
           ))}
         </aside>
@@ -381,12 +417,12 @@ function TaskSquare({
 }
 
 function PersonalityIslands({
-  onAction,
+  onOpenDetail,
   selectedIsland,
   selectedIslandData,
   setSelectedIsland
 }: {
-  onAction: (label: string) => void;
+  onOpenDetail: (detail: DetailItem) => void;
   selectedIsland: string;
   selectedIslandData: (typeof islands)[number];
   setSelectedIsland: (code: string) => void;
@@ -420,7 +456,12 @@ function PersonalityIslands({
         </div>
         <div className="task-ladder">
           {selectedIslandData.recommendedTasks.map((task, index) => (
-            <button key={task} onClick={() => onAction(`已领取：${task}`)} type="button">
+            <button
+              aria-label={`浏览岛屿任务：${task}`}
+              key={task}
+              onClick={() => onOpenDetail(createIslandTaskDetail(selectedIslandData, task, index))}
+              type="button"
+            >
               {index + 1}. {task}
             </button>
           ))}
@@ -430,7 +471,13 @@ function PersonalityIslands({
   );
 }
 
-function PartnerTeams({ onAction }: { onAction: (label: string) => void }) {
+function PartnerTeams({
+  onAction,
+  onOpenDetail
+}: {
+  onAction: (label: string) => void;
+  onOpenDetail: (detail: DetailItem) => void;
+}) {
   return (
     <section className="content-panel">
       <div className="section-heading">
@@ -452,17 +499,124 @@ function PartnerTeams({ onAction }: { onAction: (label: string) => void }) {
               <strong>{team.members}</strong>
               <span>社交强度 {team.socialEnergy}</span>
             </div>
-            <button
-              className="primary-action"
-              onClick={() => onAction(team.title === "低压散步小队" ? "已加入低压散步小队" : `已${team.cta.replace("申请", "申请：").replace("进入", "进入：").replace("报名", "报名：")} ${team.title}`)}
-              type="button"
-            >
-              {team.cta}
-            </button>
+            <div className="team-actions">
+              <button className="ghost-action" onClick={() => onOpenDetail(createTeamDetail(team))} type="button">
+                浏览小队详情
+              </button>
+              <button
+                className="primary-action"
+                onClick={() => onAction(team.title === "低压散步小队" ? "已加入低压散步小队" : `已${team.cta.replace("申请", "申请：").replace("进入", "进入：").replace("报名", "报名：")} ${team.title}`)}
+                type="button"
+              >
+                {team.cta}
+              </button>
+            </div>
           </article>
         ))}
       </div>
     </section>
+  );
+}
+
+function createPostDetail(post: EnhancedPost): DetailItem {
+  return {
+    eyebrow: `${post.type} · ${post.city} ${post.area}`,
+    title: post.title,
+    body: `${post.body} 这个入口适合先浏览规则、边界和参与方式，再决定是否加入。`,
+    meta: [`作者 ${post.author} · ${post.authorMbti}`, `状态 ${post.status}`, `互动 ${post.actions}`],
+    tags: uniqueTags(post.recommendations?.length ? [...post.tags, `推荐给 ${post.recommendations.join("、")}`] : post.tags),
+    primaryAction: post.type === "快闪" ? "报名这个快闪" : "参与这个入口",
+    secondaryAction: "收藏入口"
+  };
+}
+
+function createTaskDetail(task: CommunityTask, explanations: string[] = []): DetailItem {
+  return {
+    eyebrow: `${task.mode}任务 · ${task.city} ${task.area}`,
+    title: task.title,
+    body: `社交强度 ${task.socialEnergy}，${task.locationType}执行。系统推荐理由：${explanations.slice(0, 3).join(" · ") || "任务相似、状态接近、边界兼容"}。`,
+    meta: [`发起者 ${task.ownerMbti}`, task.acceptsWitness ? "可求见证" : "不需要见证", task.requiresOffline ? "线下公共地点" : "线上可完成"],
+    tags: uniqueTags([...task.statusTags, ...task.taskTags, ...task.boundaries]),
+    primaryAction: "我也在做",
+    secondaryAction: "先收藏任务"
+  };
+}
+
+function createIslandTaskDetail(
+  island: (typeof islands)[number],
+  task: string,
+  index: number
+): DetailItem {
+  return {
+    eyebrow: `${island.code} 岛任务包 · 第 ${index + 1} 步`,
+    title: task,
+    body: `${island.guide} 这个任务包用于给 ${island.code} 用户一个可先看、再领取的低压入口。`,
+    meta: [`场域 ${island.theme}`, island.line, "点击领取后进入任务广场"],
+    tags: uniqueTags([island.code, island.family, "人格岛", "任务包"]),
+    primaryAction: "领取这个任务",
+    secondaryAction: "稍后再看"
+  };
+}
+
+function createTeamDetail(team: (typeof teams)[number]): DetailItem {
+  return {
+    eyebrow: `${team.type} · ${team.city} ${team.area}`,
+    title: team.title,
+    body: `${team.boundary} 浏览后可以选择加入、申请、进入或报名，平台快闪只保留公共地点和可退出机制。`,
+    meta: [`成员 ${team.members}`, `社交强度 ${team.socialEnergy}`, `动作 ${team.cta}`],
+    tags: uniqueTags([team.type, team.city, team.area, "边界优先"]),
+    primaryAction: team.cta,
+    secondaryAction: "收藏小队"
+  };
+}
+
+function uniqueTags(tags: string[]) {
+  return Array.from(new Set(tags));
+}
+
+function DetailModal({
+  detail,
+  onAction,
+  onClose
+}: {
+  detail: DetailItem;
+  onAction: (label: string) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div className="modal-backdrop">
+      <section aria-label={`${detail.title}详情`} aria-modal="true" className="modal-card compact" role="dialog">
+        <div className="modal-title">
+          <div>
+            <p className="eyebrow">浏览入口详情</p>
+            <h2>{detail.title}</h2>
+          </div>
+          <button aria-label="关闭详情" onClick={onClose} type="button">
+            <X size={18} />
+          </button>
+        </div>
+        <p className="detail-eyebrow">{detail.eyebrow}</p>
+        <p className="detail-copy">{detail.body}</p>
+        <div className="detail-meta">
+          {detail.meta.map((item) => (
+            <span key={item}>{item}</span>
+          ))}
+        </div>
+        <div className="chips detail-tags">
+          {detail.tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+        <div className="modal-actions">
+          <button className="ghost-action" onClick={() => onAction(`已收藏：${detail.title}`)} type="button">
+            {detail.secondaryAction}
+          </button>
+          <button className="primary-action" onClick={() => onAction(`已选择：${detail.title}`)} type="button">
+            {detail.primaryAction}
+          </button>
+        </div>
+      </section>
+    </div>
   );
 }
 

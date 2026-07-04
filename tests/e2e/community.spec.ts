@@ -63,3 +63,29 @@ test("mobile layout does not horizontally overflow", async ({ page }) => {
 
   expect(hasHorizontalOverflow).toBe(false);
 });
+
+test("lets users browse tabs and entry details from the portrait app", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "快闪" }).click();
+  await expect(page.getByText("当前浏览：快闪")).toBeVisible();
+  await expect(page.getByText("平台快闪：周六低压散步")).toBeVisible();
+
+  await page.getByRole("button", { name: "推荐", exact: true }).click();
+  await page.getByRole("button", { name: "浏览帖子详情" }).first().click();
+  await expect(page.getByRole("dialog", { name: "想整理桌面 10 分钟，有人看见就好详情" })).toBeVisible();
+  await page.getByRole("button", { name: "关闭详情" }).click();
+
+  await page.getByRole("button", { name: "浏览推荐任务" }).first().click();
+  await expect(page.getByRole("dialog", { name: "咖啡馆安静共坐详情" })).toBeVisible();
+  await page.getByRole("button", { name: "关闭详情" }).click();
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  await page.getByRole("button", { name: "浏览岛屿任务：20 分钟低压散步" }).click();
+  await expect(page.getByRole("dialog", { name: "20 分钟低压散步详情" })).toBeVisible();
+  await page.getByRole("button", { name: "关闭详情" }).click();
+
+  await page.getByRole("button", { name: "搭子 / 小队" }).click();
+  await page.getByRole("button", { name: "浏览小队详情" }).first().click();
+  await expect(page.getByRole("dialog", { name: "低压散步小队详情" })).toBeVisible();
+});
