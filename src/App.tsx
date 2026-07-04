@@ -63,6 +63,21 @@ const feedTabs: FeedTab[] = ["推荐", "同城", "附近", "任务", "帖子", "
 const publishTypes: PostType[] = ["任务帖", "普通帖子", "复盘帖", "求见证", "快闪"];
 const boundaryTags = ["不私聊", "不拍照", "可线下公共地点", "不接受建议", "可随时退出"];
 const cognitionIcons = [ShieldCheck, MessageCircle, Sparkles, Users];
+const taskEntryCards = [
+  {
+    eyebrow: "同城任务",
+    title: "同城/附近的人和任务事件",
+    body: "把首页承接过来的同城、附近用户和任务事件集中浏览，优先看公共地点、低压参与、可退出任务。",
+    cta: "浏览附近事件"
+  },
+  {
+    eyebrow: "诊断书任务",
+    title: "查看其他人的诊断书中的任务",
+    body: "从他人的人格诊断书里查看可参与的疗愈任务，先看边界、状态和任务目标，再决定是否加入。",
+    cta: "查看诊断书任务"
+  }
+];
+const partnerActions = ["找搭子", "发布找搭子", "小队招募", "平行房", "线下快闪报名"];
 const tabDescriptions: Record<FeedTab, string> = {
   推荐: "按任务相似、状态、距离与 MBTI 沟通节奏综合排序。",
   同城: "展示上海范围内可以参与的任务、帖子和活动。",
@@ -539,6 +554,16 @@ function TaskSquare({
         <strong>当前浏览：{activeTab}</strong>
         <span>{tabDescriptions[activeTab]}</span>
       </div>
+      <div className="entry-brief-grid" aria-label="任务广场承接入口">
+        {taskEntryCards.map((card) => (
+          <article className="entry-brief-card" key={card.title}>
+            <p className="eyebrow">{card.eyebrow}</p>
+            <h3>{card.title}</h3>
+            <p>{card.body}</p>
+            <button onClick={() => onAction(card.cta)} type="button">{card.cta}</button>
+          </article>
+        ))}
+      </div>
       <div className="dashboard-grid">
         <div className="feed-list">
           {posts.map((post) => (
@@ -609,6 +634,8 @@ function PersonalityIslands({
   selectedIslandData: (typeof islands)[number];
   setSelectedIsland: (code: string) => void;
 }) {
+  const nextIslandCode = selectedIsland === "SP" ? "NF" : "SP";
+
   return (
     <section className="content-panel">
       <div className="section-heading">
@@ -649,6 +676,40 @@ function PersonalityIslands({
           ))}
         </div>
       </div>
+      <div className="island-community-grid">
+        <article className="island-community-card">
+          <p className="eyebrow">四大人格类型专属任务</p>
+          <h3>{selectedIslandData.code} 岛今日任务</h3>
+          <p>围绕 {selectedIslandData.family} 类型的行动节奏、能量边界和疗愈目标生成任务包。</p>
+          <button onClick={() => onOpenDetail(createIslandTaskDetail(selectedIslandData, selectedIslandData.recommendedTasks[0], 0))} type="button">
+            进入{selectedIslandData.code}岛屿圈子
+          </button>
+        </article>
+        <article className="island-community-card">
+          <p className="eyebrow">四大人格类型讨论</p>
+          <h3>岛屿讨论区</h3>
+          <p>围绕 NT / NF / SJ / SP 的真实任务体验、关系边界和行动方式发起讨论。</p>
+          <div className="mini-chip-row">
+            {islands.map((island) => (
+              <button key={island.code} onClick={() => setSelectedIsland(island.code)} type="button">
+                {island.code}讨论
+              </button>
+            ))}
+          </div>
+        </article>
+        <article className="island-community-card">
+          <p className="eyebrow">岛屿互访内容</p>
+          <h3>去别的岛看看</h3>
+          <p>可以登陆不同岛屿互访内容，查看其他人格类型如何做任务、写分享、设边界。</p>
+          <button onClick={() => setSelectedIsland(nextIslandCode)} type="button">互访 {nextIslandCode} 岛</button>
+        </article>
+        <article className="island-community-card">
+          <p className="eyebrow">疗愈分享帖子</p>
+          <h3>岛内分享精选</h3>
+          <p>收集同类型用户完成任务后的轻复盘、疗愈感受、低压陪伴经验。</p>
+          <button onClick={() => onOpenDetail(createIslandShareDetail(selectedIslandData))} type="button">浏览疗愈分享</button>
+        </article>
+      </div>
     </section>
   );
 }
@@ -665,8 +726,15 @@ function PartnerTeams({
       <div className="section-heading">
         <div>
           <p className="eyebrow">搭子 / 小队</p>
-          <h2>找同任务者、低压小队、平行房和平台快闪</h2>
+          <h2>找搭子、发布找搭子、小队招募、平行房和线下快闪报名</h2>
         </div>
+      </div>
+      <div className="partner-action-grid" aria-label="搭子和小队入口">
+        {partnerActions.map((action) => (
+          <button key={action} onClick={() => onAction(`已进入：${action}`)} type="button">
+            {action}
+          </button>
+        ))}
       </div>
       <div className="team-grid">
         {teams.map((team) => (
@@ -749,6 +817,18 @@ function createTeamDetail(team: (typeof teams)[number]): DetailItem {
     tags: uniqueTags([team.type, team.city, team.area, "边界优先"]),
     primaryAction: team.cta,
     secondaryAction: "收藏小队"
+  };
+}
+
+function createIslandShareDetail(island: (typeof islands)[number]): DetailItem {
+  return {
+    eyebrow: `${island.code} 岛 · 疗愈分享帖子`,
+    title: `${island.code} 岛内分享精选`,
+    body: `这里展示 ${island.family} 类型用户完成专属任务后的疗愈分享、任务经验和边界练习。`,
+    meta: [`主题 ${island.theme}`, "可互访", "可收藏"],
+    tags: uniqueTags([island.code, island.family, "疗愈分享帖子", "岛屿互访内容"]),
+    primaryAction: "进入岛屿圈子",
+    secondaryAction: "收藏分享"
   };
 }
 

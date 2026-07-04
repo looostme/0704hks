@@ -46,7 +46,7 @@ test("supports personality island and team participation flows", async ({ page }
   await page.goto("/");
 
   await page.getByRole("button", { name: "人格岛" }).click();
-  await page.getByRole("button", { name: /NT/ }).click();
+  await page.locator(".island-card.island-nt").click();
   await expect(page.getByText("理性决策清单")).toBeVisible();
 
   await page.getByRole("button", { name: "搭子 / 小队" }).click();
@@ -114,7 +114,7 @@ test("applies the selected personality palette to the whole app shell", async ({
   });
 
   await page.getByRole("button", { name: "人格岛" }).click();
-  await page.getByRole("button", { name: /NT/ }).click();
+  await page.locator(".island-card.island-nt").click();
 
   await expect(page.locator(".app-shell")).toHaveClass(/realm-nt/);
   const ntNavBackground = await page.locator(".side-nav").evaluate((element) => {
@@ -135,4 +135,23 @@ test("recreates key reference design elements as functional UI modules", async (
   await expect(page.locator(".action-step")).toHaveCount(5);
   await expect(page.getByRole("button", { name: "查看完整画像" })).toBeVisible();
   await expect(page.getByRole("button", { name: "查看疗愈方案" })).toBeVisible();
+});
+
+test("maps the three MVP entries to their updated community responsibilities", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByText("同城/附近的人和任务事件")).toBeVisible();
+  await expect(page.getByText("查看其他人的诊断书中的任务")).toBeVisible();
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  await expect(page.getByText("四大人格类型专属任务")).toBeVisible();
+  await expect(page.getByText("四大人格类型讨论")).toBeVisible();
+  await expect(page.getByText("岛屿互访内容", { exact: true })).toBeVisible();
+
+  await page.getByRole("button", { name: "搭子 / 小队" }).click();
+  await expect(page.getByRole("button", { name: "找搭子", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "发布找搭子" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "小队招募" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "平行房", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "线下快闪报名" })).toBeVisible();
 });

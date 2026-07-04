@@ -70,4 +70,25 @@ describe("community MVP interface", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "浏览小队详情" })[0]);
     expect(screen.getByRole("dialog", { name: "低压散步小队详情" })).toBeInTheDocument();
   });
+
+  it("frames each main entry around its product responsibility", () => {
+    render(<App />);
+
+    expect(screen.getAllByText("诊断书任务").length).toBeGreaterThan(0);
+    expect(screen.getByText("同城/附近的人和任务事件")).toBeInTheDocument();
+    expect(screen.getByText("查看其他人的诊断书中的任务")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "人格岛" }));
+    expect(screen.getByText("四大人格类型专属任务")).toBeInTheDocument();
+    expect(screen.getByText("四大人格类型讨论")).toBeInTheDocument();
+    expect(screen.getByText("岛屿互访内容")).toBeInTheDocument();
+    expect(screen.getByText("疗愈分享帖子")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
+    expect(screen.getByText("找搭子")).toBeInTheDocument();
+    expect(screen.getByText("发布找搭子")).toBeInTheDocument();
+    expect(screen.getByText("小队招募")).toBeInTheDocument();
+    expect(screen.getByText("平行房")).toBeInTheDocument();
+    expect(screen.getByText("线下快闪报名")).toBeInTheDocument();
+  });
 });
