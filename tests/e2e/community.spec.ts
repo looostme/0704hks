@@ -104,3 +104,21 @@ test("uses personality color systems instead of the reference image as a backgro
   });
   expect(islandBackgrounds.join("\n")).not.toContain("personality-realms.png");
 });
+
+test("applies the selected personality palette to the whole app shell", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator(".app-shell")).toHaveClass(/realm-nf/);
+  const initialNavBackground = await page.locator(".side-nav").evaluate((element) => {
+    return window.getComputedStyle(element).backgroundImage;
+  });
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  await page.getByRole("button", { name: /NT/ }).click();
+
+  await expect(page.locator(".app-shell")).toHaveClass(/realm-nt/);
+  const ntNavBackground = await page.locator(".side-nav").evaluate((element) => {
+    return window.getComputedStyle(element).backgroundImage;
+  });
+  expect(ntNavBackground).not.toEqual(initialNavBackground);
+});

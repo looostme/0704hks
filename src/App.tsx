@@ -178,7 +178,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell realm-${selectedIslandData.family.toLowerCase()}`}>
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-mark">MB</div>
