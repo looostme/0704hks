@@ -1,0 +1,399 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://0704hks.local/schemas/profile-output.schema.json",
+  "title": "FourDimensionalProfileOutput",
+  "type": "object",
+  "required": [
+    "session_id",
+    "generated_at",
+    "goal",
+    "collection",
+    "dimension_values",
+    "current_state",
+    "safety"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "collection": {
+      "type": "object",
+      "required": [
+        "mode",
+        "max_questions",
+        "coverage",
+        "next_questions",
+        "known_signal_count",
+        "input_count"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "mode": {
+          "const": "grill_me_with_kb"
+        },
+        "max_questions": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "coverage": {
+          "$ref": "#/$defs/CollectionCoverage"
+        },
+        "next_questions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Question"
+          }
+        },
+        "known_signal_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "dimension_values": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "$ref": "#/$defs/DimensionValue"
+      }
+    },
+    "current_state": {
+      "$ref": "#/$defs/CurrentState"
+    },
+    "safety": {
+      "type": "object",
+      "required": [
+        "language",
+        "events"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "events": {
+          "type": "array"
+        }
+      }
+    },
+    "engine": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "mode": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "Dimension": {
+      "enum": [
+        "tcm_body",
+        "psychology",
+        "xuanxue_spirit",
+        "mbti"
+      ]
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "Polarity": {
+      "enum": [
+        "positive",
+        "negative",
+        "neutral"
+      ]
+    },
+    "Question": {
+      "type": "object",
+      "required": [
+        "dimension",
+        "question",
+        "reason",
+        "priority"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "question": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        }
+      }
+    },
+    "CollectionCoverage": {
+      "type": "object",
+      "required": [
+        "order",
+        "minimum_required_categories",
+        "max_skipped_categories",
+        "submitted_count",
+        "needed_categories_to_generate",
+        "skipped_count",
+        "remaining_skip_count",
+        "submitted_categories",
+        "skipped_categories",
+        "required_categories",
+        "can_generate_profile",
+        "stages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "order": {
+          "type": "array",
+          "items": {
+            "enum": ["mbti", "body", "bazi", "psychology"]
+          }
+        },
+        "minimum_required_categories": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "max_skipped_categories": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "submitted_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "needed_categories_to_generate": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "skipped_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "remaining_skip_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "submitted_categories": {
+          "type": "array",
+          "items": {
+            "enum": ["mbti", "body", "bazi", "psychology"]
+          }
+        },
+        "skipped_categories": {
+          "type": "array",
+          "items": {
+            "enum": ["mbti", "body", "bazi", "psychology"]
+          }
+        },
+        "required_categories": {
+          "type": "array",
+          "items": {
+            "enum": ["mbti", "body", "bazi", "psychology"]
+          }
+        },
+        "can_generate_profile": {
+          "type": "boolean"
+        },
+        "stages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["category", "dimension", "label", "status", "required"],
+            "additionalProperties": false,
+            "properties": {
+              "category": {
+                "enum": ["mbti", "body", "bazi", "psychology"]
+              },
+              "dimension": {
+                "$ref": "#/$defs/Dimension"
+              },
+              "label": {
+                "type": "string"
+              },
+              "status": {
+                "enum": ["submitted", "skipped", "optional_missing", "required_missing", "not_reached"]
+              },
+              "required": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    },
+    "EvidenceChunk": {
+      "type": "object",
+      "required": [
+        "id",
+        "domain",
+        "tags",
+        "excerpt"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "domain": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "locator": {
+          "type": "object"
+        },
+        "source": {
+          "type": "object"
+        },
+        "excerpt": {
+          "type": "string"
+        },
+        "score": {
+          "type": "number"
+        }
+      }
+    },
+    "DimensionValue": {
+      "type": "object",
+      "required": [
+        "dimension",
+        "name",
+        "value",
+        "label",
+        "description",
+        "confidence",
+        "polarity",
+        "evidence_signal_ids",
+        "evidence_chunk_ids",
+        "evidence_chunks"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "dimension": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "polarity": {
+          "$ref": "#/$defs/Polarity"
+        },
+        "evidence_signal_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_chunk_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence_chunks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceChunk"
+          }
+        }
+      }
+    },
+    "CurrentState": {
+      "type": "object",
+      "required": [
+        "value",
+        "label",
+        "score",
+        "description",
+        "positive_dimensions",
+        "negative_dimensions",
+        "neutral_dimensions"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "enum": [
+            "positive",
+            "negative",
+            "neutral"
+          ]
+        },
+        "label": {
+          "enum": [
+            "正",
+            "负",
+            "平"
+          ]
+        },
+        "score": {
+          "type": "integer"
+        },
+        "description": {
+          "type": "string"
+        },
+        "positive_dimensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dimension"
+          }
+        },
+        "negative_dimensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dimension"
+          }
+        },
+        "neutral_dimensions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dimension"
+          }
+        }
+      }
+    }
+  }
+}

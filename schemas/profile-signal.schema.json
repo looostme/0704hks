@@ -1,0 +1,591 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://0704hks.local/schemas/profile-signal.schema.json",
+  "title": "MultimodalIntakeSession",
+  "type": "object",
+  "required": [
+    "session_id",
+    "created_at",
+    "goal",
+    "inputs",
+    "signals",
+    "unresolved_questions",
+    "safety_events"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "goal": {
+      "type": "string",
+      "description": "User's stated goal or current concern. Empty string is allowed when the first turn starts from media only."
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RawInput"
+      }
+    },
+    "skipped_categories": {
+      "type": "array",
+      "description": "Collection categories explicitly skipped by the user in the MBTI -> body -> bazi -> psychology order.",
+      "items": {
+        "enum": [
+          "mbti",
+          "body",
+          "bazi",
+          "psychology"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "signals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ProfileSignal"
+      }
+    },
+    "unresolved_questions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FollowupQuestion"
+      }
+    },
+    "safety_events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/SafetyEvent"
+      }
+    }
+  },
+  "$defs": {
+    "Dimension": {
+      "enum": [
+        "tcm_body",
+        "psychology",
+        "xuanxue_spirit",
+        "mbti"
+      ]
+    },
+    "Confidence": {
+      "enum": [
+        "high",
+        "medium",
+        "low",
+        "unknown",
+        "user_reported"
+      ]
+    },
+    "Modality": {
+      "enum": [
+        "text",
+        "voice",
+        "image"
+      ]
+    },
+    "RawInput": {
+      "type": "object",
+      "required": [
+        "id",
+        "modality",
+        "created_at",
+        "source",
+        "quality"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modality": {
+          "$ref": "#/$defs/Modality"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "kind"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "typed_text",
+                "voice_recording",
+                "uploaded_image",
+                "camera_capture"
+              ]
+            },
+            "uri": {
+              "type": "string"
+            },
+            "mime_type": {
+              "type": "string"
+            },
+            "duration_ms": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "width": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "quality": {
+          "$ref": "#/$defs/InputQuality"
+        }
+      }
+    },
+    "InputQuality": {
+      "type": "object",
+      "required": [
+        "status",
+        "issues",
+        "should_retry"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "high",
+            "medium",
+            "low",
+            "unusable"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "blur",
+              "low_light",
+              "color_cast",
+              "wrong_angle",
+              "occlusion",
+              "too_far",
+              "cropped",
+              "background_noise",
+              "low_volume",
+              "incomplete",
+              "unsupported_format",
+              "unknown"
+            ]
+          }
+        },
+        "should_retry": {
+          "type": "boolean"
+        },
+        "retry_prompt": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "EvidenceRef": {
+      "type": "object",
+      "required": [
+        "kind",
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "raw_input",
+            "transcript_span",
+            "image_observation",
+            "user_report",
+            "kb_chunk"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "span": {
+          "type": "object",
+          "required": [
+            "start",
+            "end"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "start": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "end": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "quote": {
+          "type": "string"
+        }
+      }
+    },
+    "BaseSignal": {
+      "type": "object",
+      "required": [
+        "id",
+        "modality",
+        "type",
+        "value",
+        "confidence",
+        "dimension_hint",
+        "evidence",
+        "safety"
+      ],
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "modality": {
+          "$ref": "#/$defs/Modality"
+        },
+        "type": {
+          "enum": [
+            "goal",
+            "body_state",
+            "sleep",
+            "digestion",
+            "temperature_sense",
+            "emotion_state",
+            "stress_state",
+            "repeated_pattern",
+            "self_evaluation",
+            "relationship_pattern",
+            "voice_delivery",
+            "tongue_observation",
+            "face_observation",
+            "palm_observation",
+            "birth_info",
+            "mbti_known",
+            "preference_clue",
+            "safety_risk",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normalized_value": {
+          "type": "object"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "dimension_hint": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Dimension"
+          },
+          "uniqueItems": true
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EvidenceRef"
+          }
+        },
+        "safety": {
+          "type": "object",
+          "required": [
+            "usage",
+            "must_not"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "usage": {
+              "type": "string"
+            },
+            "must_not": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "requires_escalation": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "TextSignal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseSignal"
+        },
+        {
+          "type": "object",
+          "required": [
+            "modality",
+            "raw_text"
+          ],
+          "properties": {
+            "modality": {
+              "const": "text"
+            },
+            "raw_text": {
+              "type": "string",
+              "minLength": 1
+            },
+            "language": {
+              "type": "string"
+            }
+          }
+        }
+      ]
+    },
+    "VoiceSignal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseSignal"
+        },
+        {
+          "type": "object",
+          "required": [
+            "modality",
+            "transcript",
+            "transcript_confidence"
+          ],
+          "properties": {
+            "modality": {
+              "const": "voice"
+            },
+            "transcript": {
+              "type": "string",
+              "minLength": 1
+            },
+            "transcript_confidence": {
+              "$ref": "#/$defs/Confidence"
+            },
+            "delivery_features": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/VoiceDeliveryFeature"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "VoiceDeliveryFeature": {
+      "type": "object",
+      "required": [
+        "type",
+        "value",
+        "confidence",
+        "usage_constraint"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "speech_rate",
+            "pause_density",
+            "volume",
+            "hesitation",
+            "affect_tone"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "usage_constraint": {
+          "type": "string"
+        }
+      }
+    },
+    "ImageSignal": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseSignal"
+        },
+        {
+          "type": "object",
+          "required": [
+            "modality",
+            "image_type",
+            "quality",
+            "observations",
+            "forbidden_inferences"
+          ],
+          "properties": {
+            "modality": {
+              "const": "image"
+            },
+            "image_type": {
+              "enum": [
+                "tongue",
+                "face",
+                "palm",
+                "other"
+              ]
+            },
+            "quality": {
+              "$ref": "#/$defs/InputQuality"
+            },
+            "observations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ImageObservation"
+              }
+            },
+            "forbidden_inferences": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "identity",
+                  "age",
+                  "gender",
+                  "ethnicity",
+                  "disease_diagnosis",
+                  "mental_health_diagnosis",
+                  "fate_certainty",
+                  "high_stakes_decision"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ImageObservation": {
+      "type": "object",
+      "required": [
+        "type",
+        "value",
+        "confidence"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "enum": [
+            "tongue_body_color",
+            "tongue_coating_color",
+            "tongue_coating_thickness",
+            "tongue_moisture",
+            "tongue_shape",
+            "tongue_teeth_marks",
+            "tongue_cracks",
+            "face_complexion",
+            "face_under_eye",
+            "face_expression",
+            "palm_color",
+            "palm_line_visibility",
+            "palm_texture",
+            "image_quality_note",
+            "other"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "confidence": {
+          "$ref": "#/$defs/Confidence"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "ProfileSignal": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TextSignal"
+        },
+        {
+          "$ref": "#/$defs/VoiceSignal"
+        },
+        {
+          "$ref": "#/$defs/ImageSignal"
+        }
+      ]
+    },
+    "FollowupQuestion": {
+      "type": "object",
+      "required": [
+        "id",
+        "dimension",
+        "question",
+        "reason",
+        "priority"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "dimension": {
+          "$ref": "#/$defs/Dimension"
+        },
+        "question": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "priority": {
+          "enum": [
+            "high",
+            "medium",
+            "low"
+          ]
+        }
+      }
+    },
+    "SafetyEvent": {
+      "type": "object",
+      "required": [
+        "id",
+        "level",
+        "trigger",
+        "action"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "notice",
+            "caution",
+            "escalate"
+          ]
+        },
+        "trigger": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

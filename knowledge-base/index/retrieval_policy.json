@@ -9,12 +9,12 @@
       "language": "用“倾向、可能、参考、调理方向”表达，不做医学诊断。",
       "hard_limits": ["不输出处方剂量", "不承诺疗效", "遇到急症/红旗症状提示就医"]
     },
-    "tcm_psychology": {
-      "domains": ["tcm"],
-      "default_tags": ["情志", "七情", "藏象", "气血津液", "治则"],
-      "top_k": 6,
-      "language": "把情绪解释为情志与生活状态的互动，不给精神疾病诊断。",
-      "hard_limits": ["不替代心理咨询/精神科诊断", "自伤风险必须升级为安全提示"]
+    "psychology": {
+      "domains": ["psychology", "tcm"],
+      "default_tags": ["阿德勒", "个体心理学", "自卑感", "补偿", "目标导向", "生活风格", "共同体感觉", "关系模式", "情志"],
+      "top_k": 8,
+      "language": "以阿德勒个体心理学读取心理动力、生活风格和关系模式；中医情志仅作为身心关联辅助，不给临床心理或精神科诊断。",
+      "hard_limits": ["不替代心理咨询/精神科诊断", "不做人格定论或创伤定论", "自伤风险必须升级为安全提示"]
     },
     "xuanxue_spirit": {
       "domains": ["xuanxue"],
@@ -33,7 +33,7 @@
   },
   "fusion": {
     "top_k_per_dimension": 4,
-    "conflict_handling": "当中医、玄学、MBTI 给出不同解释时，输出“多框架解释差异”，不要强行合一。",
+    "conflict_handling": "当中医、阿德勒心理学、玄学、MBTI 给出不同解释时，输出“多框架解释差异”，不要强行合一。",
     "confidence": {
       "high": "输入充分且多个知识块互相支持",
       "medium": "输入足够生成画像，但仍有关键缺失",
@@ -41,9 +41,16 @@
     }
   },
   "first_session_30s": {
-    "max_followup_questions": 3,
-    "required_minimum": ["主诉/目标", "至少一种输入信号"],
-    "optional": ["出生年月日时", "性别年龄", "已知MBTI", "舌/脸/手图片"],
-    "fallback": "信息不足时先生成低置信度画像，并在互动调理阶段继续补采。"
+    "target_seconds": 30,
+    "collection_order": ["mbti", "body", "bazi", "psychology"],
+    "max_questions": 5,
+    "psychology_questions": {"min": 3, "max": 5},
+    "required_minimum": ["至少两类信息"],
+    "max_skipped_categories": 2,
+    "skip_rule": "用户最多跳过两类；如果前面已经跳过两类，后面的类别都必填。",
+    "explicit_skip_rule": "只有用户显式跳过的类别才写入 skipped_categories；缺失八字不能自动当作已跳过，必须保留为 optional_missing 或 required_missing 并进入 next_questions。",
+    "body_inputs": ["问题", "语音", "舌图", "面相", "手相/手部图片"],
+    "bazi_inputs": ["出生年月日时", "时辰不确定时需标注不确定"],
+    "fallback": "少于两类信息时不生成完整画像，只返回按顺序的补采问题。"
   }
 }

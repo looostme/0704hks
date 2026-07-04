@@ -1,0 +1,185 @@
+{
+  "session_id": "session_demo_001",
+  "created_at": "2026-07-04T12:10:00+08:00",
+  "goal": "想知道最近为什么总是拖延、睡不好，也想看一下身体状态。",
+  "inputs": [
+    {
+      "id": "input_text_001",
+      "modality": "text",
+      "created_at": "2026-07-04T12:10:02+08:00",
+      "source": {
+        "kind": "typed_text"
+      },
+      "quality": {
+        "status": "high",
+        "issues": [],
+        "should_retry": false
+      }
+    },
+    {
+      "id": "input_voice_001",
+      "modality": "voice",
+      "created_at": "2026-07-04T12:10:15+08:00",
+      "source": {
+        "kind": "voice_recording",
+        "mime_type": "audio/m4a",
+        "duration_ms": 8200
+      },
+      "quality": {
+        "status": "medium",
+        "issues": ["background_noise"],
+        "should_retry": false,
+        "notes": "背景噪声轻微，转写可用。"
+      }
+    },
+    {
+      "id": "input_image_001",
+      "modality": "image",
+      "created_at": "2026-07-04T12:10:36+08:00",
+      "source": {
+        "kind": "camera_capture",
+        "mime_type": "image/jpeg",
+        "width": 1600,
+        "height": 1200
+      },
+      "quality": {
+        "status": "medium",
+        "issues": ["color_cast"],
+        "should_retry": false,
+        "notes": "室内灯光略偏黄，颜色相关观察降置信度。"
+      }
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig_text_001",
+      "modality": "text",
+      "type": "repeated_pattern",
+      "value": "重要任务前拖延",
+      "raw_text": "我一遇到重要任务就拖延，怕做不好被别人看低。",
+      "confidence": "high",
+      "dimension_hint": ["psychology", "mbti"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_001",
+          "quote": "重要任务就拖延"
+        }
+      ],
+      "safety": {
+        "usage": "用于心理模式和互动偏好假设",
+        "must_not": ["临床诊断", "人格定论"]
+      }
+    },
+    {
+      "id": "sig_text_002",
+      "modality": "text",
+      "type": "self_evaluation",
+      "value": "怕做不好被别人看低",
+      "raw_text": "我一遇到重要任务就拖延，怕做不好被别人看低。",
+      "confidence": "high",
+      "dimension_hint": ["psychology"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_001",
+          "quote": "怕做不好被别人看低"
+        }
+      ],
+      "safety": {
+        "usage": "用于阿德勒心理动力和保护策略假设",
+        "must_not": ["创伤定论", "临床诊断"]
+      }
+    },
+    {
+      "id": "sig_voice_001",
+      "modality": "voice",
+      "type": "sleep",
+      "value": "最近睡不好，多梦，容易烦",
+      "transcript": "最近睡不好，多梦，也很容易烦。",
+      "transcript_confidence": "medium",
+      "confidence": "medium",
+      "dimension_hint": ["tcm_body", "psychology"],
+      "delivery_features": [
+        {
+          "type": "hesitation",
+          "value": "moderate",
+          "confidence": "low",
+          "usage_constraint": "仅作为压力状态辅助线索，不单独生成结论。"
+        }
+      ],
+      "evidence": [
+        {
+          "kind": "raw_input",
+          "id": "input_voice_001"
+        }
+      ],
+      "safety": {
+        "usage": "用于睡眠和压力相关倾向参考",
+        "must_not": ["医学诊断", "心理诊断"]
+      }
+    },
+    {
+      "id": "sig_image_001",
+      "modality": "image",
+      "type": "tongue_observation",
+      "value": "舌体偏淡，白苔偏厚，疑似齿痕",
+      "image_type": "tongue",
+      "quality": {
+        "status": "medium",
+        "issues": ["color_cast"],
+        "should_retry": false,
+        "notes": "室内灯光略偏黄，颜色判断降置信度。"
+      },
+      "observations": [
+        {
+          "type": "tongue_body_color",
+          "value": "偏淡",
+          "confidence": "medium"
+        },
+        {
+          "type": "tongue_coating_thickness",
+          "value": "偏厚",
+          "confidence": "medium"
+        },
+        {
+          "type": "tongue_teeth_marks",
+          "value": "疑似齿痕",
+          "confidence": "low"
+        }
+      ],
+      "confidence": "medium",
+      "dimension_hint": ["tcm_body"],
+      "forbidden_inferences": [
+        "identity",
+        "age",
+        "gender",
+        "ethnicity",
+        "disease_diagnosis",
+        "mental_health_diagnosis",
+        "fate_certainty",
+        "high_stakes_decision"
+      ],
+      "evidence": [
+        {
+          "kind": "raw_input",
+          "id": "input_image_001"
+        }
+      ],
+      "safety": {
+        "usage": "仅作体质倾向和调理参考",
+        "must_not": ["医学诊断", "处方剂量", "疗效承诺"]
+      }
+    }
+  ],
+  "unresolved_questions": [
+    {
+      "id": "q_psychology_001",
+      "dimension": "psychology",
+      "question": "你拖延时更怕失败本身，还是更怕别人看到你失败？",
+      "reason": "区分自我评价压力和关系评价压力。",
+      "priority": "high"
+    }
+  ],
+  "safety_events": []
+}

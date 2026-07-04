@@ -1,0 +1,84 @@
+{
+  "session_id": "session_positive_001",
+  "created_at": "2026-07-04T13:20:00+08:00",
+  "goal": "最近状态还不错，想知道怎么保持现在的节奏和行动力。",
+  "inputs": [
+    {
+      "id": "input_text_positive_001",
+      "modality": "text",
+      "created_at": "2026-07-04T13:20:02+08:00",
+      "source": {
+        "kind": "typed_text"
+      },
+      "quality": {
+        "status": "high",
+        "issues": [],
+        "should_retry": false
+      }
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig_positive_body_001",
+      "modality": "text",
+      "type": "body_state",
+      "value": "最近睡眠稳定，醒来比较有精神，运动后恢复也不错",
+      "raw_text": "最近睡眠稳定，醒来比较有精神，运动后恢复也不错。",
+      "confidence": "high",
+      "dimension_hint": ["tcm_body"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_positive_001",
+          "quote": "睡眠稳定，醒来比较有精神"
+        }
+      ],
+      "safety": {
+        "usage": "用于身体状态和节律参考",
+        "must_not": ["医学诊断", "疗效承诺"]
+      }
+    },
+    {
+      "id": "sig_positive_psych_001",
+      "modality": "text",
+      "type": "emotion_state",
+      "value": "心情平稳，最近能持续推进计划",
+      "raw_text": "心情比较平稳，最近能持续推进计划，没有明显内耗。",
+      "confidence": "high",
+      "dimension_hint": ["psychology"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_positive_001",
+          "quote": "心情比较平稳，最近能持续推进计划"
+        }
+      ],
+      "safety": {
+        "usage": "用于心理状态和行动节奏参考",
+        "must_not": ["临床诊断", "人格定论"]
+      }
+    },
+    {
+      "id": "sig_positive_mbti_001",
+      "modality": "text",
+      "type": "mbti_known",
+      "value": "ENFJ",
+      "raw_text": "我之前测过大概是 ENFJ，和别人协作时状态更好。",
+      "confidence": "user_reported",
+      "dimension_hint": ["mbti"],
+      "evidence": [
+        {
+          "kind": "user_report",
+          "id": "input_text_positive_001",
+          "quote": "大概是 ENFJ"
+        }
+      ],
+      "safety": {
+        "usage": "用于 MBTI-style 互动偏好参考",
+        "must_not": ["官方测评结论", "高风险筛选"]
+      }
+    }
+  ],
+  "unresolved_questions": [],
+  "safety_events": []
+}

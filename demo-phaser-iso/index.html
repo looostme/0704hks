@@ -1,0 +1,1050 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>0704hks Mobile Inner Room Spike</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        background: #131427;
+        color: #f7efe8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        min-width: 100%;
+        height: 100%;
+        min-height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: #131427;
+      }
+
+      #game {
+        width: 100vw;
+        height: 100vh;
+      }
+
+      canvas {
+        display: block;
+        image-rendering: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main id="game" aria-label="0704hks mobile inner-room profile scene"></main>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
+    <script>
+      const DESIGN_W = 390;
+      const DESIGN_H = 844;
+      const RENDER_SCALE = 4;
+      const GAME_W = DESIGN_W * RENDER_SCALE;
+      const GAME_H = DESIGN_H * RENDER_SCALE;
+      const WORLD_SCALE = 0.58;
+      const SIGNAL_SCALE = 0.66;
+      const WORLD_ORIGIN = { x: 195, y: 330 };
+
+      const P = {
+        bg: 0x131427,
+        bgBand: 0x1b1d37,
+        bgDeep: 0x0c0e1b,
+        outline: 0x151524,
+        outlineSoft: 0x2a2638,
+        wallLeft: 0x5a3655,
+        wallRight: 0x323552,
+        wallTrim: 0x8a607d,
+        floor: 0xa86983,
+        floorLit: 0xbf7f98,
+        floorSide: 0x5e3d55,
+        bridge: 0x875a72,
+        bridgeSide: 0x55384f,
+        cream: 0xf6ecdf,
+        muted: 0xc0b7ca,
+        card: 0x766177,
+        cardDeep: 0x58475f,
+      };
+
+      const AXES = [
+        {
+          key: "body",
+          shortLabel: "身",
+          fullLabel: "中医身体",
+          nodeLabel: "脉光",
+          color: 0x8edab2,
+          glow: 0x75f0ae,
+          title: "身体画像倾向",
+          summary: "作息、消化和冷热感正在形成第一层身体线索。",
+          question: "最近三天更怕冷，还是更怕热？",
+          x: 74,
+          y: 382,
+        },
+        {
+          key: "mind",
+          shortLabel: "情",
+          fullLabel: "阿德勒心理",
+          nodeLabel: "心灯",
+          color: 0xf2b263,
+          glow: 0xffd58a,
+          title: "心理模式倾向",
+          summary: "反复卡点、保护策略和关系动作会被读成阿德勒式生活风格线索。",
+          question: "最近最反复出现的是拖延、讨好、控制，还是回避？",
+          x: 272,
+          y: 265,
+        },
+        {
+          key: "spirit",
+          shortLabel: "灵",
+          fullLabel: "玄学心灵",
+          nodeLabel: "命灯",
+          color: 0xf593bb,
+          glow: 0xff9fc7,
+          title: "心灵叙事倾向",
+          summary: "人生阶段和行动主题被处理成非决定论的反思入口。",
+          question: "你现在更想问事业、关系，还是自我状态？",
+          x: 314,
+          y: 430,
+        },
+        {
+          key: "mbti",
+          shortLabel: "互",
+          fullLabel: "MBTI",
+          nodeLabel: "镜光",
+          color: 0x9ebdff,
+          glow: 0xaac9ff,
+          title: "互动偏好倾向",
+          summary: "表达方式、决策偏好和关系互动开始连成画像。",
+          question: "做决定时更先看事实，还是更先看人的感受？",
+          x: 154,
+          y: 194,
+        },
+      ];
+
+      const DEMO_SCENES = [
+        {
+          key: "intake",
+          label: "采集",
+          title: "采集 · 光团降世",
+          subtitle: "MBTI 光团先落入世界，后续身体、八字、问答各自成场。",
+        },
+        {
+          key: "profile",
+          label: "结果",
+          title: "结果 · 四维房间",
+          subtitle: "至少两维画像和当前状态在同一个内心房间里被点亮。",
+        },
+        {
+          key: "wellness",
+          label: "调理",
+          title: "调理 · 四屋岛",
+          subtitle: "岛上四间房子：中医、哲学、冥想、艺术，每间都有店长。",
+        },
+        {
+          key: "social",
+          label: "社交",
+          title: "社交 · 人格岛",
+          subtitle: "海面上漂着多个人格岛，可以左右滑动探索。",
+        },
+      ];
+
+      class MobileInnerRoomScene extends Phaser.Scene {
+        constructor() {
+          super("MobileInnerRoomScene");
+          this.signals = [];
+          this.sceneObjects = [];
+          this.sceneButtons = [];
+          this.sceneTitle = null;
+          this.axisRail = null;
+          this.selected = null;
+          this.profileCard = null;
+          this.beam = null;
+          this.currentDemoScene = null;
+        }
+
+        create() {
+          this.cameras.main.setBackgroundColor("#131427");
+          this.cameras.main.roundPixels = false;
+          this.cameras.main.setZoom(RENDER_SCALE);
+          this.cameras.main.centerOn(DESIGN_W / 2, DESIGN_H / 2);
+
+          window.__renderInfo = {
+            design: `${DESIGN_W}x${DESIGN_H}`,
+            backing: `${this.game.canvas.width}x${this.game.canvas.height}`,
+            scale: RENDER_SCALE,
+            worldScale: WORLD_SCALE,
+          };
+          document.body.dataset.canvasBacking = `${this.game.canvas.width}x${this.game.canvas.height}`;
+          document.body.dataset.worldScale = `${WORLD_SCALE}`;
+
+          this.addBackground();
+          this.addHeader();
+          this.renderSceneTabs();
+          this.showDemoScene("intake");
+        }
+
+        worldPoint(x, y) {
+          return {
+            x: WORLD_ORIGIN.x + (x - WORLD_ORIGIN.x) * WORLD_SCALE,
+            y: WORLD_ORIGIN.y + (y - WORLD_ORIGIN.y) * WORLD_SCALE,
+          };
+        }
+
+        worldGraphics(g) {
+          g.setPosition(WORLD_ORIGIN.x * (1 - WORLD_SCALE), WORLD_ORIGIN.y * (1 - WORLD_SCALE));
+          g.setScale(WORLD_SCALE);
+          this.trackSceneObject(g);
+          return g;
+        }
+
+        worldContainer(c, scale = WORLD_SCALE) {
+          const p = this.worldPoint(c.x, c.y);
+          c.setPosition(p.x, p.y);
+          c.setScale(scale);
+          this.trackSceneObject(c);
+          return c;
+        }
+
+        trackSceneObject(obj) {
+          if (obj && this.sceneObjects && !this.sceneObjects.includes(obj)) {
+            this.sceneObjects.push(obj);
+          }
+          return obj;
+        }
+
+        addBackground() {
+          const g = this.add.graphics().setDepth(0);
+          g.fillStyle(P.bg, 1);
+          g.fillRect(0, 0, DESIGN_W, DESIGN_H);
+          g.fillStyle(P.bgDeep, 0.56);
+          g.fillRect(0, 0, DESIGN_W, 90);
+          g.fillStyle(P.bgBand, 0.76);
+          g.fillRect(0, 90, DESIGN_W, 465);
+          g.fillStyle(P.bgDeep, 0.38);
+          g.fillRect(0, 555, DESIGN_W, DESIGN_H - 555);
+
+          this.glow(196, 310, 270, 0x2e2642, 0.22, 0);
+          this.glow(315, 210, 130, 0xffcc8a, 0.13, 1);
+          this.glow(74, 390, 112, 0x7ce9af, 0.1, 1);
+
+          const stars = this.add.graphics().setDepth(2);
+          [
+            [44, 136, 1.3],
+            [92, 102, 1.2],
+            [325, 132, 1.1],
+            [350, 484, 1.2],
+            [42, 510, 1.1],
+            [286, 512, 1.4],
+          ].forEach(([x, y, r], i) => {
+            stars.fillStyle(i % 2 ? 0x8b84a6 : P.cream, 0.22);
+            stars.fillCircle(x, y, r);
+          });
+        }
+
+        addHeader() {
+          this.add.text(22, 28, "心象地图", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "26px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+          }).setDepth(900);
+
+          this.add.text(24, 64, "采集 · 结果 · 调理 · 社交", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "13px",
+            color: "#c0b7ca",
+          }).setDepth(900);
+        }
+
+        renderSceneTabs() {
+          const group = this.add.container(20, 92).setDepth(940);
+          DEMO_SCENES.forEach((scene, index) => {
+            const x = index * 88;
+            const bg = this.add.graphics();
+            const text = this.add.text(x + 36, 16, scene.label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "13px",
+              fontStyle: "800",
+              color: "#f6ecdf",
+            }).setOrigin(0.5);
+            const hit = this.add.zone(x + 36, 16, 74, 34).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => this.showDemoScene(scene.key));
+            group.add([bg, text, hit]);
+            this.sceneButtons.push({ scene, bg, text, x });
+          });
+          this.paintSceneTabs();
+        }
+
+        paintSceneTabs() {
+          this.sceneButtons.forEach(({ scene, bg, text, x }) => {
+            const active = scene.key === this.currentDemoScene;
+            bg.clear();
+            bg.fillStyle(active ? 0x766177 : 0x242337, active ? 0.95 : 0.74);
+            bg.fillRoundedRect(x, 0, 72, 32, 10);
+            bg.lineStyle(1, active ? 0xf6ecdf : 0xf6ecdf, active ? 0.28 : 0.1);
+            bg.strokeRoundedRect(x, 0, 72, 32, 10);
+            text.setColor(active ? "#fff7ed" : "#c0b7ca");
+          });
+        }
+
+        showDemoScene(key) {
+          if (key === this.currentDemoScene) return;
+          this.clearDemoScene();
+          this.currentDemoScene = key;
+          this.paintSceneTabs();
+          const scene = DEMO_SCENES.find((item) => item.key === key);
+          document.body.dataset.demoScene = key;
+          window.__demoScene = key;
+          this.renderSceneTitle(scene);
+          if (key === "intake") this.renderIntakeScene(scene);
+          if (key === "profile") this.renderProfileScene(scene);
+          if (key === "wellness") this.renderWellnessScene(scene);
+          if (key === "social") this.renderSocialScene(scene);
+        }
+
+        clearDemoScene() {
+          this.tweens.killAll();
+          this.signals.forEach((signal) => {
+            signal.container?.destroy();
+            signal.hit?.destroy();
+          });
+          this.signals = [];
+          if (this.profileCard) this.profileCard.destroy(true);
+          if (this.beam) this.beam.destroy(true);
+          if (this.axisRail) this.axisRail.destroy(true);
+          if (this.sceneTitle) this.sceneTitle.destroy(true);
+          this.profileCard = null;
+          this.beam = null;
+          this.axisRail = null;
+          this.sceneTitle = null;
+          delete document.body.dataset.isoAxis;
+          delete document.body.dataset.isoLabel;
+          this.sceneObjects.forEach((obj) => {
+            if (obj && obj.active !== false) obj.destroy(true);
+          });
+          this.sceneObjects = [];
+        }
+
+        renderSceneTitle(scene) {
+          const group = this.add.container(22, 140).setDepth(910);
+          const title = this.add.text(0, 0, scene.title, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "18px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+          });
+          const subtitle = this.add.text(0, 28, scene.subtitle, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            color: "#c0b7ca",
+            wordWrap: { width: 330 },
+            lineSpacing: 4,
+          });
+          group.add([title, subtitle]);
+          this.sceneTitle = group;
+        }
+
+        renderDemoCard(title, lines, color = 0x9ebdff) {
+          const group = this.add.container(20, 596).setDepth(720);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.34);
+          g.fillRoundedRect(-4, 8, 350, 154, 18);
+          g.fillStyle(P.card, 0.94);
+          g.fillRoundedRect(0, 0, 348, 154, 18);
+          g.lineStyle(1, 0xf6ecdf, 0.14);
+          g.strokeRoundedRect(0, 0, 348, 154, 18);
+          g.fillStyle(color, 1);
+          g.fillRoundedRect(20, 26, 38, 38, 10);
+          const heading = this.add.text(76, 24, title, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "21px",
+            fontStyle: "800",
+            color: "#fff7ed",
+          });
+          const body = this.add.text(22, 86, lines.join("\n"), {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "13px",
+            color: "#f2eaf2",
+            lineSpacing: 7,
+            wordWrap: { width: 302 },
+          });
+          group.add([g, heading, body]);
+          this.trackSceneObject(group);
+          return group;
+        }
+
+        renderIntakeScene(scene) {
+          this.addConstellation(195, 328);
+          this.addLightDescent(195, 310);
+          this.addTinyGate(195, 422);
+          this.renderDemoCard("MBTI 光团降世", [
+            "人格信号先以光团落下，不像问卷，而像一个角色进入世界。",
+            "身体、八字、问答还保留 TBD，占位为后续场景。",
+          ], 0x9ebdff);
+        }
+
+        renderProfileScene() {
+          this.addStage();
+          AXES.forEach((axis, index) => this.addSignal(axis, index));
+          this.renderAxisRail();
+          this.selectSignal(AXES[1], false);
+        }
+
+        renderWellnessScene() {
+          this.addSeaBand();
+          this.addWellnessIsland(195, 375);
+          this.renderDemoCard("四屋调理岛", [
+            "中医、哲学、冥想、艺术四间小屋围成一座岛。",
+            "每间屋子有店长，给练习、解释、照护或创作任务。",
+          ], 0x8edab2);
+        }
+
+        renderSocialScene() {
+          this.addSeaBand();
+          const group = this.add.container(0, 0).setDepth(150);
+          this.trackSceneObject(group);
+          [
+            { x: 88, y: 358, label: "INFP", color: 0x9ebdff },
+            { x: 210, y: 342, label: "ENFJ", color: 0xf593bb },
+            { x: 328, y: 374, label: "ISTJ", color: 0xf2b263 },
+            { x: 450, y: 340, label: "ENTP", color: 0x8edab2 },
+          ].forEach((island) => group.add(this.makePersonalityIsland(island)));
+          const dragZone = this.add.zone(195, 365, 390, 280).setDepth(500).setInteractive({ useHandCursor: true });
+          let startX = 0;
+          let baseX = 0;
+          dragZone.on("pointerdown", (pointer) => {
+            startX = pointer.x;
+            baseX = group.x;
+          });
+          dragZone.on("pointermove", (pointer) => {
+            if (!pointer.isDown) return;
+            group.x = Phaser.Math.Clamp(baseX + pointer.x - startX, -120, 28);
+          });
+          this.trackSceneObject(dragZone);
+          this.renderDemoCard("人格岛群", [
+            "人格不是列表，而是海面上的岛屿。",
+            "左右拖动海面，可以浏览不同人格岛和关系入口。",
+          ], 0xf593bb);
+        }
+
+        addConstellation(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(70));
+          const stars = [
+            [cx - 90, cy - 96, 1.4],
+            [cx - 36, cy - 132, 1.2],
+            [cx + 42, cy - 118, 1.5],
+            [cx + 94, cy - 78, 1.2],
+            [cx - 70, cy - 16, 1.1],
+            [cx + 78, cy + 6, 1.3],
+          ];
+          g.lineStyle(0.8, 0xd7c8ff, 0.2);
+          for (let i = 0; i < stars.length - 1; i += 1) {
+            g.lineBetween(stars[i][0], stars[i][1], stars[i + 1][0], stars[i + 1][1]);
+          }
+          stars.forEach(([x, y, r], index) => {
+            g.fillStyle(index % 2 ? 0x9ebdff : 0xf6ecdf, 0.82);
+            g.fillCircle(x, y, r);
+          });
+        }
+
+        addLightDescent(cx, cy) {
+          this.glow(cx, cy - 70, 126, 0x9ebdff, 0.26, 82, true);
+          this.glow(cx, cy - 52, 72, 0xf593bb, 0.16, 83, true);
+          const c = this.add.container(cx, cy - 48).setDepth(250);
+          const g = this.add.graphics();
+          g.lineStyle(1.4, 0xf6ecdf, 0.5);
+          g.lineBetween(0, -120, 0, 60);
+          g.lineStyle(0.8, 0xaac9ff, 0.36);
+          g.lineBetween(-18, -96, 14, 42);
+          for (let i = 0; i < 7; i += 1) {
+            const dot = this.add.circle(
+              Phaser.Math.Between(-28, 28),
+              Phaser.Math.Between(-40, 20),
+              Phaser.Math.Between(3, 7),
+              i % 2 ? 0xf593bb : 0x9ebdff,
+              0.9
+            );
+            c.add(dot);
+            this.tweens.add({
+              targets: dot,
+              y: dot.y - Phaser.Math.Between(5, 14),
+              alpha: 0.48,
+              duration: 900 + i * 120,
+              yoyo: true,
+              repeat: -1,
+              ease: "Sine.easeInOut",
+            });
+          }
+          const core = this.add.graphics();
+          core.fillStyle(0xf6ecdf, 1);
+          core.fillCircle(0, -4, 11);
+          core.lineStyle(2, 0x9ebdff, 0.9);
+          core.strokeCircle(0, -4, 22);
+          core.lineStyle(1, 0xf593bb, 0.62);
+          core.strokeCircle(0, -4, 34);
+          c.add([g, core]);
+          this.worldContainer(c, WORLD_SCALE * 0.96);
+        }
+
+        addTinyGate(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(132));
+          this.poly(g, [[cx, cy - 56], [cx + 92, cy - 10], [cx, cy + 42], [cx - 92, cy - 10]], 0x58475f, 1, P.outline, 2);
+          this.poly(g, [[cx, cy - 30], [cx + 54, cy - 4], [cx, cy + 26], [cx - 54, cy - 4]], 0x9ebdff, 0.16, 0xdce6ff, 0.8);
+          g.lineStyle(1.2, 0xf6ecdf, 0.36);
+          g.lineBetween(cx - 42, cy - 4, cx + 42, cy - 4);
+          g.fillStyle(0xf6ecdf, 0.92);
+          g.fillCircle(cx, cy - 4, 4);
+        }
+
+        addSeaBand() {
+          const g = this.add.graphics().setDepth(20);
+          this.trackSceneObject(g);
+          g.fillStyle(0x111b34, 0.48);
+          g.fillRect(0, 198, DESIGN_W, 356);
+          g.lineStyle(1, 0x9ebdff, 0.12);
+          for (let y = 236; y < 520; y += 46) {
+            g.beginPath();
+            g.moveTo(-20, y);
+            for (let x = -20; x <= 420; x += 28) {
+              g.lineTo(x, y + Math.sin((x + y) * 0.04) * 7);
+            }
+            g.strokePath();
+          }
+          this.trackSceneObject(this.glow(204, 380, 240, 0x274b5c, 0.13, 21));
+        }
+
+        addWellnessIsland(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(120));
+          this.shadow(cx, cy + 86, 300, 52, 0.2, 88);
+          this.poly(g, [[cx, cy - 112], [cx + 164, cy - 34], [cx + 104, cy + 70], [cx - 28, cy + 118], [cx - 160, cy + 42], [cx - 126, cy - 58]], 0x516d5c, 1, P.outline, 3);
+          this.poly(g, [[cx, cy - 80], [cx + 118, cy - 24], [cx + 74, cy + 44], [cx - 20, cy + 80], [cx - 116, cy + 28], [cx - 86, cy - 40]], 0x8edab2, 0.38, 0xf6ecdf, 0.8);
+          g.lineStyle(2, 0xf0d8bc, 0.7);
+          g.lineBetween(cx - 76, cy + 22, cx + 64, cy - 44);
+          g.lineBetween(cx - 16, cy + 62, cx + 50, cy - 44);
+          this.drawTinyHouse(g, cx - 70, cy + 20, 0x8edab2);
+          this.drawTinyHouse(g, cx + 56, cy - 44, 0xf2b263);
+          this.drawTinyHouse(g, cx - 4, cy - 62, 0x9ebdff);
+          this.drawTinyHouse(g, cx + 70, cy + 34, 0xf593bb);
+          this.drawKeeper(g, cx - 42, cy + 58, 0x8edab2);
+          this.drawKeeper(g, cx + 84, cy - 8, 0xf2b263);
+          this.drawKeeper(g, cx + 22, cy - 26, 0x9ebdff);
+          this.drawKeeper(g, cx + 100, cy + 70, 0xf593bb);
+        }
+
+        drawTinyHouse(g, x, y, color) {
+          this.isoBlock(g, x, y, 52, 36, 30, 0xf0d8bc, 0x8c5362, 0x5d3b55, 1.6);
+          this.poly(g, [[x - 32, y - 20], [x, y - 48], [x + 34, y - 18], [x, y + 2]], color, 0.96, P.outline, 1.5);
+          g.fillStyle(0x1b2038, 1);
+          g.fillRoundedRect(x - 7, y + 6, 14, 22, 4);
+          g.fillStyle(0xf6ecdf, 0.72);
+          g.fillRect(x + 13, y - 2, 9, 8);
+        }
+
+        drawKeeper(g, x, y, color) {
+          g.fillStyle(0x050712, 0.2);
+          g.fillEllipse(x, y + 16, 28, 10);
+          g.fillStyle(color, 0.96);
+          g.fillRoundedRect(x - 8, y - 8, 16, 22, 6);
+          g.fillStyle(0xf1c4aa, 1);
+          g.fillCircle(x, y - 10, 7);
+        }
+
+        makePersonalityIsland({ x, y, label, color }) {
+          const c = this.add.container(x, y).setScale(0.72);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.24);
+          g.fillEllipse(0, 50, 96, 22);
+          this.poly(g, [[0, -46], [62, -12], [44, 38], [-20, 58], [-68, 16], [-44, -30]], 0x516d5c, 1, P.outline, 2);
+          this.poly(g, [[0, -28], [40, -8], [26, 24], [-16, 36], [-44, 10], [-26, -18]], color, 0.36, 0xf6ecdf, 0.8);
+          this.drawTinyHouse(g, -6, -6, color);
+          g.fillStyle(0xf6ecdf, 0.92);
+          g.fillCircle(30, 22, 5);
+          g.fillCircle(42, 14, 3);
+          const text = this.add.text(0, 78, label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          c.add([g, text]);
+          return c;
+        }
+
+        addStage() {
+          this.addStageShadow();
+          this.addBridge(60, 382, 152, 0.52, 54);
+          this.addBridge(290, 408, 150, -0.55, 70);
+          this.addRoom(195, 303);
+          this.addWallDetails(195, 303);
+          this.addFloorDetails(195, 303);
+          this.addFurniture();
+          this.addLamp(318, 198);
+          this.addAvatar(178, 352);
+        }
+
+        addStageShadow() {
+          const g = this.worldGraphics(this.add.graphics().setDepth(8));
+          g.fillStyle(0x050712, 0.28);
+          g.fillEllipse(204, 418, 320, 78);
+          g.fillStyle(0x050712, 0.18);
+          g.fillEllipse(242, 438, 260, 44);
+        }
+
+        addBridge(cx, cy, length, slope, depth) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(depth));
+          const half = length / 2;
+          const thick = 16;
+          const dx = half;
+          const dy = half * slope * 0.35;
+          const nx = thick * slope * 0.35;
+          const ny = thick;
+          const top = [
+            [cx - dx - nx, cy - dy - ny],
+            [cx + dx - nx, cy + dy - ny],
+            [cx + dx + nx, cy + dy + ny],
+            [cx - dx + nx, cy - dy + ny],
+          ];
+          const side = top.map(([x, y], index) => index > 1 ? [x, y + 14] : [x, y]);
+          this.poly(g, [top[3], top[2], side[2], side[3]], P.bridgeSide, 1, P.outline, 2);
+          this.poly(g, top, P.bridge, 1, P.outline, 2);
+          g.lineStyle(1, 0xc98ba2, 0.7);
+          g.lineBetween(top[0][0] + 10, top[0][1] + 2, top[1][0] - 10, top[1][1] + 2);
+        }
+
+        addRoom(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(120));
+          const top = [cx, cy - 92];
+          const right = [cx + 142, cy - 20];
+          const bottom = [cx, cy + 62];
+          const left = [cx - 142, cy - 20];
+          const wallTop = cy - 184;
+
+          this.poly(g, [left, bottom, [bottom[0], bottom[1] + 24], [left[0], left[1] + 24]], P.floorSide, 1, P.outline, 2);
+          this.poly(g, [bottom, right, [right[0], right[1] + 24], [bottom[0], bottom[1] + 24]], 0x51364f, 1, P.outline, 2);
+          this.poly(g, [left, top, [cx, wallTop], [cx - 142, wallTop + 72]], P.wallLeft, 1, P.outline, 3);
+          this.poly(g, [top, right, [cx + 142, wallTop + 72], [cx, wallTop]], P.wallRight, 1, P.outline, 3);
+          this.poly(g, [top, right, bottom, left], P.floor, 1, P.outline, 3);
+          this.poly(g, [[cx, cy - 72], [cx + 112, cy - 18], [cx, cy + 42], [cx - 112, cy - 18]], P.floorLit, 0.36, P.cream, 0.8);
+        }
+
+        addWallDetails(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(142));
+          this.poly(g, [[cx - 92, cy - 122], [cx - 42, cy - 148], [cx - 42, cy - 96], [cx - 92, cy - 70]], 0x1d1e32, 1, P.outline, 2);
+          const colors = [0xf2b263, 0x9ebdff, 0x8edab2, 0xf593bb, 0xe6d1b6];
+          for (let row = 0; row < 3; row += 1) {
+            for (let col = 0; col < 4; col += 1) {
+              g.fillStyle(colors[(row + col) % colors.length], 0.9);
+              g.fillRoundedRect(cx - 84 + col * 10, cy - 113 + row * 16, 6, 12, 1);
+            }
+          }
+
+          this.poly(g, [[cx + 62, cy - 126], [cx + 108, cy - 104], [cx + 108, cy - 64], [cx + 62, cy - 86]], 0x242942, 1, P.outline, 2);
+          this.poly(g, [[cx + 72, cy - 108], [cx + 100, cy - 94], [cx + 100, cy - 76], [cx + 72, cy - 90]], 0xf2b263, 0.26, P.cream, 0.8);
+        }
+
+        addFloorDetails(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(143));
+          g.lineStyle(1, 0xf8d1dc, 0.42);
+          g.lineBetween(cx - 98, cy - 18, cx, cy - 66);
+          g.lineBetween(cx + 96, cy - 19, cx, cy - 66);
+          g.lineBetween(cx - 74, cy + 8, cx + 72, cy - 62);
+          g.lineStyle(0.8, 0xffffff, 0.26);
+          g.lineBetween(cx - 105, cy - 18, cx, cy + 36);
+          g.lineBetween(cx, cy + 36, cx + 108, cy - 18);
+        }
+
+        addFurniture() {
+          this.addPlant(66, 383);
+          this.addMirror(153, 195);
+          this.addDesk(210, 345);
+          this.addCouch(260, 315);
+          this.addLantern(314, 428, 0xf593bb);
+        }
+
+        addDesk(x, y) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 24));
+          this.shadow(x + 8, y + 32, 76, 24, 0.18, y + 18);
+          this.isoBlock(g, x, y, 74, 36, 24, 0x5e405b, 0x443047, 0x312639, 2);
+          this.poly(g, [[x - 34, y - 18], [x - 2, y - 34], [x + 24, y - 20], [x - 8, y - 4]], 0xf0d8bc, 0.92, P.outline, 1.3);
+          g.fillStyle(0xf593bb, 0.95);
+          g.fillCircle(x + 7, y - 26, 4.4);
+          g.fillStyle(0x9ebdff, 0.95);
+          g.fillCircle(x + 24, y - 16, 4.4);
+        }
+
+        addCouch(x, y) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 32));
+          this.shadow(x, y + 40, 92, 26, 0.18, y + 24);
+          this.isoBlock(g, x, y, 86, 42, 28, 0xcd8e93, 0x8c5362, 0x5d3b55, 2);
+          this.poly(g, [[x - 42, y - 22], [x + 4, y - 44], [x + 42, y - 23], [x - 4, y - 2]], 0xe6a4a3, 0.92, P.outline, 1.5);
+        }
+
+        addAvatar(x, y) {
+          const c = this.add.container(x, y).setDepth(y + 76);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.34);
+          g.fillEllipse(2, 34, 62, 16);
+          g.fillStyle(0x2b2435, 1);
+          g.fillRoundedRect(-19, -42, 38, 45, 16);
+          g.fillStyle(0x1f1a28, 1);
+          g.fillEllipse(0, -34, 38, 24);
+          g.fillStyle(0xf1c4aa, 1);
+          g.fillCircle(0, -24, 17);
+          g.fillStyle(0x2b2435, 1);
+          g.fillCircle(-7, -27, 2.4);
+          g.fillCircle(7, -27, 2.4);
+          g.fillStyle(0xbf6c7b, 0.9);
+          g.fillCircle(0, -17, 2);
+          g.fillStyle(0x765168, 1);
+          g.fillRoundedRect(-15, -8, 30, 36, 9);
+          g.fillStyle(P.cream, 1);
+          g.fillRoundedRect(-8, -2, 16, 13, 3);
+          g.lineStyle(2.6, 0x2c2434, 1);
+          g.lineBetween(-10, 24, -26, 36);
+          g.lineBetween(10, 24, 26, 36);
+          g.lineBetween(-13, 6, -28, 13);
+          g.lineBetween(13, 6, 28, 0);
+          c.add(g);
+          this.worldContainer(c);
+          const restingY = c.y;
+          this.tweens.add({ targets: c, y: restingY - 4 * WORLD_SCALE, duration: 1500, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+        }
+
+        addPlant(x, y) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 46));
+          this.shadow(x + 1, y + 24, 48, 18, 0.18, y + 34);
+          this.isoBlock(g, x, y, 30, 22, 20, 0x6b4259, 0x4c3249, 0x2d2437, 1.6);
+          g.fillStyle(0x8edab2, 0.78);
+          g.fillEllipse(x - 9, y - 34, 14, 36);
+          g.fillEllipse(x + 9, y - 42, 15, 44);
+          g.lineStyle(1.4, 0x26382f, 1);
+          g.lineBetween(x - 9, y - 20, x - 9, y - 52);
+          g.lineBetween(x + 9, y - 20, x + 9, y - 62);
+        }
+
+        addMirror(x, y) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 74));
+          this.poly(g, [[x - 30, y - 44], [x + 8, y - 64], [x + 34, y - 40], [x - 6, y - 18]], 0x1b2038, 1, P.outline, 2);
+          this.poly(g, [[x - 18, y - 40], [x + 6, y - 52], [x + 20, y - 40], [x - 5, y - 28]], 0x9ebdff, 0.34, 0xdce6ff, 0.8);
+        }
+
+        addLamp(x, y) {
+          this.glow(x, y - 58, 90, 0xffd18a, 0.22, 62, true);
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 52));
+          g.lineStyle(2.4, 0x171520, 1);
+          g.lineBetween(x, y - 62, x, y + 34);
+          g.lineBetween(x - 18, y + 34, x + 18, y + 34);
+          g.fillStyle(0xffd18a, 1);
+          g.fillCircle(x, y - 66, 8);
+          g.lineStyle(1.4, P.cream, 0.86);
+          g.strokeCircle(x, y - 66, 15);
+          g.lineStyle(0.8, 0xfff0bd, 0.48);
+          g.strokeCircle(x, y - 66, 24);
+        }
+
+        addLantern(x, y, color) {
+          this.glow(x, y - 22, 56, color, 0.22, y + 2, true);
+          const g = this.worldGraphics(this.add.graphics().setDepth(y + 48));
+          this.shadow(x, y + 12, 44, 18, 0.2, y + 36);
+          this.isoBlock(g, x, y, 32, 24, 24, 0x6c435a, 0x4e354c, 0x33283d, 1.5);
+          g.fillStyle(color, 0.95);
+          g.fillCircle(x, y - 22, 8);
+          g.lineStyle(2, P.cream, 0.8);
+          g.lineBetween(x - 9, y - 8, x, y - 30);
+          g.lineBetween(x + 9, y - 8, x, y - 30);
+        }
+
+        addSignal(axis, index) {
+          const p = this.worldPoint(axis.x, axis.y);
+          const c = this.add.container(p.x, p.y).setDepth(axis.y + 210).setScale(SIGNAL_SCALE);
+          const glow = this.add.graphics();
+          const gem = this.add.graphics();
+          const label = this.add.text(0, 35, axis.nodeLabel, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+
+          c.add([glow, gem, label]);
+          this.paintSignal(glow, gem, axis, false);
+
+          const hit = this.add.zone(p.x, p.y - 5 * WORLD_SCALE, 70, 76).setDepth(axis.y + 320).setInteractive({ useHandCursor: true });
+          hit.on("pointerover", () => {
+            this.paintSignal(glow, gem, axis, true);
+            this.tweens.add({ targets: c, scale: SIGNAL_SCALE * 1.08, duration: 120, ease: "Sine.easeOut" });
+          });
+          hit.on("pointerout", () => {
+            this.paintSignal(glow, gem, axis, this.selected?.key === axis.key);
+            this.tweens.add({ targets: c, scale: SIGNAL_SCALE, duration: 140, ease: "Sine.easeOut" });
+          });
+          hit.on("pointerdown", () => this.selectSignal(axis, true));
+
+          this.tweens.add({
+            targets: [c, hit],
+            y: p.y - 6 * WORLD_SCALE,
+            duration: 1120 + index * 150,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+          this.signals.push({ axis, container: c, glow, gem, hit, point: p });
+        }
+
+        paintSignal(glow, gem, axis, active) {
+          glow.clear();
+          gem.clear();
+          const alpha = active ? 0.42 : 0.2;
+          for (let i = 4; i >= 1; i -= 1) {
+            glow.fillStyle(axis.glow, alpha / (i * 0.95));
+            glow.fillCircle(0, -6, i * 14);
+          }
+          gem.fillStyle(P.outline, 1);
+          gem.fillCircle(0, -5, active ? 18 : 16);
+          gem.fillStyle(axis.color, 1);
+          gem.beginPath();
+          gem.moveTo(0, -30);
+          gem.lineTo(18, -8);
+          gem.lineTo(0, 16);
+          gem.lineTo(-18, -8);
+          gem.closePath();
+          gem.fillPath();
+          gem.lineStyle(active ? 2 : 1.4, P.cream, active ? 0.94 : 0.52);
+          gem.strokePath();
+          gem.fillStyle(0xffffff, active ? 0.82 : 0.5);
+          gem.fillCircle(-5, -13, 3.6);
+        }
+
+        renderAxisRail() {
+          const group = this.add.container(22, 760).setDepth(720);
+          this.axisRail = group;
+          AXES.forEach((axis, index) => {
+            const x = index * 87;
+            const g = this.add.graphics();
+            g.fillStyle(0x242337, 0.82);
+            g.fillRoundedRect(x, 0, 70, 54, 14);
+            g.lineStyle(1, 0xf6ecdf, 0.12);
+            g.strokeRoundedRect(x, 0, 70, 54, 14);
+            g.fillStyle(axis.color, 1);
+            g.beginPath();
+            g.moveTo(x + 20, 18);
+            g.lineTo(x + 30, 27);
+            g.lineTo(x + 20, 36);
+            g.lineTo(x + 10, 27);
+            g.closePath();
+            g.fillPath();
+            const text = this.add.text(x + 38, 18, axis.shortLabel, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "17px",
+              fontStyle: "800",
+              color: "#f6ecdf",
+            });
+            group.add([g, text]);
+          });
+        }
+
+        selectSignal(axis, animate) {
+          this.selected = axis;
+          this.signals.forEach((signal) => {
+            this.paintSignal(signal.glow, signal.gem, signal.axis, signal.axis.key === axis.key);
+          });
+          this.renderBeam(axis);
+          this.renderProfile(axis);
+          if (animate) this.spawnBurst(axis);
+        }
+
+        renderBeam(axis) {
+          if (this.beam) this.beam.destroy(true);
+          const p = this.worldPoint(axis.x, axis.y);
+          const group = this.add.container(0, 0).setDepth(210);
+          const g = this.add.graphics();
+          g.lineStyle(1.6, axis.color, 0.28);
+          g.lineBetween(p.x, p.y + 14 * WORLD_SCALE, 98, 583);
+          g.lineStyle(0.8, P.cream, 0.16);
+          g.lineBetween(p.x - 4 * WORLD_SCALE, p.y + 12 * WORLD_SCALE, 82, 586);
+          group.add(g);
+          group.setAlpha(0);
+          this.tweens.add({ targets: group, alpha: 1, duration: 180, ease: "Sine.easeOut" });
+          this.beam = group;
+        }
+
+        spawnBurst(axis) {
+          const p = this.worldPoint(axis.x, axis.y);
+          for (let i = 0; i < 7; i += 1) {
+            const dot = this.add.circle(p.x + Phaser.Math.Between(-7, 7), p.y + Phaser.Math.Between(-6, 7), Phaser.Math.Between(2, 3), axis.color, 0.9).setDepth(760);
+            this.tweens.add({
+              targets: dot,
+              x: 82 + Phaser.Math.Between(-10, 18),
+              y: 596 + Phaser.Math.Between(-10, 18),
+              scale: 0.2,
+              alpha: 0,
+              duration: 480 + i * 42,
+              ease: "Sine.easeInOut",
+              onComplete: () => dot.destroy(),
+            });
+          }
+        }
+
+        renderProfile(axis) {
+          if (this.profileCard) this.profileCard.destroy(true);
+
+          const group = this.add.container(20, 552).setDepth(700);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.34);
+          g.fillRoundedRect(-4, 8, 350, 178, 18);
+          g.fillStyle(P.card, 0.96);
+          g.fillRoundedRect(0, 0, 348, 178, 18);
+          this.poly(g, [[60, 0], [82, -18], [104, 0]], P.card, 0.96, P.card, 1);
+          g.fillStyle(0xffffff, 0.08);
+          g.fillRoundedRect(18, 22, 62, 62, 14);
+          g.fillStyle(axis.color, 1);
+          g.fillRoundedRect(28, 31, 42, 42, 11);
+          g.lineStyle(1, 0xf6ecdf, 0.14);
+          g.strokeRoundedRect(0, 0, 348, 178, 18);
+
+          const face = this.add.graphics();
+          face.fillStyle(0x2b2436, 1);
+          face.fillRoundedRect(36, 40, 26, 17, 8);
+          face.fillStyle(0xf1c4aa, 1);
+          face.fillCircle(49, 55, 14);
+          face.fillStyle(0x2b2436, 1);
+          face.fillCircle(44, 55, 1.9);
+          face.fillCircle(54, 55, 1.9);
+          face.lineStyle(1.5, 0x925c72, 1);
+          face.lineBetween(44, 63, 54, 63);
+
+          const label = this.add.text(96, 25, axis.fullLabel, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "13px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+          });
+          const title = this.add.text(96, 48, axis.title, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "23px",
+            fontStyle: "800",
+            color: "#ffffff",
+          });
+          const summary = this.add.text(28, 100, axis.summary, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "14px",
+            color: "#f2eaf2",
+            lineSpacing: 6,
+            wordWrap: { width: 292 },
+          });
+          const question = this.add.text(28, 142, axis.question, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "14px",
+            fontStyle: "800",
+            color: "#fff0c8",
+            wordWrap: { width: 292 },
+          });
+
+          group.add([g, face, label, title, summary, question]);
+          group.setAlpha(0);
+          group.y += 12;
+          this.tweens.add({ targets: group, alpha: 1, y: 552, duration: 190, ease: "Sine.easeOut" });
+          this.profileCard = group;
+
+          window.__isoSpikeState = {
+            selectedAxis: axis.key,
+            selectedLabel: axis.fullLabel,
+            sourceLabel: axis.nodeLabel,
+            layout: "mobile-portrait",
+            worldScale: WORLD_SCALE,
+          };
+          document.body.dataset.isoAxis = axis.key;
+          document.body.dataset.isoLabel = axis.fullLabel;
+        }
+
+        glow(x, y, radius, color, alpha, depth, world = false) {
+          const g = this.add.graphics().setDepth(depth);
+          for (let i = 7; i >= 1; i -= 1) {
+            g.fillStyle(color, alpha / (i * 1.05));
+            g.fillCircle(x, y, (radius / 7) * i);
+          }
+          if (world) this.worldGraphics(g);
+          return g;
+        }
+
+        shadow(x, y, w, h, alpha, depth) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(depth));
+          g.fillStyle(0x050712, alpha);
+          g.fillEllipse(x, y, w, h);
+        }
+
+        isoBlock(g, x, y, w, d, h, topColor, leftColor, rightColor, strokeWidth) {
+          const top = [
+            [x, y - d / 2],
+            [x + w / 2, y],
+            [x, y + d / 2],
+            [x - w / 2, y],
+          ];
+          const left = [
+            [x - w / 2, y],
+            [x, y + d / 2],
+            [x, y + d / 2 + h],
+            [x - w / 2, y + h],
+          ];
+          const right = [
+            [x, y + d / 2],
+            [x + w / 2, y],
+            [x + w / 2, y + h],
+            [x, y + d / 2 + h],
+          ];
+          this.poly(g, left, leftColor, 1, P.outline, strokeWidth);
+          this.poly(g, right, rightColor, 1, P.outline, strokeWidth);
+          this.poly(g, top, topColor, 1, P.outline, strokeWidth);
+          g.lineStyle(0.8, 0xffffff, 0.22);
+          g.lineBetween(top[3][0] + 5, top[3][1] - 1, top[0][0] - 5, top[0][1] - d / 2 + 5);
+          g.lineBetween(top[0][0] + 5, top[0][1] - d / 2 + 5, top[1][0] - 5, top[1][1] - 1);
+        }
+
+        poly(g, points, fill, alpha = 1, stroke = P.outline, strokeWidth = 2) {
+          g.fillStyle(fill, alpha);
+          g.lineStyle(strokeWidth, stroke, 1);
+          g.beginPath();
+          g.moveTo(points[0][0], points[0][1]);
+          points.slice(1).forEach(([x, y]) => g.lineTo(x, y));
+          g.closePath();
+          g.fillPath();
+          g.strokePath();
+        }
+      }
+
+      const config = {
+        type: Phaser.AUTO,
+        parent: "game",
+        width: GAME_W,
+        height: GAME_H,
+        backgroundColor: "#131427",
+        render: {
+          antialias: true,
+          antialiasGL: true,
+          pixelArt: false,
+          roundPixels: false,
+        },
+        scale: {
+          mode: Phaser.Scale.FIT,
+          autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+        scene: [MobileInnerRoomScene],
+      };
+
+      window.addEventListener("load", () => {
+        new Phaser.Game(config);
+      });
+    </script>
+  </body>
+</html>

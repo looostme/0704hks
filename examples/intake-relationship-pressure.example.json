@@ -1,0 +1,84 @@
+{
+  "session_id": "session_relationship_001",
+  "created_at": "2026-07-04T13:25:00+08:00",
+  "goal": "最近关系里很累，总是怕别人不高兴，想知道自己为什么这样。",
+  "inputs": [
+    {
+      "id": "input_text_relationship_001",
+      "modality": "text",
+      "created_at": "2026-07-04T13:25:02+08:00",
+      "source": {
+        "kind": "typed_text"
+      },
+      "quality": {
+        "status": "high",
+        "issues": [],
+        "should_retry": false
+      }
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig_relationship_psych_001",
+      "modality": "text",
+      "type": "relationship_pattern",
+      "value": "关系里经常讨好，害怕冲突和被讨厌",
+      "raw_text": "我在关系里经常讨好，害怕冲突，也怕别人觉得我麻烦。",
+      "confidence": "high",
+      "dimension_hint": ["psychology", "mbti"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_relationship_001",
+          "quote": "经常讨好，害怕冲突"
+        }
+      ],
+      "safety": {
+        "usage": "用于关系模式和心理保护策略假设",
+        "must_not": ["临床诊断", "人格定论"]
+      }
+    },
+    {
+      "id": "sig_relationship_self_001",
+      "modality": "text",
+      "type": "self_evaluation",
+      "value": "怕自己不够好，担心被抛下",
+      "raw_text": "我总觉得自己不够好，如果不多做一点，对方可能就不想理我。",
+      "confidence": "high",
+      "dimension_hint": ["psychology"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_relationship_001",
+          "quote": "自己不够好"
+        }
+      ],
+      "safety": {
+        "usage": "用于阿德勒自卑感、补偿和关系位置假设",
+        "must_not": ["创伤定论", "临床诊断"]
+      }
+    },
+    {
+      "id": "sig_relationship_body_001",
+      "modality": "text",
+      "type": "sleep",
+      "value": "最近入睡难，睡前反复想白天的对话",
+      "raw_text": "最近入睡比较难，睡前会反复想白天的对话，担心自己说错话。",
+      "confidence": "medium",
+      "dimension_hint": ["tcm_body", "psychology"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_relationship_001",
+          "quote": "入睡比较难"
+        }
+      ],
+      "safety": {
+        "usage": "用于睡眠和压力相关倾向参考",
+        "must_not": ["医学诊断", "心理诊断"]
+      }
+    }
+  ],
+  "unresolved_questions": [],
+  "safety_events": []
+}

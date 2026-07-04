@@ -19,6 +19,7 @@
     "domain": {
       "enum": [
         "tcm",
+        "psychology",
         "xuanxue",
         "mbti"
       ]

@@ -1,14 +1,16 @@
 {
   "name": "four-dimensional-profile-kb",
-  "built_at": "2026-07-04T09:02:33.439760+00:00",
+  "built_at": "2026-07-04T11:50:46.471297+00:00",
   "domains": {
     "tcm": 209,
+    "psychology": 9,
     "mbti": 20,
     "xuanxue": 393
   },
-  "total_chunks": 622,
+  "total_chunks": 631,
   "files": {
     "tcm_chunks": "knowledge-base/chunks/tcm.jsonl",
+    "psychology_chunks": "knowledge-base/chunks/psychology.jsonl",
     "xuanxue_chunks": "knowledge-base/chunks/xuanxue.jsonl",
     "mbti_chunks": "knowledge-base/chunks/mbti.jsonl",
     "sqlite_index": "knowledge-base/index/kb.sqlite",
@@ -18,6 +20,7 @@
   "sqlite_fts5": true,
   "safety_defaults": {
     "tcm": "仅作为中医基础理论与调理参考，不输出医学诊断、处方或疗效承诺。",
+    "psychology": "仅作为心理模式与自我理解参考，不输出临床诊断、人格定论或创伤定论。",
     "xuanxue": "仅作为文化解释和反思框架，不输出命运定论或恐吓式断语。",
     "mbti": "仅作为人格偏好反思，不作为正式 MBTI 测评或高风险决策依据。"
   }

@@ -1,0 +1,128 @@
+{
+  "session_id": "session_xuanxue_001",
+  "created_at": "2026-07-04T13:30:00+08:00",
+  "goal": "想看一下最近人生阶段的主题，尤其是事业和自我节奏。",
+  "inputs": [
+    {
+      "id": "input_text_xuanxue_001",
+      "modality": "text",
+      "created_at": "2026-07-04T13:30:02+08:00",
+      "source": {
+        "kind": "typed_text"
+      },
+      "quality": {
+        "status": "high",
+        "issues": [],
+        "should_retry": false
+      }
+    },
+    {
+      "id": "input_image_palm_001",
+      "modality": "image",
+      "created_at": "2026-07-04T13:30:20+08:00",
+      "source": {
+        "kind": "camera_capture",
+        "mime_type": "image/jpeg",
+        "width": 1400,
+        "height": 1800
+      },
+      "quality": {
+        "status": "medium",
+        "issues": ["low_light"],
+        "should_retry": false,
+        "notes": "掌心清楚但光线略暗，掌纹观察降置信度。"
+      }
+    }
+  ],
+  "signals": [
+    {
+      "id": "sig_xuanxue_birth_001",
+      "modality": "text",
+      "type": "birth_info",
+      "value": "1998-05-12 08:30，出生时间用户自报",
+      "raw_text": "我的出生时间大概是 1998-05-12 早上 8:30。",
+      "confidence": "user_reported",
+      "dimension_hint": ["xuanxue_spirit"],
+      "evidence": [
+        {
+          "kind": "user_report",
+          "id": "input_text_xuanxue_001",
+          "quote": "1998-05-12 早上 8:30"
+        }
+      ],
+      "safety": {
+        "usage": "用于四柱文化解释和阶段反思",
+        "must_not": ["命运定论", "灾祸断言", "替代现实决策"]
+      }
+    },
+    {
+      "id": "sig_xuanxue_theme_001",
+      "modality": "text",
+      "type": "goal",
+      "value": "关注事业和自我节奏",
+      "raw_text": "我最近主要想看事业和自我节奏，不太想问感情。",
+      "confidence": "high",
+      "dimension_hint": ["xuanxue_spirit", "psychology"],
+      "evidence": [
+        {
+          "kind": "transcript_span",
+          "id": "input_text_xuanxue_001",
+          "quote": "事业和自我节奏"
+        }
+      ],
+      "safety": {
+        "usage": "用于人生主题和行动节奏反思",
+        "must_not": ["命运定论", "高风险决策"]
+      }
+    },
+    {
+      "id": "sig_xuanxue_palm_001",
+      "modality": "image",
+      "type": "palm_observation",
+      "value": "掌纹清晰度中等，主线较明显，掌色偏淡",
+      "image_type": "palm",
+      "quality": {
+        "status": "medium",
+        "issues": ["low_light"],
+        "should_retry": false,
+        "notes": "光线略暗，象意观察仅作低到中置信度参考。"
+      },
+      "observations": [
+        {
+          "type": "palm_line_visibility",
+          "value": "主线较明显",
+          "confidence": "medium"
+        },
+        {
+          "type": "palm_color",
+          "value": "偏淡",
+          "confidence": "low"
+        }
+      ],
+      "confidence": "medium",
+      "dimension_hint": ["xuanxue_spirit"],
+      "forbidden_inferences": [
+        "identity",
+        "age",
+        "gender",
+        "ethnicity",
+        "disease_diagnosis",
+        "mental_health_diagnosis",
+        "fate_certainty",
+        "high_stakes_decision"
+      ],
+      "evidence": [
+        {
+          "kind": "raw_input",
+          "id": "input_image_palm_001"
+        }
+      ],
+      "safety": {
+        "usage": "仅用于象意和阶段反思",
+        "must_not": ["命运定论", "灾祸断言", "高风险建议"]
+      }
+    }
+  ],
+  "unresolved_questions": [],
+  "safety_events": []
+}
