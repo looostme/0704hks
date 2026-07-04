@@ -15,6 +15,66 @@ WORK = ROOT / ".cache"
 
 TCM_SOURCE = Path(os.environ.get("TCM_SOURCE", ROOT / "data" / "中医基础.txt"))
 XUANXUE_SOURCE = ROOT / "梁湘润-子平基础概要.pdf"
+TCM_ANCIENT_DIR = OUTPUT / "raw_clean" / "tcm_ancient_diagnostics"
+
+
+TCM_ANCIENT_DIAGNOSTIC_SOURCES = [
+    {
+        "code": "linzheng_yanshefa",
+        "filename": "516-临症验舌法.txt",
+        "title": "临症验舌法",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/516-%E4%B8%B4%E7%97%87%E9%AA%8C%E8%88%8C%E6%B3%95.txt",
+        "source_repo": "https://github.com/xiaopangxia/TCM-Ancient-Books",
+        "priority": "primary",
+        "topic": "tongue_diagnosis",
+        "tags": ["古籍诊法", "舌诊", "临症验舌", "虚实", "阴阳", "脏腑", "主方"],
+        "selection_note": "舌诊首选；通用于临症验舌，覆盖虚实、阴阳、脏腑和配主方。",
+    },
+    {
+        "code": "chase_bianzheng_xinfa",
+        "filename": "521-察舌辨症新法.txt",
+        "title": "察舌辨症新法",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/521-%E5%AF%9F%E8%88%8C%E8%BE%A8%E7%97%87%E6%96%B0%E6%B3%95.txt",
+        "source_repo": "https://github.com/xiaopangxia/TCM-Ancient-Books",
+        "priority": "supplementary",
+        "topic": "tongue_diagnosis",
+        "tags": ["古籍诊法", "舌诊", "看舌八法", "黄苔", "白苔", "舌苔分类"],
+        "selection_note": "舌诊补充；分类更细，有看舌八法、黄苔类、白苔类等。",
+    },
+    {
+        "code": "shanghan_shejian",
+        "filename": "490-伤寒舌鉴.txt",
+        "title": "伤寒舌鉴",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/490-%E4%BC%A4%E5%AF%92%E8%88%8C%E9%89%B4.txt",
+        "source_repo": "https://github.com/xiaopangxia/TCM-Ancient-Books",
+        "priority": "supplementary",
+        "topic": "cold_damage_tongue",
+        "tags": ["古籍诊法", "舌诊", "伤寒", "外感热病", "白苔", "黄苔", "黑苔"],
+        "selection_note": "舌诊补充；适合伤寒/外感热病语境，不作为通用舌诊首选。",
+    },
+    {
+        "code": "wangzhen_zunjing",
+        "filename": "517-望诊遵经.txt",
+        "title": "望诊遵经",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/517-%E6%9C%9B%E8%AF%8A%E9%81%B5%E7%BB%8F.txt",
+        "source_repo": "https://github.com/xiaopangxia/TCM-Ancient-Books",
+        "priority": "primary",
+        "topic": "face_observation",
+        "tags": ["古籍诊法", "望诊", "面诊", "望色", "明堂", "面部部位", "脏腑对应"],
+        "selection_note": "面诊/望面色首选；专讲望诊，直接对应面部气色、部位和脏腑关系。",
+    },
+    {
+        "code": "xingse_waizhen_jianmo",
+        "filename": "510-形色外诊简摩.txt",
+        "title": "形色外诊简摩",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/510-%E5%BD%A2%E8%89%B2%E5%A4%96%E8%AF%8A%E7%AE%80%E6%91%A9.txt",
+        "source_repo": "https://github.com/xiaopangxia/TCM-Ancient-Books",
+        "priority": "supplementary",
+        "topic": "external_observation",
+        "tags": ["古籍诊法", "望诊", "形色", "外诊", "面色", "体征"],
+        "selection_note": "面诊/望诊补充；范围更广，覆盖形体、气色和外在体征。",
+    },
+]
 
 
 def repo_path(path):
@@ -66,10 +126,19 @@ def run_textutil_rtf(path):
 
 
 def read_source_text(path):
-    try:
-        return run_textutil_rtf(path)
-    except Exception:
-        return normalize_text(path.read_text(encoding="utf-8", errors="ignore"))
+    if path.suffix.lower() == ".rtf":
+        try:
+            return run_textutil_rtf(path)
+        except Exception:
+            pass
+
+    data = path.read_bytes()
+    for encoding in ["utf-8", "utf-8-sig", "gb18030", "big5"]:
+        try:
+            return normalize_text(data.decode(encoding))
+        except UnicodeDecodeError:
+            continue
+    return normalize_text(data.decode("utf-8", errors="ignore"))
 
 
 def iter_tcm_sections(text):
@@ -153,6 +222,100 @@ def classify_tcm(text):
     return tags or ["中医基础"]
 
 
+def classify_tcm_ancient_diagnostics(text):
+    tags = ["古籍诊法"]
+    patterns = {
+        "舌诊": r"舌|舌苔|舌质|苔色|舌尖|舌根|齿印|齿痕|金津|玉液",
+        "舌图": r"舌图|验舌|察舌|看舌|辨舌",
+        "望诊": r"望诊|望色|察色|诊法|四诊|形色",
+        "面诊": r"面|明堂|面部|气色|五色|色诊",
+        "虚实": r"虚实|邪气盛|正气夺|有余|不足",
+        "阴阳": r"阴阳|阳虚|阴虚|阴盛|阳盛",
+        "寒热": r"寒|热|温|凉|燥|湿",
+        "脏腑": r"脏腑|五脏|六腑|肝|心|脾|肺|肾|胃",
+        "伤寒": r"伤寒|太阳|阳明|少阳|太阴|少阴|厥阴",
+        "外感热病": r"外感|温病|热病|伏邪|瘟疫",
+        "主方": r"主方|汤|散|丸|方",
+        "体征": r"形体|体部|体征|外诊|皮毛|爪|唇|目|鼻|耳",
+    }
+    for tag, pattern in patterns.items():
+        if re.search(pattern, text) and tag not in tags:
+            tags.append(tag)
+    return tags
+
+
+def iter_ancient_diagnostic_entries(text):
+    text = normalize_text(text)
+    parts = re.split(r"\n?<篇名>([^\n]+)\n", text)
+    if len(parts) <= 1:
+        yield "全文", text
+        return
+
+    for idx in range(1, len(parts), 2):
+        title = parts[idx].strip()
+        body = parts[idx + 1]
+        body_lines = []
+        for line in body.splitlines():
+            stripped = line.strip()
+            if stripped.startswith("<目录>"):
+                continue
+            body_lines.append(line)
+        body = normalize_text("\n".join(body_lines))
+        if body:
+            yield title, body
+
+
+def build_tcm_ancient_diagnostic_rows():
+    rows = []
+    for source_info in TCM_ANCIENT_DIAGNOSTIC_SOURCES:
+        source_path = TCM_ANCIENT_DIR / source_info["filename"]
+        if not source_path.exists():
+            continue
+
+        text = read_source_text(source_path)
+        source_path.write_text(text, encoding="utf-8")
+        source_hash = sha256_file(source_path)
+        entries = list(iter_ancient_diagnostic_entries(text))
+        for section_idx, (section_title, section_text) in enumerate(entries, start=1):
+            for chunk_idx, chunk in enumerate(chunk_text(section_text, max_chars=1000, overlap=120), start=1):
+                base_tags = [source_info["title"], *source_info["tags"]]
+                for tag in classify_tcm_ancient_diagnostics(chunk):
+                    if tag not in base_tags:
+                        base_tags.append(tag)
+                rows.append(
+                    {
+                        "id": f"tcm_diag_{source_info['code']}_{section_idx:03d}_{chunk_idx:03d}",
+                        "domain": "tcm",
+                        "source": {
+                            "title": source_info["title"],
+                            "path": repo_path(source_path),
+                            "source_repo": source_info["source_repo"],
+                            "url": source_info["url"],
+                            "source_sha256": source_hash,
+                            "source_kind": "tcm_ancient_diagnostics",
+                        },
+                        "locator": {
+                            "book": source_info["title"],
+                            "section": section_title,
+                            "chunk_index": chunk_idx,
+                        },
+                        "tags": base_tags,
+                        "text": chunk,
+                        "structured": {
+                            "topic": source_info["topic"],
+                            "priority": source_info["priority"],
+                            "selection_note": source_info["selection_note"],
+                        },
+                        "text_sha256": sha256_text(chunk),
+                        "safety": {
+                            "mode": "educational_and_wellness_reference",
+                            "must_not": ["替代医学诊断", "直接开方用药", "承诺疗效", "仅凭图片下诊断结论"],
+                        },
+                    }
+                )
+    return rows
+
+
 def write_jsonl(path, rows):
     with open(path, "w", encoding="utf-8") as f:
         for row in rows:
@@ -199,6 +362,7 @@ def build_tcm():
                     },
                 }
             )
+    rows.extend(build_tcm_ancient_diagnostic_rows())
 
     chunks_path = OUTPUT / "chunks" / "tcm.jsonl"
     write_jsonl(chunks_path, rows)
@@ -780,12 +944,26 @@ def write_manifest(results, db_path, has_fts):
         "total_chunks": len(all_rows),
         "files": {
             "tcm_chunks": repo_path(OUTPUT / "chunks" / "tcm.jsonl"),
+            "tcm_ancient_diagnostics_raw": repo_path(TCM_ANCIENT_DIR),
             "psychology_chunks": repo_path(OUTPUT / "chunks" / "psychology.jsonl"),
             "xuanxue_chunks": repo_path(OUTPUT / "chunks" / "xuanxue.jsonl"),
             "mbti_chunks": repo_path(OUTPUT / "chunks" / "mbti.jsonl"),
             "sqlite_index": repo_path(db_path),
             "retrieval_policy": repo_path(OUTPUT / "index" / "retrieval_policy.json"),
             "schema": repo_path(OUTPUT / "schemas" / "chunk.schema.json"),
+        },
+        "selected_sources": {
+            "tcm_ancient_diagnostics": [
+                {
+                    "title": source["title"],
+                    "filename": source["filename"],
+                    "priority": source["priority"],
+                    "topic": source["topic"],
+                    "url": source["url"],
+                    "selection_note": source["selection_note"],
+                }
+                for source in TCM_ANCIENT_DIAGNOSTIC_SOURCES
+            ]
         },
         "sqlite_fts5": has_fts,
         "safety_defaults": {
@@ -807,10 +985,21 @@ Built at: {manifest["built_at"]}
 
 This directory contains the first local KB for the product idea:
 
-- `tcm`: 中医基础理论，用于身体/情志/体质/调理倾向参考。
+- `tcm`: 中医基础理论 + 古籍舌诊/望诊补充，用于身体/情志/体质/调理倾向参考。
 - `psychology`: 阿德勒个体心理学摘要，用于心理动力、生活风格、关系模式和 grill-me 追问。
 - `xuanxue`: 梁湘润《子平基础概要》OCR 后的子平/四柱文化解释参考。
 - `mbti`: MBTI-style 偏好维度与 16 类型画像，用于人格和关系互动。
+
+## TCM Ancient Diagnostic Supplements
+
+Selected from `xiaopangxia/TCM-Ancient-Books`:
+
+- Primary tongue diagnosis: `516-临症验舌法.txt`
+- Supplementary tongue diagnosis: `521-察舌辨症新法.txt`, `490-伤寒舌鉴.txt`
+- Primary face/color observation: `517-望诊遵经.txt`
+- Supplementary external observation: `510-形色外诊简摩.txt`
+
+These sources stay in the `tcm` domain and are tagged with `舌诊`, `舌图`, `望诊`, `面诊`, `望色`, `明堂`, and related diagnostic tags. They are evidence for low-risk observation only, not image-based diagnosis or direct prescriptions.
 
 ## Files
 
@@ -834,6 +1023,10 @@ LIMIT 5;
 ```
 
 For application RAG, read the JSONL chunks, embed `text`, and keep `domain`, `tags`, `locator`, and `safety` as metadata filters.
+
+## Intake Policy
+
+The first session follows MBTI -> body -> Ba Zi -> psychology. A full profile requires at least two submitted categories. Users may skip at most two categories; after two explicit skips, all later categories are required. Missing Ba Zi is not the same as skipped Ba Zi: if no birth date/time is provided and the user did not skip it, the engine should keep Ba Zi as a follow-up question.
 
 ## Product Boundary
 

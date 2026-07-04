@@ -49,6 +49,7 @@ The current data pipeline is:
 ```mermaid
 flowchart TD
   A["Raw / cleaned sources"] --> B["scripts/build_kb.py"]
+  T["TCM ancient tongue / face texts"] --> B
   H["Adler product synthesis"] --> B
   P["梁湘润 PDF"] --> O["scripts/ocr_xuanxue.py"]
   O --> X["xuanxue_ocr.clean.txt"]
@@ -65,7 +66,7 @@ flowchart TD
 Important files:
 
 - `scripts/ocr_xuanxue.py`: renders scanned PDF pages and runs Tesseract OCR for the Zi Ping source.
-- `scripts/build_kb.py`: builds TCM, psychology, Xuanxue, and MBTI chunks, writes SQLite, schema, manifest, and KB README.
+- `scripts/build_kb.py`: builds TCM, psychology, Xuanxue, and MBTI chunks, writes SQLite, schema, manifest, and KB README. TCM includes selected ancient diagnostic supplements for tongue diagnosis and face/color observation.
 - `knowledge-base/index/retrieval_policy.json`: maps product dimensions to KB domains, tags, `top_k`, language guidance, and hard limits.
 - `knowledge-base/index/kb.sqlite`: current keyword search index with FTS5 enabled.
 

@@ -20,6 +20,7 @@ Use “倾向 / 画像 / 调理建议 / 参考” language. Do not present outpu
 - Default test model is `claude-sonnet-5` through `https://api.openai-next.com`; keep API keys in environment variables only.
 - The output contract is four dimension values plus one current state: `positive/正`, `negative/负`, or `neutral/平`.
 - Latest five-round smoke test passed on 2026-07-04: missing Ba Zi now appears as a follow-up collection question, explicit two-skip sessions require Ba Zi and psychology, and fewer than two submitted categories are blocked by `collection_gate`.
+- TCM body now includes ancient tongue/face observation supplements from `xiaopangxia/TCM-Ancient-Books`: `516-临症验舌法` and `517-望诊遵经` are primary; `521-察舌辨症新法`, `490-伤寒舌鉴`, and `510-形色外诊简摩` are supplementary. Use them as low-risk observation evidence only, not image diagnosis or direct prescriptions.
 
 ## Technical Engine
 
@@ -82,7 +83,11 @@ The local knowledge base is in `knowledge-base/`.
 
 It currently contains:
 
-- `tcm`: 209 chunks from 中医基础理论.
+- `tcm`: 540 chunks from 中医基础理论 plus selected ancient tongue/face observation texts.
+  - Primary tongue diagnosis: `516-临症验舌法`.
+  - Supplementary tongue diagnosis: `521-察舌辨症新法`, `490-伤寒舌鉴`.
+  - Primary face/color observation: `517-望诊遵经`.
+  - Supplementary external observation: `510-形色外诊简摩`.
 - `psychology`: 9 chunks from an Adlerian individual psychology product synthesis based on 《理解人性》.
 - `xuanxue`: 393 chunks from OCR of `梁湘润-子平基础概要.pdf`.
 - `mbti`: 20 chunks, covering four preference dimensions and 16 MBTI-style type summaries.

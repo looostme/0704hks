@@ -1,21 +1,66 @@
 {
   "name": "four-dimensional-profile-kb",
-  "built_at": "2026-07-04T11:50:46.471297+00:00",
+  "built_at": "2026-07-04T15:22:06.913868+00:00",
   "domains": {
-    "tcm": 209,
+    "tcm": 540,
     "psychology": 9,
     "mbti": 20,
     "xuanxue": 393
   },
-  "total_chunks": 631,
+  "total_chunks": 962,
   "files": {
     "tcm_chunks": "knowledge-base/chunks/tcm.jsonl",
+    "tcm_ancient_diagnostics_raw": "knowledge-base/raw_clean/tcm_ancient_diagnostics",
     "psychology_chunks": "knowledge-base/chunks/psychology.jsonl",
     "xuanxue_chunks": "knowledge-base/chunks/xuanxue.jsonl",
     "mbti_chunks": "knowledge-base/chunks/mbti.jsonl",
     "sqlite_index": "knowledge-base/index/kb.sqlite",
     "retrieval_policy": "knowledge-base/index/retrieval_policy.json",
     "schema": "knowledge-base/schemas/chunk.schema.json"
+  },
+  "selected_sources": {
+    "tcm_ancient_diagnostics": [
+      {
+        "title": "临症验舌法",
+        "filename": "516-临症验舌法.txt",
+        "priority": "primary",
+        "topic": "tongue_diagnosis",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/516-%E4%B8%B4%E7%97%87%E9%AA%8C%E8%88%8C%E6%B3%95.txt",
+        "selection_note": "舌诊首选；通用于临症验舌，覆盖虚实、阴阳、脏腑和配主方。"
+      },
+      {
+        "title": "察舌辨症新法",
+        "filename": "521-察舌辨症新法.txt",
+        "priority": "supplementary",
+        "topic": "tongue_diagnosis",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/521-%E5%AF%9F%E8%88%8C%E8%BE%A8%E7%97%87%E6%96%B0%E6%B3%95.txt",
+        "selection_note": "舌诊补充；分类更细，有看舌八法、黄苔类、白苔类等。"
+      },
+      {
+        "title": "伤寒舌鉴",
+        "filename": "490-伤寒舌鉴.txt",
+        "priority": "supplementary",
+        "topic": "cold_damage_tongue",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/490-%E4%BC%A4%E5%AF%92%E8%88%8C%E9%89%B4.txt",
+        "selection_note": "舌诊补充；适合伤寒/外感热病语境，不作为通用舌诊首选。"
+      },
+      {
+        "title": "望诊遵经",
+        "filename": "517-望诊遵经.txt",
+        "priority": "primary",
+        "topic": "face_observation",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/517-%E6%9C%9B%E8%AF%8A%E9%81%B5%E7%BB%8F.txt",
+        "selection_note": "面诊/望面色首选；专讲望诊，直接对应面部气色、部位和脏腑关系。"
+      },
+      {
+        "title": "形色外诊简摩",
+        "filename": "510-形色外诊简摩.txt",
+        "priority": "supplementary",
+        "topic": "external_observation",
+        "url": "https://github.com/xiaopangxia/TCM-Ancient-Books/blob/master/510-%E5%BD%A2%E8%89%B2%E5%A4%96%E8%AF%8A%E7%AE%80%E6%91%A9.txt",
+        "selection_note": "面诊/望诊补充；范围更广，覆盖形体、气色和外在体征。"
+      }
+    ]
   },
   "sqlite_fts5": true,
   "safety_defaults": {

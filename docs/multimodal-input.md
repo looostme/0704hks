@@ -141,11 +141,15 @@ Tongue images can support the TCM body dimension. Extract observations only:
 
 Do not output disease diagnosis, prescriptions, or efficacy promises.
 
+Knowledge support now includes selected ancient tongue-diagnosis texts in the `tcm` domain: `临症验舌法` as the primary general source, plus `察舌辨症新法` and `伤寒舌鉴` as supplementary references. Use them to name visible tongue observations and uncertainty, not to diagnose from an image.
+
 ### Face
 
 Face images can provide very weak body-state or reflective cues, but must avoid sensitive inferences. Extract only visible, low-risk observations such as complexion or under-eye state when quality allows.
 
 Do not infer identity, age, gender, ethnicity, mental health diagnosis, attractiveness, or social status.
+
+Knowledge support now includes `望诊遵经` as the primary face/color observation source and `形色外诊简摩` as supplementary external-observation material. Use them only for low-risk complexion and visible-state cues.
 
 ### Palm
 

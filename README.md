@@ -46,6 +46,8 @@ demo-phaser-iso/index.html
 - `knowledge-base/index/kb.sqlite`
 - `knowledge-base/index/retrieval_policy.json`
 
+TCM 域已补充 `xiaopangxia/TCM-Ancient-Books` 中的舌诊与望诊资料：`临症验舌法`、`察舌辨症新法`、`伤寒舌鉴`、`望诊遵经`、`形色外诊简摩`。这些材料只用于舌图、面部气色和外在体征的低风险观察参考。
+
 快速检查：
 
 ```bash

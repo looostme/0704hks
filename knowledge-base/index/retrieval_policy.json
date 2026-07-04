@@ -4,10 +4,16 @@
   "dimensions": {
     "tcm_body": {
       "domains": ["tcm"],
-      "default_tags": ["体质", "藏象", "气血津液", "病因", "病机", "治则"],
+      "default_tags": ["体质", "舌诊", "舌图", "舌苔", "舌质", "望诊", "面诊", "望色", "明堂", "形色", "藏象", "气血津液", "病因", "病机", "治则"],
       "top_k": 6,
-      "language": "用“倾向、可能、参考、调理方向”表达，不做医学诊断。",
-      "hard_limits": ["不输出处方剂量", "不承诺疗效", "遇到急症/红旗症状提示就医"]
+      "language": "用“倾向、可能、参考、调理方向”表达，不做医学诊断；舌图、面相、望色只作为低风险观察线索。",
+      "hard_limits": ["不输出处方剂量", "不承诺疗效", "不把古籍方名直接变成用药建议", "不根据图片做疾病诊断", "遇到急症/红旗症状提示就医"],
+      "diagnostic_sources": {
+        "tongue_primary": ["临症验舌法"],
+        "tongue_supplementary": ["察舌辨症新法", "伤寒舌鉴"],
+        "face_primary": ["望诊遵经"],
+        "face_supplementary": ["形色外诊简摩"]
+      }
     },
     "psychology": {
       "domains": ["psychology", "tcm"],
