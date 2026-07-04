@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>心愈 App · 心愈聊天诊断建议</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">Xinyu Chat Prototype</p>
+        <h1>心愈聊天 · 诊断建议页</h1>
+        <p class="intro-copy">
+          心愈聊天承接用户的心理状态、身体问题、八字判断和 MBTI 判断，生成四维诊断结论，再推荐定制化健康方案。这个页面展示客户在聊天后看到的诊断建议和背后的数据逻辑。
+        </p>
+      </div>
+      <div class="demo-note">
+        <span>App 底部导航</span>
+        <strong>心愈聊天 · 心愈广场 · 心愈星球 · 我的心愈</strong>
+        <p>当前重点展示第一个入口“心愈聊天”。</p>
+      </div>
+    </section>
+
+    <section class="stage">
+      <aside class="side-panel">
+        <div class="panel-title">
+          <p>输入数据</p>
+          <h2>来自上一步四维诊断</h2>
+        </div>
+        <div class="source-stack">
+          <div>
+            <span>心理状态</span>
+            <strong>反复思考、焦虑紧绷、情绪压抑</strong>
+          </div>
+          <div>
+            <span>身体问题</span>
+            <strong>睡眠浅、肩颈紧、胃口波动</strong>
+          </div>
+          <div>
+            <span>八字判断</span>
+            <strong>木火偏旺，土弱，承载感不足</strong>
+          </div>
+          <div>
+            <span>MBTI 判断</span>
+            <strong>INTJ 倾向，偏理性分析</strong>
+          </div>
+        </div>
+        <div class="logic-note">
+          <span>第一层判断</span>
+          <strong>MBTI 决定方案表达方式；身心状态决定调理优先级；八字用于能量叙事和长期调养方向。</strong>
+        </div>
+      </aside>
+
+      <section class="phone-shell" aria-label="心愈 App 手机原型">
+        <div class="phone-top">
+          <span>9:41</span>
+          <div class="speaker"></div>
+          <span>100%</span>
+        </div>
+
+        <div class="app-screen">
+          <header class="app-header">
+            <div>
+              <p id="screenKicker">心愈聊天</p>
+              <h2 id="screenTitle">你的诊断建议</h2>
+            </div>
+            <button class="quiet-button" id="switchUser" type="button">切换样例</button>
+          </header>
+
+          <section class="screen active" id="screen-chat">
+            <div class="chat-hero">
+              <div>
+                <span>四维诊断完成</span>
+                <strong id="diagnosisName">思维过载型身心失衡</strong>
+                <p id="diagnosisSummary">你当前不是单纯疲惫，而是长期高负荷思考后，睡眠、肩颈和情绪出口一起变弱。</p>
+              </div>
+              <div class="risk-badge" id="riskBadge">低到中风险</div>
+            </div>
+
+            <div class="subnav">
+              <button class="subtab active" data-view="advice" type="button">诊断建议</button>
+              <button class="subtab" data-view="plan" type="button">推荐方案</button>
+              <button class="subtab" data-view="result" type="button">结果页</button>
+              <button class="subtab" data-view="logic" type="button">数据逻辑</button>
+            </div>
+
+            <div class="chat-view active" id="view-advice">
+              <div class="energy-card">
+                <div>
+                  <span>能量图</span>
+                  <strong id="energyTitle">脑内能量高，恢复能量低</strong>
+                  <p id="energyCopy">心理压力和夜间反刍偏高，身体承载与睡眠恢复偏低。</p>
+                </div>
+                <div class="energy-map">
+                  <div class="energy-center">愈</div>
+                  <div class="energy-node mind">心 82</div>
+                  <div class="energy-node body">身 74</div>
+                  <div class="energy-node rhythm">律 31</div>
+                </div>
+              </div>
+
+              <div class="diagnosis-list" id="diagnosisCards"></div>
+
+              <div class="xinyu-message">
+                <span>心愈建议</span>
+                <strong id="mainAdvice">先修复睡眠节律，再处理反复思考和身体紧绷。</strong>
+                <p id="mainAdviceCopy">今晚不要继续深度分析，先做一个低负担的收尾动作，让身体知道今天结束了。</p>
+              </div>
+            </div>
+
+            <div class="chat-view" id="view-plan">
+              <div class="section-heading">
+                <span>定制化健康方案</span>
+                <strong id="planTitle">7 天低打扰修复方案</strong>
+              </div>
+              <div class="plan-list" id="planList"></div>
+              <div class="section-heading">
+                <span>推荐进入心愈广场</span>
+                <strong>适合你的特色疗愈模块</strong>
+              </div>
+              <div class="module-list" id="moduleList"></div>
+            </div>
+
+            <div class="chat-view" id="view-result">
+              <div class="result-page">
+                <section class="result-sheet">
+                  <div class="result-top">
+                    <div>
+                      <span>AI 总结</span>
+                      <strong id="resultDiagnosis">思维过载型身心失衡</strong>
+                      <p id="resultSummary">你当前不是单纯疲惫，而是长期高负荷思考后，睡眠、肩颈和情绪出口一起变弱。</p>
+                    </div>
+                    <div class="result-risk" id="resultRisk">低到中风险</div>
+                  </div>
+
+                  <div class="result-metrics">
+                    <div>
+                      <span>心理</span>
+                      <strong id="metricMind">82</strong>
+                    </div>
+                    <div>
+                      <span>身体</span>
+                      <strong id="metricBody">74</strong>
+                    </div>
+                    <div>
+                      <span>节律</span>
+                      <strong id="metricRhythm">31</strong>
+                    </div>
+                    <div>
+                      <span>支持</span>
+                      <strong id="metricSupport">46</strong>
+                    </div>
+                  </div>
+
+                  <div class="result-block">
+                    <span>核心建议</span>
+                    <strong id="resultAdvice">先修复睡眠节律，再处理反复思考和身体紧绷。</strong>
+                    <p id="resultAdviceCopy">今晚不要继续深度分析，先做一个低负担的收尾动作，让身体知道今天结束了。</p>
+                  </div>
+
+                  <div class="result-block">
+                    <span>调理优先级</span>
+                    <div class="priority-table" id="resultPriorities"></div>
+                  </div>
+                </section>
+
+                <section class="result-sheet">
+                  <div class="section-heading compact">
+                    <span>计划表</span>
+                    <strong id="resultPlanTitle">7 天低打扰修复方案</strong>
+                  </div>
+                  <div class="schedule-table" id="resultSchedule"></div>
+                  <div class="section-heading compact">
+                    <span>推荐疗愈模块</span>
+                    <strong>加入心愈广场继续执行</strong>
+                  </div>
+                  <div class="result-modules" id="resultModules"></div>
+                </section>
+              </div>
+            </div>
+
+            <div class="chat-view" id="view-logic">
+              <div class="logic-flow" id="logicFlow"></div>
+              <div class="rule-card">
+                <span>方案生成规则</span>
+                <strong>先做风格判断，再做优先级排序，最后匹配工具模块。</strong>
+                <p>例如 INTJ 用户不适合被推送大量情绪化内容，系统会使用“原因 + 小任务 + 反馈指标”的表达方式。</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="screen" id="screen-plaza">
+            <div id="plazaHome">
+              <div class="plaza-hero">
+                <div>
+                  <strong>找到适合此刻的疗愈方式</strong>
+                  <p>从一个小练习开始，让身心慢慢回稳。</p>
+                </div>
+              </div>
+
+              <div class="featured-card">
+                <div>
+                  <strong id="featuredTitle">24节气养生</strong>
+                  <p id="featuredCopy">顺应时令</p>
+                </div>
+                <button class="featured-pill" id="featuredOpen" type="button">
+                  开始
+                </button>
+              </div>
+
+              <div class="category-row" id="categoryRow"></div>
+
+              <div class="section-heading plaza-heading">
+                <strong id="toolCount">为你推荐</strong>
+              </div>
+              <div class="tool-grid" id="toolGrid"></div>
+            </div>
+
+            <div class="tool-detail-view" id="toolDetailView"></div>
+          </section>
+
+          <section class="screen" id="screen-planet">
+            <div class="placeholder-card">
+              <span>心愈星球</span>
+              <strong>互动社区</strong>
+              <p>用户围绕睡眠、情绪、身体调养、关系议题进行匿名互动和主题陪伴。</p>
+            </div>
+          </section>
+
+          <section class="screen" id="screen-mine">
+            <div class="placeholder-card">
+              <span>我的心愈</span>
+              <strong>我的档案、推荐和设置</strong>
+              <p>记录诊断档案、已推荐方案、已加入工具、提醒和隐私设置。</p>
+            </div>
+          </section>
+        </div>
+
+        <nav class="tabbar" aria-label="心愈底部导航">
+          <button class="tab active" data-screen="chat" type="button"><span>聊</span>心愈聊天</button>
+          <button class="tab" data-screen="plaza" type="button"><span>广</span>心愈广场</button>
+          <button class="tab" data-screen="planet" type="button"><span>星</span>心愈星球</button>
+          <button class="tab" data-screen="mine" type="button"><span>我</span>我的心愈</button>
+        </nav>
+      </section>
+
+      <aside class="side-panel right">
+        <div class="panel-title">
+          <p>页面目标</p>
+          <h2>客户能看到什么</h2>
+        </div>
+        <div class="feature-list">
+          <div>
+            <strong>诊断建议</strong>
+            <p>不是只给分数，而是把四维结果翻译成用户能理解的身心状态。</p>
+          </div>
+          <div>
+            <strong>推荐方案</strong>
+            <p>输出 7 天健康方案，并推荐可进入心愈广场的疗愈模块。</p>
+          </div>
+          <div>
+            <strong>数据逻辑</strong>
+            <p>解释为什么这样推荐，避免用户觉得结果是随机生成。</p>
+          </div>
+          <div>
+            <strong>合规边界</strong>
+            <p>表达为健康管理、状态评估和调理建议，不做医疗确诊或治愈承诺。</p>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script src="xinyu-health-data-adapter.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
