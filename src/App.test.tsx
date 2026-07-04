@@ -13,6 +13,20 @@ describe("community MVP interface", () => {
     expect(within(navigation).queryByText("我的复盘")).not.toBeInTheDocument();
   });
 
+  it("keeps global chrome lightweight and moves search into task square only", () => {
+    render(<App />);
+
+    expect(screen.queryByText("疗愈任务社区")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "发布" })).toHaveLength(1);
+    expect(screen.getByLabelText("搜索任务、帖子、活动")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "人格岛" }));
+
+    expect(screen.queryByLabelText("搜索任务、帖子、活动")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "公约" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "INFP 个人" })).toBeInTheDocument();
+  });
+
   it("publishes a task post and shows suitable recommendation recipients", () => {
     render(<App />);
 

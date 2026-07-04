@@ -29,6 +29,27 @@ test("presents the site as a portrait app shell inside the web page", async ({ p
   }
 });
 
+test("keeps the upper controls lightweight and non-fixed", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator(".topbar")).toHaveCount(0);
+  await expect(page.locator(".utility-bar")).toBeVisible();
+
+  const utilityStyle = await page.locator(".utility-bar").evaluate((element) => {
+    const styles = window.getComputedStyle(element);
+    return {
+      height: element.getBoundingClientRect().height,
+      position: styles.position
+    };
+  });
+
+  expect(utilityStyle.height).toBeLessThan(88);
+  expect(["fixed", "sticky"]).not.toContain(utilityStyle.position);
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  await expect(page.getByLabel("搜索任务、帖子、活动")).toHaveCount(0);
+});
+
 test("publishes a task and displays recommended recipients", async ({ page }) => {
   await page.goto("/");
 

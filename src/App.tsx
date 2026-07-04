@@ -1,5 +1,4 @@
 import {
-  Bell,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
@@ -7,7 +6,6 @@ import {
   Flag,
   HeartHandshake,
   Map,
-  MapPin,
   MessageCircle,
   Plus,
   Search,
@@ -349,13 +347,6 @@ export default function App() {
   return (
     <div className={`app-shell realm-${selectedIslandData.family.toLowerCase()}`}>
       <aside className="sidebar">
-        <div className="brand">
-          <div className="brand-mark">MB</div>
-          <div>
-            <p>疗愈任务社区</p>
-            <span>同城 · 附近 · MBTI</span>
-          </div>
-        </div>
         <nav aria-label="主导航" className="side-nav">
           {navItems.map((item) => (
             <button
@@ -371,43 +362,22 @@ export default function App() {
             </button>
           ))}
         </nav>
-        <div className="covenant-card">
-          <ShieldCheck size={20} />
-          <p>不诊断、不拯救、不控制、不追问、不越界。</p>
-          <button type="button" onClick={() => setCovenantOpen(true)}>
-            查看社区公约
-          </button>
-        </div>
       </aside>
 
       <main className="main-area">
-        <header className="topbar">
-          <div className="topbar-row">
-            <div className="location-pill">
-              <MapPin size={17} />
-              <span>上海 · 徐汇</span>
-            </div>
-            <button className="profile-button" onClick={() => setProfileOpen(true)} type="button">
-              <span>{currentUser.mbti}</span>
-              个人中心
-            </button>
+        <header aria-label="页面工具" className="utility-bar">
+          <div className="utility-current">
+            <span>当前入口</span>
+            <strong>{activeSection}</strong>
           </div>
-          <label className="search-box">
-            <Search size={17} />
-            <input
-              aria-label="搜索任务、帖子、活动"
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="搜任务、帖子、活动"
-              value={searchTerm}
-            />
-          </label>
-          <div className="topbar-actions">
-            <button className="primary-action" onClick={() => setPublishOpen(true)} type="button">
-              <Plus size={17} />
-              发布
+          <div className="utility-actions">
+            <button onClick={() => setCovenantOpen(true)} type="button">
+              <ShieldCheck size={15} />
+              公约
             </button>
-            <button className="icon-button" onClick={() => handleAction("暂无新的通知")} type="button" aria-label="通知">
-              <Bell size={18} />
+            <button className="utility-profile" onClick={() => setProfileOpen(true)} type="button">
+              <span>{currentUser.mbti}</span>
+              个人
             </button>
           </div>
         </header>
@@ -430,7 +400,9 @@ export default function App() {
             onPublish={() => setPublishOpen(true)}
             posts={visiblePosts}
             recommendations={taskRecommendations}
+            searchTerm={searchTerm}
             setActiveTab={setActiveTab}
+            setSearchTerm={setSearchTerm}
           />
         )}
 
@@ -590,7 +562,9 @@ function TaskSquare({
   onPublish,
   posts,
   recommendations,
-  setActiveTab
+  searchTerm,
+  setActiveTab,
+  setSearchTerm
 }: {
   activeTab: FeedTab;
   onAction: (label: string) => void;
@@ -598,7 +572,9 @@ function TaskSquare({
   onPublish: () => void;
   posts: EnhancedPost[];
   recommendations: ReturnType<typeof recommendTasksForUser>;
+  searchTerm: string;
   setActiveTab: (tab: FeedTab) => void;
+  setSearchTerm: (term: string) => void;
 }) {
   const activeTabPanel = tabFunctionPanels[activeTab];
 
@@ -609,9 +585,20 @@ function TaskSquare({
           <p className="eyebrow">社区大厅</p>
           <h2>浏览、参与、发帖，围绕任务发生连接</h2>
         </div>
+      </div>
+      <div className="task-command-row">
+        <label className="search-box">
+          <Search size={17} />
+          <input
+            aria-label="搜索任务、帖子、活动"
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder="搜任务、帖子、活动"
+            value={searchTerm}
+          />
+        </label>
         <button className="primary-action" onClick={onPublish} type="button">
           <Plus size={17} />
-          发起任务
+          发布
         </button>
       </div>
       <div className="tab-row" role="tablist" aria-label="任务广场筛选">

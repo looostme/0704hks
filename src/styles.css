@@ -82,17 +82,7 @@ button {
 }
 
 .sidebar {
-  position: static;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  height: auto;
-  padding: 14px 14px 10px;
-  border-right: 0;
-  border-bottom: 1px solid var(--realm-line);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--realm-a), #070b13 64%), rgba(11, 15, 24, 0.7)),
-    radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--realm-c), transparent 78%), transparent 42%);
+  display: contents;
 }
 
 .brand {
@@ -230,49 +220,75 @@ button {
   padding: 12px 14px 104px;
 }
 
-.topbar {
-  display: grid;
-  grid-template-columns: 1fr;
+.utility-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid color-mix(in srgb, var(--realm-line), transparent 16%);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--realm-panel), transparent 24%);
 }
 
-.topbar-row,
-.topbar-actions {
+.utility-current {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
+  min-width: 0;
+  gap: 2px;
+}
+
+.utility-current span {
+  color: var(--realm-muted);
+  font-size: 12px;
+}
+
+.utility-current strong {
+  overflow: hidden;
+  font-size: 16px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.utility-actions {
+  display: flex;
+  flex: 0 0 auto;
   gap: 8px;
 }
 
-.location-pill,
-.search-box,
-.profile-button,
-.icon-button {
+.utility-actions button,
+.search-box {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 42px;
+  min-height: 38px;
   border: 1px solid var(--realm-line);
   border-radius: 999px;
   color: var(--realm-text);
   background: color-mix(in srgb, var(--realm-button), transparent 8%);
 }
 
-.location-pill,
-.profile-button,
-.icon-button {
-  padding: 0 12px;
+.utility-actions button {
+  padding: 0 10px;
+  font-size: 13px;
 }
 
-.profile-button span {
+.utility-profile span {
   display: inline-grid;
-  min-width: 42px;
-  min-height: 26px;
+  min-width: 38px;
+  min-height: 24px;
   place-items: center;
   border-radius: 999px;
   color: var(--realm-on-accent);
   background: var(--realm-accent);
+}
+
+.task-command-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
 .search-box {
@@ -290,12 +306,6 @@ button {
 
 .search-box input::placeholder {
   color: color-mix(in srgb, var(--realm-muted), transparent 22%);
-}
-
-.icon-button {
-  width: 42px;
-  justify-content: center;
-  padding: 0;
 }
 
 .primary-action,
