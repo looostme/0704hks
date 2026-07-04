@@ -46,6 +46,8 @@ type EnhancedPost = CommunityPost & {
   recommendationReasons?: string[];
 };
 
+type RealmFamily = "NT" | "NF" | "SJ" | "SP";
+
 type DetailItem = {
   eyebrow: string;
   title: string;
@@ -60,6 +62,7 @@ const navItems: Section[] = ["任务广场", "人格岛", "搭子 / 小队"];
 const feedTabs: FeedTab[] = ["推荐", "同城", "附近", "任务", "帖子", "快闪"];
 const publishTypes: PostType[] = ["任务帖", "普通帖子", "复盘帖", "求见证", "快闪"];
 const boundaryTags = ["不私聊", "不拍照", "可线下公共地点", "不接受建议", "可随时退出"];
+const cognitionIcons = [ShieldCheck, MessageCircle, Sparkles, Users];
 const tabDescriptions: Record<FeedTab, string> = {
   推荐: "按任务相似、状态、距离与 MBTI 沟通节奏综合排序。",
   同城: "展示上海范围内可以参与的任务、帖子和活动。",
@@ -67,6 +70,90 @@ const tabDescriptions: Record<FeedTab, string> = {
   任务: "只看带明确目标、边界和参与动作的任务帖。",
   帖子: "浏览社区讨论、求见证和轻回应内容。",
   快闪: "查看平台组织的短时、公共地点、可退出活动。"
+};
+const realmDesigns: Record<
+  RealmFamily,
+  {
+    pairing: string;
+    role: string;
+    summary: string;
+    dimensions: Array<{ title: string; body: string }>;
+    energy: Array<{ label: string; value: string }>;
+    actions: string[];
+  }
+> = {
+  NT: {
+    pairing: "直觉 × 思考",
+    role: "你是战略的构建者，思想的远见者。",
+    summary: "你在寻找更清晰的系统，也需要被允许安静地推演。",
+    dimensions: [
+      { title: "逻辑核心", body: "把问题拆成结构，再决定行动。" },
+      { title: "远景映射", body: "看见更远的路径，不急着被情绪带走。" },
+      { title: "自我校准", body: "允许自己先验证，再回应他人。" },
+      { title: "能量边界", body: "减少无效争辩，保留深度思考空间。" }
+    ],
+    energy: [
+      { label: "思维洞察", value: "75%" },
+      { label: "执行促成", value: "30%" },
+      { label: "内在稳定", value: "55%" },
+      { label: "情感感知", value: "40%" }
+    ],
+    actions: ["深度思考", "记录关键假设", "验证最小步骤", "知取假设", "推进实验"]
+  },
+  NF: {
+    pairing: "直觉 × 情感",
+    role: "你是意义的探寻者，心灵的倾听者。",
+    summary: "你在用心连接世界，也需要照顾好自己的内心。",
+    dimensions: [
+      { title: "情绪锚点", body: "先确认此刻感受，再决定是否回应。" },
+      { title: "共情能力", body: "理解他人前，先确认自己的需求。" },
+      { title: "理想愿景", body: "把心中方向转成一个低压行动。" },
+      { title: "能量承载", body: "高共感时保留退出和静默空间。" }
+    ],
+    energy: [
+      { label: "你在认可", value: "75%" },
+      { label: "行动实践", value: "30%" },
+      { label: "行动决策", value: "30%" },
+      { label: "其他感知", value: "60%" }
+    ],
+    actions: ["倾听内心", "表达感受", "帮助他人", "创造价值", "自我关怀"]
+  },
+  SJ: {
+    pairing: "感觉 × 判断",
+    role: "你是秩序的守护者，可靠的执行者。",
+    summary: "你在用秩序守护世界，也需要给自己一些灵活的空间。",
+    dimensions: [
+      { title: "责任边界", body: "先分清自己的事，再决定照顾范围。" },
+      { title: "细节关注", body: "用稳定步骤减少消耗和反复确认。" },
+      { title: "秩序构建", body: "把日常恢复做成可重复的小流程。" },
+      { title: "能量恢复", body: "让休息成为计划的一部分。" }
+    ],
+    energy: [
+      { label: "责任担当", value: "75%" },
+      { label: "适应灵活", value: "30%" },
+      { label: "执行能力", value: "55%" },
+      { label: "细节关注", value: "60%" }
+    ],
+    actions: ["制定计划", "完成任务", "优化流程", "关注细节", "适应放松"]
+  },
+  SP: {
+    pairing: "感觉 × 知觉",
+    role: "你是体验的创造者，灵活的适应者。",
+    summary: "你在享受当下的美好，也需要规律一点长远的规划。",
+    dimensions: [
+      { title: "即时体验", body: "从真实身体感受里找回行动力。" },
+      { title: "灵活适应", body: "允许路径变化，但保留安全边界。" },
+      { title: "行动冲刺", body: "先做一个短小真实的现场任务。" },
+      { title: "能量欢愉", body: "把恢复做得轻盈、具体、可感知。" }
+    ],
+    energy: [
+      { label: "感官体验", value: "75%" },
+      { label: "即兴性", value: "30%" },
+      { label: "行动能力", value: "55%" },
+      { label: "灵活适应", value: "60%" }
+    ],
+    actions: ["享受当下", "探索新事物", "保持灵活", "记录体验", "设定小目标"]
+  }
 };
 
 const defaultDraft: PublishDraft = {
@@ -243,33 +330,13 @@ export default function App() {
           </div>
         </header>
 
-        <section className="hero-grid">
-          <div className={`realm-panel realm-${selectedIslandData.family.toLowerCase()}`}>
-            <div className="realm-copy">
-              <span>{selectedIslandData.family} 人格场域 · {selectedIslandData.theme}</span>
-              <h1>{activeSection}</h1>
-              <p>{selectedIslandData.line} 用任务连接人，用边界保护人。</p>
-            </div>
-            <div className="status-orbit" aria-label="今日状态光谱">
-              <Sparkles size={32} />
-              <span>今日状态</span>
-              <strong>{currentUser.status}</strong>
-            </div>
-          </div>
-          <div className="quick-panel">
-            <p className="eyebrow">今日边界</p>
-            <div className="tag-cloud">
-              {boundaryTags.map((tag) => (
-                <button key={tag} onClick={() => handleAction(`已选择：${tag}`)} type="button">
-                  {tag}
-                </button>
-              ))}
-            </div>
-            <button className="outline-action" onClick={() => setPublishOpen(true)} type="button">
-              发起任务 <ChevronRight size={16} />
-            </button>
-          </div>
-        </section>
+        <RealmOpening
+          activeSection={activeSection}
+          onAction={handleAction}
+          onOpenProfile={() => setActiveSection("人格岛")}
+          onPublish={() => setPublishOpen(true)}
+          selectedIslandData={selectedIslandData}
+        />
 
         {activeSection === "任务广场" && (
           <TaskSquare
@@ -314,6 +381,121 @@ export default function App() {
       {profileOpen && <ProfileDrawer onClose={() => setProfileOpen(false)} />}
       {covenantOpen && <CovenantModal onClose={() => setCovenantOpen(false)} />}
     </div>
+  );
+}
+
+function RealmOpening({
+  activeSection,
+  onAction,
+  onOpenProfile,
+  onPublish,
+  selectedIslandData
+}: {
+  activeSection: Section;
+  onAction: (label: string) => void;
+  onOpenProfile: () => void;
+  onPublish: () => void;
+  selectedIslandData: (typeof islands)[number];
+}) {
+  const realm = realmDesigns[selectedIslandData.family];
+
+  return (
+    <section className="hero-grid">
+      <div className={`realm-panel realm-opening realm-${selectedIslandData.family.toLowerCase()}`}>
+        <div className="realm-opening-header">
+          <div className="realm-copy">
+            <span>{selectedIslandData.family} 人格开场页 · {selectedIslandData.theme}</span>
+            <h1>{selectedIslandData.family}</h1>
+            <strong>{realm.pairing}</strong>
+            <p>{realm.role} 用任务连接人，用边界保护人。</p>
+          </div>
+          <div className="realm-context">
+            <span>当前入口</span>
+            <strong>{activeSection}</strong>
+          </div>
+        </div>
+
+        <div className="realm-stage">
+          <section className="cognition-panel" aria-label="认知维度探索">
+            <p className="eyebrow">认知维度探索</p>
+            <div className="cognition-grid">
+              {realm.dimensions.map((dimension, index) => {
+                const Icon = cognitionIcons[index];
+                return (
+                  <article className="cognition-card" key={dimension.title}>
+                    <div className="cognition-icon">
+                      <Icon size={16} />
+                    </div>
+                    <strong>{dimension.title}</strong>
+                    <p>{dimension.body}</p>
+                    <button onClick={() => onAction(`正在评估：${dimension.title}`)} type="button">
+                      在看详情
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+            <div className="summary-strip">
+              <span>一句话总结</span>
+              <p>{realm.summary}</p>
+            </div>
+          </section>
+
+          <section className="spectrum-panel" aria-label="你的能量光谱">
+            <div className="spectrum-head">
+              <p className="eyebrow">你的能量光谱</p>
+              <span>{currentUser.status}</span>
+            </div>
+            <div className="spectrum-layout">
+              <div className="energy-spectrum" aria-label={`${selectedIslandData.family} 能量光谱`}>
+                <div className="spectrum-ring ring-one" />
+                <div className="spectrum-ring ring-two" />
+                <div className="spectrum-core">
+                  <Sparkles size={28} />
+                  <strong>今日状态</strong>
+                  <span>{currentUser.status}</span>
+                </div>
+                {realm.energy.map((item, index) => (
+                  <div className={`energy-node energy-node-${index}`} key={item.label}>
+                    <span>{item.label}</span>
+                    <strong>{item.value}</strong>
+                  </div>
+                ))}
+              </div>
+              <div className="action-list-card">
+                <p>今日建设行动</p>
+                <ol>
+                  {realm.actions.map((action) => (
+                    <li className="action-step" key={action}>{action}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div className="realm-footer">
+          <div className="tag-cloud">
+            {boundaryTags.map((tag) => (
+              <button key={tag} onClick={() => onAction(`已选择：${tag}`)} type="button">
+                {tag}
+              </button>
+            ))}
+          </div>
+          <div className="realm-footer-actions">
+            <button className="ghost-action" onClick={() => onAction("已回到安全边界")} type="button">
+              返回
+            </button>
+            <button className="outline-action" onClick={onOpenProfile} type="button">
+              查看完整画像 <ChevronRight size={16} />
+            </button>
+            <button className="primary-action" onClick={onPublish} type="button">
+              查看疗愈方案 <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

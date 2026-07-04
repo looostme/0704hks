@@ -122,3 +122,17 @@ test("applies the selected personality palette to the whole app shell", async ({
   });
   expect(ntNavBackground).not.toEqual(initialNavBackground);
 });
+
+test("recreates key reference design elements as functional UI modules", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.locator(".realm-opening")).toBeVisible();
+  await expect(page.getByText("认知维度探索")).toBeVisible();
+  await expect(page.locator(".cognition-card")).toHaveCount(4);
+  await expect(page.getByText("你的能量光谱")).toBeVisible();
+  await expect(page.locator(".energy-node")).toHaveCount(4);
+  await expect(page.getByText("今日建设行动")).toBeVisible();
+  await expect(page.locator(".action-step")).toHaveCount(5);
+  await expect(page.getByRole("button", { name: "查看完整画像" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "查看疗愈方案" })).toBeVisible();
+});

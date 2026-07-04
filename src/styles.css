@@ -367,6 +367,315 @@ button {
   opacity: 0.5;
 }
 
+.realm-opening {
+  gap: 18px;
+  min-height: 640px;
+  padding: 18px 14px;
+}
+
+.realm-opening .realm-copy {
+  align-self: start;
+  padding: 0;
+}
+
+.realm-opening-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: start;
+}
+
+.realm-context {
+  display: grid;
+  gap: 4px;
+  min-width: 92px;
+  padding: 10px;
+  border: 1px solid var(--realm-line);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--realm-panel), transparent 8%);
+  text-align: right;
+}
+
+.realm-context span {
+  color: var(--realm-muted);
+  font-size: 12px;
+}
+
+.realm-context strong {
+  font-size: 14px;
+}
+
+.realm-stage {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  min-width: 0;
+}
+
+.cognition-panel,
+.spectrum-panel,
+.summary-strip,
+.action-list-card {
+  border: 1px solid var(--realm-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--realm-panel), transparent 4%), color-mix(in srgb, var(--realm-button), transparent 26%));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.cognition-panel,
+.spectrum-panel {
+  min-width: 0;
+  padding: 12px;
+}
+
+.cognition-grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.cognition-card {
+  flex: 0 0 158px;
+  display: grid;
+  gap: 8px;
+  min-height: 146px;
+  padding: 10px;
+  border: 1px solid var(--realm-line);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--realm-text), transparent 88%), color-mix(in srgb, var(--realm-panel), transparent 22%));
+}
+
+.cognition-card p {
+  margin: 0;
+  color: var(--realm-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.cognition-card button {
+  align-self: end;
+  min-height: 30px;
+  border: 1px solid var(--realm-line);
+  border-radius: 999px;
+  color: var(--realm-text);
+  background: color-mix(in srgb, var(--realm-button), transparent 12%);
+  font-size: 12px;
+}
+
+.cognition-icon {
+  display: grid;
+  width: 30px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--realm-on-accent);
+  background: var(--realm-accent);
+}
+
+.summary-strip {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 10px;
+}
+
+.summary-strip span,
+.action-list-card p {
+  margin: 0;
+  color: var(--realm-muted);
+  font-size: 12px;
+}
+
+.summary-strip p {
+  margin: 0;
+  line-height: 1.65;
+}
+
+.spectrum-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.spectrum-head span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  border: 1px solid var(--realm-line);
+  border-radius: 999px;
+  color: var(--realm-on-accent);
+  background: var(--realm-accent);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.spectrum-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 132px;
+  gap: 10px;
+  align-items: center;
+}
+
+.energy-spectrum {
+  position: relative;
+  display: grid;
+  min-height: 238px;
+  place-items: center;
+}
+
+.energy-spectrum::before,
+.energy-spectrum::after,
+.spectrum-ring {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.energy-spectrum::before {
+  width: 178px;
+  aspect-ratio: 1;
+  border: 1px solid color-mix(in srgb, var(--realm-line), transparent 18%);
+}
+
+.energy-spectrum::after {
+  width: 120px;
+  aspect-ratio: 1;
+  border: 1px dashed color-mix(in srgb, var(--realm-line), transparent 10%);
+}
+
+.spectrum-ring.ring-one {
+  width: 94px;
+  aspect-ratio: 1;
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--realm-accent), transparent 16%) 0 34%, transparent 35%),
+    conic-gradient(from 12deg, color-mix(in srgb, var(--realm-accent), transparent 40%), color-mix(in srgb, var(--realm-b), transparent 48%), color-mix(in srgb, var(--realm-accent), transparent 40%));
+  opacity: 0.82;
+}
+
+.spectrum-ring.ring-two {
+  width: 64px;
+  aspect-ratio: 1;
+  background: color-mix(in srgb, var(--realm-accent), transparent 28%);
+  filter: blur(1px);
+}
+
+.spectrum-core {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  width: 76px;
+  aspect-ratio: 1;
+  place-items: center;
+  border: 1px solid var(--realm-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--realm-panel), transparent 6%);
+  text-align: center;
+}
+
+.spectrum-core strong,
+.spectrum-core span {
+  margin-top: -12px;
+  font-size: 11px;
+}
+
+.energy-node {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 2px;
+  min-width: 68px;
+  padding: 5px 7px;
+  border: 1px solid var(--realm-line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--realm-panel), transparent 4%);
+  text-align: center;
+  font-size: 10px;
+}
+
+.energy-node span {
+  color: var(--realm-muted);
+}
+
+.energy-node-0 {
+  top: 10px;
+  right: 2px;
+}
+
+.energy-node-1 {
+  top: 86px;
+  left: 0;
+}
+
+.energy-node-2 {
+  right: 0;
+  bottom: 54px;
+}
+
+.energy-node-3 {
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+}
+
+.action-list-card {
+  padding: 10px;
+}
+
+.action-list-card ol {
+  display: grid;
+  counter-reset: action-step;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.action-step {
+  counter-increment: action-step;
+  display: grid;
+  grid-template-columns: 23px 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 29px;
+  color: var(--realm-text);
+}
+
+.action-step::before {
+  display: grid;
+  width: 22px;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--realm-on-accent);
+  background: var(--realm-accent);
+  content: counter(action-step);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.realm-footer {
+  display: grid;
+  gap: 14px;
+}
+
+.realm-footer .tag-cloud {
+  margin-bottom: 0;
+}
+
+.realm-footer-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
 .realm-nt,
 .island-nt {
   --realm-a: #2b1b58;
