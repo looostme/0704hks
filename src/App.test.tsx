@@ -27,6 +27,23 @@ describe("community MVP interface", () => {
     expect(screen.getByRole("button", { name: "INFP 个人" })).toBeInTheDocument();
   });
 
+  it("uses user-centered task square and partner wording", () => {
+    render(<App />);
+
+    expect(screen.getByText("今天想完成什么任务？")).toBeInTheDocument();
+    expect(screen.queryByText("浏览、参与、发帖，围绕任务发生连接")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
+
+    expect(screen.getByText("加入任务、招募搭子、加入多人任务、平行房和线下快闪报名")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^加入任务$/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "招募搭子" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "加入多人任务" })).toBeInTheDocument();
+    expect(screen.queryByText("找搭子")).not.toBeInTheDocument();
+    expect(screen.queryByText("发布找搭子")).not.toBeInTheDocument();
+    expect(screen.queryByText("小队招募")).not.toBeInTheDocument();
+  });
+
   it("publishes a task post and shows suitable recommendation recipients", () => {
     render(<App />);
 
@@ -85,7 +102,7 @@ describe("community MVP interface", () => {
   it("does not reuse the personality opening across main tabs", () => {
     render(<App />);
 
-    expect(screen.getByText("社区大厅")).toBeInTheDocument();
+    expect(screen.getByText("先找任务")).toBeInTheDocument();
     expect(screen.queryByText(/人格开场页/)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "人格岛" }));
@@ -94,7 +111,7 @@ describe("community MVP interface", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
     expect(screen.queryByText(/人格开场页/)).not.toBeInTheDocument();
-    expect(screen.getByText("找搭子、发布找搭子、小队招募、平行房和线下快闪报名")).toBeInTheDocument();
+    expect(screen.getByText("加入任务、招募搭子、加入多人任务、平行房和线下快闪报名")).toBeInTheDocument();
   });
 
   it("opens detail browsing for community posts and recommended tasks", () => {
@@ -118,7 +135,7 @@ describe("community MVP interface", () => {
     fireEvent.click(screen.getByRole("button", { name: "关闭详情" }));
 
     fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
-    fireEvent.click(screen.getAllByRole("button", { name: "浏览小队详情" })[0]);
+    fireEvent.click(screen.getAllByRole("button", { name: "浏览任务详情" })[0]);
     expect(screen.getByRole("dialog", { name: "低压散步小队详情" })).toBeInTheDocument();
   });
 
@@ -136,9 +153,9 @@ describe("community MVP interface", () => {
     expect(screen.getByText("疗愈分享帖子")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
-    expect(screen.getByText("找搭子")).toBeInTheDocument();
-    expect(screen.getByText("发布找搭子")).toBeInTheDocument();
-    expect(screen.getByText("小队招募")).toBeInTheDocument();
+    expect(screen.getByText("加入任务")).toBeInTheDocument();
+    expect(screen.getByText("招募搭子")).toBeInTheDocument();
+    expect(screen.getByText("加入多人任务")).toBeInTheDocument();
     expect(screen.getByText("平行房")).toBeInTheDocument();
     expect(screen.getByText("线下快闪报名")).toBeInTheDocument();
   });

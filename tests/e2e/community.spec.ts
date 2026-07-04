@@ -7,7 +7,7 @@ test("renders the MVP community shell and keeps navigation simplified", async ({
   await expect(page.getByRole("button", { name: "人格岛" })).toBeVisible();
   await expect(page.getByRole("button", { name: "搭子 / 小队" })).toBeVisible();
   await expect(page.getByText("我的复盘")).toHaveCount(0);
-  await expect(page.locator(".section-heading .eyebrow", { hasText: "社区大厅" })).toBeVisible();
+  await expect(page.locator(".section-heading .eyebrow", { hasText: "先找任务" })).toBeVisible();
 });
 
 test("presents the site as a portrait app shell inside the web page", async ({ page }) => {
@@ -107,7 +107,7 @@ test("lets users browse tabs and entry details from the portrait app", async ({ 
   await page.getByRole("button", { name: "关闭详情" }).click();
 
   await page.getByRole("button", { name: "搭子 / 小队" }).click();
-  await page.getByRole("button", { name: "浏览小队详情" }).first().click();
+  await page.getByRole("button", { name: "浏览任务详情" }).first().click();
   await expect(page.getByRole("dialog", { name: "低压散步小队详情" })).toBeVisible();
 });
 
@@ -184,12 +184,14 @@ test("keeps tab functions separated instead of repeating the same surface", asyn
 
   await page.getByRole("button", { name: "搭子 / 小队" }).click();
   await expect(page.getByText(/人格开场页/)).toHaveCount(0);
-  await expect(page.getByText("找搭子、发布找搭子、小队招募、平行房和线下快闪报名")).toBeVisible();
+  await expect(page.getByText("加入任务、招募搭子、加入多人任务、平行房和线下快闪报名")).toBeVisible();
 });
 
 test("maps the three MVP entries to their updated community responsibilities", async ({ page }) => {
   await page.goto("/");
 
+  await expect(page.getByText("今天想完成什么任务？")).toBeVisible();
+  await expect(page.getByText("浏览、参与、发帖，围绕任务发生连接")).toHaveCount(0);
   await expect(page.getByText("同城/附近的人和任务事件")).toBeVisible();
   await expect(page.getByText("查看其他人的诊断书中的任务")).toBeVisible();
 
@@ -199,9 +201,9 @@ test("maps the three MVP entries to their updated community responsibilities", a
   await expect(page.getByText("岛屿互访内容", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "搭子 / 小队" }).click();
-  await expect(page.getByRole("button", { name: "找搭子", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "发布找搭子" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "小队招募" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "加入任务", exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "招募搭子" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "加入多人任务" })).toBeVisible();
   await expect(page.getByRole("button", { name: "平行房", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "线下快闪报名" })).toBeVisible();
 });

@@ -65,17 +65,17 @@ const taskEntryCards = [
   {
     eyebrow: "同城任务",
     title: "同城/附近的人和任务事件",
-    body: "把首页承接过来的同城、附近用户和任务事件集中浏览，优先看公共地点、低压参与、可退出任务。",
+    body: "看看附近有没有今天就能加入的低压任务，先确认地点、边界和退出方式。",
     cta: "浏览附近事件"
   },
   {
     eyebrow: "诊断书任务",
     title: "查看其他人的诊断书中的任务",
-    body: "从他人的人格诊断书里查看可参与的疗愈任务，先看边界、状态和任务目标，再决定是否加入。",
+    body: "看看别人诊断书里适合当前状态的任务，觉得合适再加入或收藏。",
     cta: "查看诊断书任务"
   }
 ];
-const partnerActions = ["找搭子", "发布找搭子", "小队招募", "平行房", "线下快闪报名"];
+const partnerActions = ["加入任务", "招募搭子", "加入多人任务", "平行房", "线下快闪报名"];
 const tabDescriptions: Record<FeedTab, string> = {
   推荐: "按任务相似、状态、距离与 MBTI 沟通节奏综合排序。",
   同城: "展示上海范围内可以参与的任务、帖子和活动。",
@@ -135,7 +135,7 @@ const tabFunctionPanels: Record<
   帖子: {
     eyebrow: "讨论承接",
     title: "疗愈讨论区",
-    body: "只放非任务型内容：经验分享、求见证、轻回应和社区讨论，不承担找搭子和活动报名。",
+    body: "只放非任务型内容：经验分享、求见证、轻回应和社区讨论，不承担招募搭子和活动报名。",
     actions: ["发普通帖子", "求轻回应"],
     points: ["轻回应", "经验分享", "不变成诊断"],
     sideTitle: "帖子互动规则",
@@ -582,8 +582,8 @@ function TaskSquare({
     <section className="content-panel">
       <div className="section-heading">
         <div>
-          <p className="eyebrow">社区大厅</p>
-          <h2>浏览、参与、发帖，围绕任务发生连接</h2>
+          <p className="eyebrow">先找任务</p>
+          <h2>今天想完成什么任务？</h2>
         </div>
       </div>
       <div className="task-command-row">
@@ -817,7 +817,7 @@ function PartnerTeams({
       <div className="section-heading">
         <div>
           <p className="eyebrow">搭子 / 小队</p>
-          <h2>找搭子、发布找搭子、小队招募、平行房和线下快闪报名</h2>
+          <h2>加入任务、招募搭子、加入多人任务、平行房和线下快闪报名</h2>
         </div>
       </div>
       <div className="partner-action-grid" aria-label="搭子和小队入口">
@@ -842,7 +842,7 @@ function PartnerTeams({
             </div>
             <div className="team-actions">
               <button className="ghost-action" onClick={() => onOpenDetail(createTeamDetail(team))} type="button">
-                浏览小队详情
+                浏览任务详情
               </button>
               <button
                 className="primary-action"
