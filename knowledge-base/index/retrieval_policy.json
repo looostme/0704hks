@@ -1,0 +1,49 @@
+{
+  "version": "0.1.0",
+  "purpose": "Route product questions into the four-dimensional profile knowledge base.",
+  "dimensions": {
+    "tcm_body": {
+      "domains": ["tcm"],
+      "default_tags": ["体质", "藏象", "气血津液", "病因", "病机", "治则"],
+      "top_k": 6,
+      "language": "用“倾向、可能、参考、调理方向”表达，不做医学诊断。",
+      "hard_limits": ["不输出处方剂量", "不承诺疗效", "遇到急症/红旗症状提示就医"]
+    },
+    "tcm_psychology": {
+      "domains": ["tcm"],
+      "default_tags": ["情志", "七情", "藏象", "气血津液", "治则"],
+      "top_k": 6,
+      "language": "把情绪解释为情志与生活状态的互动，不给精神疾病诊断。",
+      "hard_limits": ["不替代心理咨询/精神科诊断", "自伤风险必须升级为安全提示"]
+    },
+    "xuanxue_spirit": {
+      "domains": ["xuanxue"],
+      "default_tags": ["四柱", "五行", "十神", "大运", "刑冲合会", "格局"],
+      "top_k": 8,
+      "language": "作为文化解释和反思框架，避免宿命、恐吓和绝对断语。",
+      "hard_limits": ["不做灾祸断言", "不诱导付费化解", "不替代现实决策"]
+    },
+    "mbti": {
+      "domains": ["mbti"],
+      "default_tags": ["MBTI", "偏好维度", "16型人格"],
+      "top_k": 5,
+      "language": "作为 MBTI-style 偏好画像，不声称完成官方测评。",
+      "hard_limits": ["不做人格定论", "不用于高风险筛选", "不把类型当成能力上限"]
+    }
+  },
+  "fusion": {
+    "top_k_per_dimension": 4,
+    "conflict_handling": "当中医、玄学、MBTI 给出不同解释时，输出“多框架解释差异”，不要强行合一。",
+    "confidence": {
+      "high": "输入充分且多个知识块互相支持",
+      "medium": "输入足够生成画像，但仍有关键缺失",
+      "low": "输入少、图片质量差、出生时间不确定或检索证据弱"
+    }
+  },
+  "first_session_30s": {
+    "max_followup_questions": 3,
+    "required_minimum": ["主诉/目标", "至少一种输入信号"],
+    "optional": ["出生年月日时", "性别年龄", "已知MBTI", "舌/脸/手图片"],
+    "fallback": "信息不足时先生成低置信度画像，并在互动调理阶段继续补采。"
+  }
+}

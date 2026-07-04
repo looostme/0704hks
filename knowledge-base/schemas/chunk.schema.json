@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "KnowledgeBaseChunk",
+  "type": "object",
+  "required": [
+    "id",
+    "domain",
+    "source",
+    "locator",
+    "tags",
+    "text",
+    "text_sha256",
+    "safety"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "domain": {
+      "enum": [
+        "tcm",
+        "xuanxue",
+        "mbti"
+      ]
+    },
+    "source": {
+      "type": "object"
+    },
+    "locator": {
+      "type": "object"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "text": {
+      "type": "string"
+    },
+    "structured": {
+      "type": "object"
+    },
+    "text_sha256": {
+      "type": "string"
+    },
+    "safety": {
+      "type": "object"
+    }
+  }
+}

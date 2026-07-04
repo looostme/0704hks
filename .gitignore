@@ -1,0 +1,12 @@
+.cache/
+work/
+outputs/
+__pycache__/
+*.pyc
+*.sqlite-wal
+*.sqlite-shm
+page-*.png
+page-*.jpg
+page-*.jpeg
+page-*.tif
+page-*.tiff
