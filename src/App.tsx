@@ -189,9 +189,15 @@ export default function App() {
 
       <main className="main-area">
         <header className="topbar">
-          <div className="location-pill">
-            <MapPin size={17} />
-            <span>上海 · 徐汇</span>
+          <div className="topbar-row">
+            <div className="location-pill">
+              <MapPin size={17} />
+              <span>上海 · 徐汇</span>
+            </div>
+            <button className="profile-button" onClick={() => setProfileOpen(true)} type="button">
+              <span>{currentUser.mbti}</span>
+              个人中心
+            </button>
           </div>
           <label className="search-box">
             <Search size={17} />
@@ -202,17 +208,15 @@ export default function App() {
               value={searchTerm}
             />
           </label>
-          <button className="primary-action" onClick={() => setPublishOpen(true)} type="button">
-            <Plus size={17} />
-            发布
-          </button>
-          <button className="icon-button" onClick={() => handleAction("暂无新的通知")} type="button" aria-label="通知">
-            <Bell size={18} />
-          </button>
-          <button className="profile-button" onClick={() => setProfileOpen(true)} type="button">
-            <span>{currentUser.mbti}</span>
-            个人中心
-          </button>
+          <div className="topbar-actions">
+            <button className="primary-action" onClick={() => setPublishOpen(true)} type="button">
+              <Plus size={17} />
+              发布
+            </button>
+            <button className="icon-button" onClick={() => handleAction("暂无新的通知")} type="button" aria-label="通知">
+              <Bell size={18} />
+            </button>
+          </div>
         </header>
 
         <section className="hero-grid">

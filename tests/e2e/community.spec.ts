@@ -10,6 +10,25 @@ test("renders the MVP community shell and keeps navigation simplified", async ({
   await expect(page.locator(".section-heading .eyebrow", { hasText: "社区大厅" })).toBeVisible();
 });
 
+test("presents the site as a portrait app shell inside the web page", async ({ page }) => {
+  await page.goto("/");
+
+  const viewport = page.viewportSize();
+  expect(viewport).not.toBeNull();
+  const shellBox = await page.locator(".app-shell").boundingBox();
+  const navBox = await page.locator(".side-nav").boundingBox();
+
+  expect(shellBox).not.toBeNull();
+  expect(navBox).not.toBeNull();
+  expect(shellBox!.width).toBeLessThanOrEqual(Math.min(viewport!.width, 460));
+  expect(navBox!.y).toBeGreaterThan(viewport!.height - 130);
+
+  if (viewport!.width > 700) {
+    const shellCenter = shellBox!.x + shellBox!.width / 2;
+    expect(Math.abs(shellCenter - viewport!.width / 2)).toBeLessThan(24);
+  }
+});
+
 test("publishes a task and displays recommended recipients", async ({ page }) => {
   await page.goto("/");
 
