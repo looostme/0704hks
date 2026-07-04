@@ -89,3 +89,18 @@ test("lets users browse tabs and entry details from the portrait app", async ({ 
   await page.getByRole("button", { name: "浏览小队详情" }).first().click();
   await expect(page.getByRole("dialog", { name: "低压散步小队详情" })).toBeVisible();
 });
+
+test("uses personality color systems instead of the reference image as a background", async ({ page }) => {
+  await page.goto("/");
+
+  const heroBackground = await page.locator(".realm-panel").evaluate((element) => {
+    return window.getComputedStyle(element).backgroundImage;
+  });
+  expect(heroBackground).not.toContain("personality-realms.png");
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  const islandBackgrounds = await page.locator(".island-card").evaluateAll((elements) => {
+    return elements.map((element) => window.getComputedStyle(element).backgroundImage);
+  });
+  expect(islandBackgrounds.join("\n")).not.toContain("personality-realms.png");
+});
