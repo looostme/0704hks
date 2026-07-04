@@ -863,6 +863,59 @@ button {
   margin-bottom: 14px;
 }
 
+.tab-function-panel {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 1px solid color-mix(in srgb, var(--realm-accent), transparent 44%);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 12% 20%, color-mix(in srgb, var(--realm-accent), transparent 78%), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--realm-panel), transparent 4%), color-mix(in srgb, var(--realm-button), transparent 20%));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13);
+}
+
+.tab-function-panel h3 {
+  margin: 0 0 8px;
+}
+
+.tab-function-panel p {
+  margin: 0;
+  color: var(--realm-muted);
+  line-height: 1.65;
+}
+
+.tab-function-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.tab-function-actions button {
+  min-height: 40px;
+  border: 1px solid var(--realm-line);
+  border-radius: 8px;
+  color: var(--realm-text);
+  background: color-mix(in srgb, var(--realm-button), transparent 7%);
+}
+
+.tab-function-points,
+.context-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tab-function-points span,
+.context-list span {
+  padding: 7px 10px;
+  border: 1px solid var(--realm-line);
+  border-radius: 999px;
+  color: var(--realm-text);
+  background: color-mix(in srgb, var(--realm-button), transparent 24%);
+}
+
 .entry-brief-card,
 .island-community-card {
   display: grid;
@@ -921,6 +974,10 @@ button {
 
 .partner-action-grid button:nth-child(5) {
   grid-column: 1 / -1;
+}
+
+.tab-context-panel {
+  align-content: start;
 }
 
 .feed-list,

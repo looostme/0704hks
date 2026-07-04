@@ -40,10 +40,47 @@ describe("community MVP interface", () => {
   it("switches task square tabs into browsable sections", () => {
     render(<App />);
 
+    expect(screen.getByText("推荐匹配台")).toBeInTheDocument();
+
     fireEvent.click(screen.getByRole("button", { name: "快闪" }));
 
     expect(screen.getByText("当前浏览：快闪")).toBeInTheDocument();
+    expect(screen.getByText("平台快闪报名台")).toBeInTheDocument();
+    expect(screen.queryByText("推荐匹配台")).not.toBeInTheDocument();
     expect(screen.getByText("平台快闪：周六低压散步")).toBeInTheDocument();
+  });
+
+  it("gives every task square tab a distinct function surface", () => {
+    render(<App />);
+
+    const tabFunctions = [
+      ["推荐", "推荐匹配台"],
+      ["同城", "同城事件地图"],
+      ["附近", "附近可参与清单"],
+      ["任务", "诊断书任务库"],
+      ["帖子", "疗愈讨论区"],
+      ["快闪", "平台快闪报名台"]
+    ];
+
+    tabFunctions.forEach(([tab, title]) => {
+      fireEvent.click(screen.getByRole("button", { name: tab }));
+      expect(screen.getByText(title)).toBeInTheDocument();
+    });
+  });
+
+  it("does not reuse the personality opening across main tabs", () => {
+    render(<App />);
+
+    expect(screen.getByText("社区大厅")).toBeInTheDocument();
+    expect(screen.queryByText(/人格开场页/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "人格岛" }));
+    expect(screen.getByText("NF 人格开场页 · 绿色森林")).toBeInTheDocument();
+    expect(screen.getByText("认知维度探索")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "搭子 / 小队" }));
+    expect(screen.queryByText(/人格开场页/)).not.toBeInTheDocument();
+    expect(screen.getByText("找搭子、发布找搭子、小队招募、平行房和线下快闪报名")).toBeInTheDocument();
   });
 
   it("opens detail browsing for community posts and recommended tasks", () => {

@@ -86,6 +86,73 @@ const tabDescriptions: Record<FeedTab, string> = {
   帖子: "浏览社区讨论、求见证和轻回应内容。",
   快闪: "查看平台组织的短时、公共地点、可退出活动。"
 };
+const tabFunctionPanels: Record<
+  FeedTab,
+  {
+    eyebrow: string;
+    title: string;
+    body: string;
+    actions: string[];
+    points: string[];
+    sideTitle: string;
+    sideItems: string[];
+  }
+> = {
+  推荐: {
+    eyebrow: "算法承接",
+    title: "推荐匹配台",
+    body: "只处理适合你的任务和人：相似任务、可接受边界、同城距离和 MBTI 沟通节奏会一起参与排序。",
+    actions: ["查看推荐逻辑", "刷新推荐池"],
+    points: ["相似任务优先", "边界冲突降权", "低社交强度优先"],
+    sideTitle: "推荐给你",
+    sideItems: ["相似任务", "合适的人", "低风险加入"]
+  },
+  同城: {
+    eyebrow: "城市承接",
+    title: "同城事件地图",
+    body: "只看上海范围内能被线下或线上参与的任务事件，重点处理城市级活动、公共地点和同城发起人。",
+    actions: ["查看上海任务", "发布同城事件"],
+    points: ["城市范围筛选", "公共地点优先", "同城发起人露出"],
+    sideTitle: "同城参与规则",
+    sideItems: ["先看地点", "再看边界", "最后决定加入"]
+  },
+  附近: {
+    eyebrow: "附近承接",
+    title: "附近可参与清单",
+    body: "只看你附近地区能低压参与的任务，默认把距离、安全边界和可退出机制放在前面。",
+    actions: ["查看徐汇附近", "设置附近范围"],
+    points: ["徐汇优先", "可随时退出", "线下公共地点"],
+    sideTitle: "附近安全筛选",
+    sideItems: ["不私聊", "不拍照", "不去私密地点"]
+  },
+  任务: {
+    eyebrow: "诊断书承接",
+    title: "诊断书任务库",
+    body: "只看别人诊断书里沉淀出的疗愈任务，围绕任务目标、适合状态和参与动作做浏览。",
+    actions: ["筛选任务目标", "查看任务边界"],
+    points: ["目标明确", "步骤清楚", "可被见证"],
+    sideTitle: "任务筛选器",
+    sideItems: ["按状态筛", "按 MBTI 节奏筛", "按地点筛"]
+  },
+  帖子: {
+    eyebrow: "讨论承接",
+    title: "疗愈讨论区",
+    body: "只放非任务型内容：经验分享、求见证、轻回应和社区讨论，不承担找搭子和活动报名。",
+    actions: ["发普通帖子", "求轻回应"],
+    points: ["轻回应", "经验分享", "不变成诊断"],
+    sideTitle: "帖子互动规则",
+    sideItems: ["不追问隐私", "不替人诊断", "先回应再建议"]
+  },
+  快闪: {
+    eyebrow: "平台组织",
+    title: "平台快闪报名台",
+    body: "只承接平台组织的短时线下活动，突出报名、集合地点、活动时长和退出机制。",
+    actions: ["查看快闪日程", "报名线下快闪"],
+    points: ["平台组织", "短时活动", "公共地点集合"],
+    sideTitle: "快闪报名须知",
+    sideItems: ["报名后显示地点", "30 分钟内可退出", "平台审核领队"]
+  }
+};
 const realmDesigns: Record<
   RealmFamily,
   {
@@ -345,13 +412,15 @@ export default function App() {
           </div>
         </header>
 
-        <RealmOpening
-          activeSection={activeSection}
-          onAction={handleAction}
-          onOpenProfile={() => setActiveSection("人格岛")}
-          onPublish={() => setPublishOpen(true)}
-          selectedIslandData={selectedIslandData}
-        />
+        {activeSection === "人格岛" && (
+          <RealmOpening
+            activeSection={activeSection}
+            onAction={handleAction}
+            onOpenProfile={() => setActiveSection("人格岛")}
+            onPublish={() => setPublishOpen(true)}
+            selectedIslandData={selectedIslandData}
+          />
+        )}
 
         {activeSection === "任务广场" && (
           <TaskSquare
@@ -531,6 +600,8 @@ function TaskSquare({
   recommendations: ReturnType<typeof recommendTasksForUser>;
   setActiveTab: (tab: FeedTab) => void;
 }) {
+  const activeTabPanel = tabFunctionPanels[activeTab];
+
   return (
     <section className="content-panel">
       <div className="section-heading">
@@ -554,16 +625,37 @@ function TaskSquare({
         <strong>当前浏览：{activeTab}</strong>
         <span>{tabDescriptions[activeTab]}</span>
       </div>
-      <div className="entry-brief-grid" aria-label="任务广场承接入口">
-        {taskEntryCards.map((card) => (
-          <article className="entry-brief-card" key={card.title}>
-            <p className="eyebrow">{card.eyebrow}</p>
-            <h3>{card.title}</h3>
-            <p>{card.body}</p>
-            <button onClick={() => onAction(card.cta)} type="button">{card.cta}</button>
-          </article>
-        ))}
+      <div className="tab-function-panel" aria-label={`${activeTab}专属功能`}>
+        <div>
+          <p className="eyebrow">{activeTabPanel.eyebrow}</p>
+          <h3>{activeTabPanel.title}</h3>
+          <p>{activeTabPanel.body}</p>
+        </div>
+        <div className="tab-function-actions">
+          {activeTabPanel.actions.map((action) => (
+            <button key={action} onClick={() => onAction(action)} type="button">
+              {action}
+            </button>
+          ))}
+        </div>
+        <div className="tab-function-points">
+          {activeTabPanel.points.map((point) => (
+            <span key={point}>{point}</span>
+          ))}
+        </div>
       </div>
+      {activeTab === "推荐" ? (
+        <div className="entry-brief-grid" aria-label="任务广场承接入口">
+          {taskEntryCards.map((card) => (
+            <article className="entry-brief-card" key={card.title}>
+              <p className="eyebrow">{card.eyebrow}</p>
+              <h3>{card.title}</h3>
+              <p>{card.body}</p>
+              <button onClick={() => onAction(card.cta)} type="button">{card.cta}</button>
+            </article>
+          ))}
+        </div>
+      ) : null}
       <div className="dashboard-grid">
         <div className="feed-list">
           {posts.map((post) => (
@@ -604,20 +696,32 @@ function TaskSquare({
             </article>
           ))}
         </div>
-        <aside className="recommend-panel">
-          <p className="eyebrow">推荐给你</p>
-          <h3>相似任务优先，MBTI 只做沟通参考</h3>
-          {recommendations.slice(0, 3).map((result) => (
-            <div className="mini-card" key={result.task.id}>
-              <strong>{result.task.title}</strong>
-              <span>{result.explanations.slice(0, 3).join(" · ")}</span>
-              <div className="mini-actions">
-                <button onClick={() => onOpenDetail(createTaskDetail(result.task, result.explanations))} type="button">浏览推荐任务</button>
-                <button onClick={() => onAction(`已加入任务：${result.task.title}`)} type="button">我也在做</button>
+        {activeTab === "推荐" ? (
+          <aside className="recommend-panel">
+            <p className="eyebrow">{activeTabPanel.sideTitle}</p>
+            <h3>相似任务优先，MBTI 只做沟通参考</h3>
+            {recommendations.slice(0, 3).map((result) => (
+              <div className="mini-card" key={result.task.id}>
+                <strong>{result.task.title}</strong>
+                <span>{result.explanations.slice(0, 3).join(" · ")}</span>
+                <div className="mini-actions">
+                  <button onClick={() => onOpenDetail(createTaskDetail(result.task, result.explanations))} type="button">浏览推荐任务</button>
+                  <button onClick={() => onAction(`已加入任务：${result.task.title}`)} type="button">我也在做</button>
+                </div>
               </div>
+            ))}
+          </aside>
+        ) : (
+          <aside className="recommend-panel tab-context-panel">
+            <p className="eyebrow">{activeTabPanel.sideTitle}</p>
+            <h3>{activeTab} tab 只处理自己的场景</h3>
+            <div className="context-list">
+              {activeTabPanel.sideItems.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
             </div>
-          ))}
-        </aside>
+          </aside>
+        )}
       </div>
     </section>
   );

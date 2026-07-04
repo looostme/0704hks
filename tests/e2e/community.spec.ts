@@ -92,13 +92,13 @@ test("lets users browse tabs and entry details from the portrait app", async ({ 
 
 test("uses personality color systems instead of the reference image as a background", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "人格岛" }).click();
 
   const heroBackground = await page.locator(".realm-panel").evaluate((element) => {
     return window.getComputedStyle(element).backgroundImage;
   });
   expect(heroBackground).not.toContain("personality-realms.png");
 
-  await page.getByRole("button", { name: "人格岛" }).click();
   const islandBackgrounds = await page.locator(".island-card").evaluateAll((elements) => {
     return elements.map((element) => window.getComputedStyle(element).backgroundImage);
   });
@@ -125,6 +125,7 @@ test("applies the selected personality palette to the whole app shell", async ({
 
 test("recreates key reference design elements as functional UI modules", async ({ page }) => {
   await page.goto("/");
+  await page.getByRole("button", { name: "人格岛" }).click();
 
   await expect(page.locator(".realm-opening")).toBeVisible();
   await expect(page.getByText("认知维度探索")).toBeVisible();
@@ -135,6 +136,34 @@ test("recreates key reference design elements as functional UI modules", async (
   await expect(page.locator(".action-step")).toHaveCount(5);
   await expect(page.getByRole("button", { name: "查看完整画像" })).toBeVisible();
   await expect(page.getByRole("button", { name: "查看疗愈方案" })).toBeVisible();
+});
+
+test("keeps tab functions separated instead of repeating the same surface", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(page.getByText("推荐匹配台")).toBeVisible();
+  await expect(page.getByText(/人格开场页/)).toHaveCount(0);
+
+  const tabFunctions = [
+    ["同城", "同城事件地图"],
+    ["附近", "附近可参与清单"],
+    ["任务", "诊断书任务库"],
+    ["帖子", "疗愈讨论区"],
+    ["快闪", "平台快闪报名台"]
+  ];
+
+  for (const [tab, title] of tabFunctions) {
+    await page.getByRole("button", { name: tab, exact: true }).click();
+    await expect(page.getByText(title)).toBeVisible();
+    await expect(page.getByText("推荐匹配台")).toHaveCount(0);
+  }
+
+  await page.getByRole("button", { name: "人格岛" }).click();
+  await expect(page.getByText("NF 人格开场页 · 绿色森林")).toBeVisible();
+
+  await page.getByRole("button", { name: "搭子 / 小队" }).click();
+  await expect(page.getByText(/人格开场页/)).toHaveCount(0);
+  await expect(page.getByText("找搭子、发布找搭子、小队招募、平行房和线下快闪报名")).toBeVisible();
 });
 
 test("maps the three MVP entries to their updated community responsibilities", async ({ page }) => {
