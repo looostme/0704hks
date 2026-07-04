@@ -8,6 +8,8 @@
 
 产品场景地图见 [docs/scene-map.md](docs/scene-map.md)。
 
+后续互动和 AI 精细素材计划见 [docs/interaction-asset-plan.md](docs/interaction-asset-plan.md)。
+
 grill-me 采集到四维画像产出的流程见 [docs/diagnosis-flow.md](docs/diagnosis-flow.md)。
 
 多模态输入契约见 [docs/multimodal-input.md](docs/multimodal-input.md)，JSON Schema 见 [schemas/profile-signal.schema.json](schemas/profile-signal.schema.json)，示例见 [examples/multimodal-intake.example.json](examples/multimodal-intake.example.json)。

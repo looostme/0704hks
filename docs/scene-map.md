@@ -17,6 +17,8 @@ The product should feel like a small isometric inner-world journey rather than a
 
 The current scale target is deliberately small: `WORLD_SCALE = 0.58`, with a `390x844` mobile design viewport and `4x` backing canvas. Future scene work should preserve this small-world feeling while increasing asset detail.
 
+The next phase is documented in `docs/interaction-asset-plan.md`: improve game-like interactions first, then generate fine assets from detailed scene/object specs.
+
 ## Scene Groups
 
 | Product step | Scene group | Current direction | Status |
@@ -154,6 +156,11 @@ Recommended order:
 5. Return to TBD collection scenes after the interaction grammar is stable.
 
 The first four items already exist as rough visual demos in `demo-phaser-iso/index.html`; the next pass should turn them into cleaner TypeScript Phaser scenes after the app scaffold exists.
+
+Next priority is not more static scene count. It is interaction depth plus asset specificity:
+
+1. Make each scene playable through tap, drag, hold, reveal, and micro-reward loops.
+2. Prepare detailed AI asset specs before generating images.
 
 ## Open Questions
 

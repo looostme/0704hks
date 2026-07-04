@@ -64,6 +64,8 @@ Keep the knowledge-base code outside the Phaser scene layer. The scene should as
 
 The product scene map is tracked in `docs/scene-map.md`. Use it as the source for scene splitting and asset planning.
 
+The next interaction and fine-asset plan is tracked in `docs/interaction-asset-plan.md`. Use it before requesting AI-generated art assets.
+
 ## Existing Spike
 
 `demo-phaser-iso/index.html` is a no-build Phaser 3 spike. It validates:

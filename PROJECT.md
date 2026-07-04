@@ -44,6 +44,15 @@ The current spike contains four switchable mobile scenes:
 
 The current spike uses a `390x844` design viewport, `4x` canvas backing, and `WORLD_SCALE = 0.58`.
 
+## Next Phase Memory
+
+The next work splits into two tracks:
+
+1. Game-like interaction improvement: each scene should become a small playable moment, not only a static picture or tab switch.
+2. Fine asset requirements: AI image generation should only happen after detailed asset specs are written, including camera scale, layer boundaries, output size, transparency, interaction role, and negative prompts.
+
+The working plan and asset spec template are in `docs/interaction-asset-plan.md`.
+
 ## Repository
 
 Remote: `https://github.com/looostme/0704hks`
