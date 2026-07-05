@@ -12,7 +12,7 @@ The product should feel like a small isometric inner-world journey rather than a
 
 - `采集`: MBTI 光团降世.
 - `结果`: four-dimensional room, including selectable dimension nodes and a profile card.
-- `调理`: four-house island for TCM, philosophy, meditation, and art.
+- `调理`: four-house island for TCM, philosophy, meditation, and art; this is the main-front-end version of `心愈广场`.
 - `社交`: personality islands on a sea surface with horizontal drag browsing.
 
 The protagonist starts as the MBTI light, becomes a small character after the first commit, and then moves to clicked targets across the other scenes. The current scale target is deliberately small: `WORLD_SCALE = 0.58`, with a `390x844` mobile design viewport and `4x` backing canvas. Future scene work should preserve this small-world feeling while increasing asset detail.
@@ -24,8 +24,8 @@ The next phase is documented in `docs/interaction-asset-plan.md`: improve game-l
 | Product step | Scene group | Current direction | Status |
 |---|---|---|---|
 | Collection | Per-step intake scenes | Each collection dimension gets its own scene | Partially defined |
-| Four-dimensional result and current state | Inner room | Current isometric room scene, showing at least two dimensions plus state | Defined in spike |
-| Wellness / adjustment | Island with four houses | One island with TCM, philosophy, meditation, and art houses; each house has a shopkeeper | Defined direction |
+| Four-dimensional result and current state | Inner room | Current isometric room scene, showing at least two dimensions plus `正 / 负 / 平` state | Defined in spike |
+| Wellness / adjustment / 心愈广场 | Island with four houses | One island with TCM, philosophy, meditation, and art houses; each house has a shopkeeper and ranked practice tools | Implemented in spike |
 | Social | Personality islands | Multiple islands on the sea; user can swipe/drag to browse islands | Defined direction |
 
 ## 1. Collection Scenes
@@ -65,6 +65,7 @@ Scene requirements:
 
 - Show at least two profile dimensions at once.
 - Show current state derived from the four dimensions, such as `正`, `负`, or `平`.
+- Treat `心愈诊断` as the user-facing description of that current state. It should explain what the room state means and what kind of adjustment direction fits next.
 - Preserve the small isometric-world scale inspired by Love Lights.
 - Keep user-facing wording in the range of `倾向`, `画像`, `参考`, and `调理方向`.
 
@@ -85,6 +86,12 @@ ProfileRoomScene
 
 The treatment or adjustment module should avoid medical "treatment" language in user-facing copy. Internally this can be called treatment for shorthand, but UI should prefer `调理`, `练习`, `照护`, `探索`, or `修复`.
 
+In the main front end, this island is `心愈广场`. It is not a separate DOM page or feed. It reads the four-dimensional room output and the current state:
+
+- `正`: recommend happy replenishment, nature recovery, and light food rhythm.
+- `负`: recommend sleep meditation, breathing, acupoint care, and low-stimulation closing rituals.
+- `平`: recommend observation, rhythm building, and gentle exploration.
+
 Confirmed direction:
 
 - One island.
@@ -100,6 +107,7 @@ Product meaning:
 - The island is the user's adjustment hub after the profile result.
 - Houses represent different intervention styles, not clinical treatment categories.
 - Shopkeepers give prompts, rituals, exercises, explanations, or creative tasks.
+- Each house can hold multiple concrete tools. The top recommendation is ranked from the room state plus dimension polarity, then shown as today's suggested practice.
 
 Suggested Phaser scene name:
 

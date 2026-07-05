@@ -196,6 +196,25 @@ Still blocked:
 
 - Full media storage validation remains blocked until R2 is enabled in the Cloudflare Dashboard. `wrangler r2 bucket list` returns Cloudflare API `code: 10042`.
 
+## 2026-07-05 Xinyu Wellness Island Deploy Result
+
+Published the main-front-end Xinyu state and wellness island update through the smoke Worker:
+
+```text
+https://0704hks-smoke.070405hks.workers.dev
+Cloudflare Worker version: 4289d7ee-f6e1-4ca5-bbd6-1b66e049bd6b
+```
+
+Passed checks:
+
+- `wrangler deploy -c wrangler.remote-smoke.toml --dry-run` recognized Static Assets, D1, and env bindings.
+- `wrangler deploy -c wrangler.remote-smoke.toml` uploaded the changed `/index.html` static asset.
+- `GET /api/health` returned `200 OK` with `status=ready`.
+- Static asset root `/` returned the new HTML containing `XINYU_STATES`, `心愈诊断`, and the wellness recommendation logic.
+- Browser execution created a `1560x3376` Phaser canvas.
+- Initial deployed state reported `xinyuDiagnosis=负/negative` and top wellness recommendation `睡前冥想`.
+- Deployed click smoke switched to the `调理` scene and reported the top three recommendations: `睡前冥想`, `穴位按揉`, `正念呼吸`.
+
 ## 2026-07-05 Local Validation Result
 
 Validated locally with Wrangler 4.107.0 and the temporary openai-next test key passed through `--var`, not written to disk.

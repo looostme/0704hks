@@ -176,16 +176,265 @@
           mood: "orb",
         },
         selectedHouse: "meditation",
+        selectedTool: "sleepMeditation",
+        wellnessStateKey: null,
+        savedTools: [],
         selectedIsland: "INFP",
         actions: [],
       };
 
       const WELLNESS_HOUSES = [
-        { key: "tcm", label: "中医", dimension: "tcm_body", color: 0x8edab2, x: 124, y: 386, practice: "今晚把睡前 20 分钟留给身体降噪。" },
-        { key: "philosophy", label: "哲学", dimension: "psychology", color: 0xf2b263, x: 228, y: 350, practice: "把「必须做好」改写成一个可验证的小命题。" },
-        { key: "meditation", label: "冥想", dimension: "current_state", color: 0x9ebdff, x: 192, y: 336, practice: "做 6 次慢呼吸，只观察身体哪里最紧。" },
-        { key: "art", label: "艺术", dimension: "mbti", color: 0xf593bb, x: 246, y: 394, practice: "用三个颜色画出今天的情绪天气。" },
+        { key: "tcm", label: "中医", dimension: "tcm_body", color: 0x8edab2, x: 124, y: 386 },
+        { key: "philosophy", label: "哲学", dimension: "psychology", color: 0xf2b263, x: 228, y: 350 },
+        { key: "meditation", label: "冥想", dimension: "current_state", color: 0x9ebdff, x: 192, y: 336 },
+        { key: "art", label: "艺术", dimension: "mbti", color: 0xf593bb, x: 246, y: 394 },
       ];
+
+      const XINYU_STATES = {
+        positive: {
+          label: "正",
+          title: "状态明亮稳定",
+          description: "四维房间里可启动的能量更强，心愈诊断重点不是继续找问题，而是守住节律、增加开心补能。",
+          direction: "保持节律，增加开心体验",
+          recommendation: "今天从自然恢复、开心补能或轻盈食养里选一个小动作。",
+          color: 0xffd58a,
+        },
+        negative: {
+          label: "负",
+          title: "系统处在消耗态",
+          description: "四维房间显示压力或身体负荷更突出，心愈诊断会先降低刺激和任务量，再给出可执行调理。",
+          direction: "先降噪，再修复睡眠和身体负荷",
+          recommendation: "今晚优先做睡前冥想、短呼吸或低刺激身体照护。",
+          color: 0x7f8db8,
+        },
+        neutral: {
+          label: "平",
+          title: "状态正在观察整理",
+          description: "四维房间还没有明显偏向，心愈诊断会鼓励补齐关键线索，同时用温和练习建立节律。",
+          direction: "补齐观察，建立轻量节律",
+          recommendation: "今天适合做一件容易完成的探索练习，观察身体和情绪反馈。",
+          color: 0x9ebdff,
+        },
+      };
+
+      const WELLNESS_TOOLS = [
+        {
+          key: "joy",
+          house: "art",
+          title: "开心补能",
+          category: "艺术",
+          icon: "乐",
+          summary: "安排一件无功利的小事，把好状态留在生活里。",
+          action: "今天用 15 分钟做一件纯粹开心的事，不复盘、不优化。",
+          steps: ["选一件轻松小事", "给它留 15 分钟", "结束后只记录身体是否变亮"],
+          stateBonus: { positive: 44, neutral: 10, negative: 0 },
+          stateReason: {
+            positive: "状态偏正时，先把开心体验留住。",
+            neutral: "状态平稳时，用小快乐观察能量变化。",
+          },
+          dimensionRules: [{ key: "mbti", polarity: "positive", points: 8, reason: "互动偏好已点亮，适合主动安排轻体验。" }],
+        },
+        {
+          key: "nature",
+          house: "art",
+          title: "自然恢复",
+          category: "艺术",
+          icon: "森",
+          summary: "晒光、看树或慢走，让身体从输入里退出来。",
+          action: "去窗边、楼下或户外接触自然光 10 分钟，不处理消息。",
+          steps: ["看一个真实自然物", "慢走或站立 10 分钟", "不听课程和播客"],
+          stateBonus: { positive: 34, neutral: 18, negative: 12 },
+          stateReason: {
+            positive: "状态偏正时，自然恢复能稳住好节律。",
+            neutral: "状态平时，自然是最低负担的观察入口。",
+            negative: "消耗态下，短时间自然接触比强训练更稳。",
+          },
+          dimensionRules: [{ key: "mind", polarity: "negative", points: 8, reason: "心理维度偏耗时，用自然降低脑内刺激。" }],
+        },
+        {
+          key: "food",
+          house: "tcm",
+          title: "轻盈食养",
+          category: "中医",
+          icon: "食",
+          summary: "用温热、规律、舒服的饮食做低风险调理。",
+          action: "今晚选择温热清淡的一餐，减少冰冷、重油和深夜加餐。",
+          steps: ["晚餐保持温热", "七分饱后停止", "记录次日胃口和精神"],
+          stateBonus: { positive: 28, neutral: 22, negative: 16 },
+          stateReason: {
+            positive: "状态好时，食养只需要轻盈维护。",
+            neutral: "状态平时，规律饮食能帮助建立节律。",
+            negative: "消耗态下，先让身体获得稳定承载。",
+          },
+          dimensionRules: [{ key: "body", polarity: "negative", points: 18, reason: "身体维度偏弱时，食养优先级上升。" }],
+        },
+        {
+          key: "sleepMeditation",
+          house: "meditation",
+          title: "睡前冥想",
+          category: "冥想",
+          icon: "眠",
+          summary: "给一天一个收尾，帮助身体切到休息。",
+          action: "今晚用 8 分钟做睡前收尾，结束后不再打开工作内容。",
+          steps: ["放下未完成事项", "听短引导或做慢呼吸", "结束后保持低刺激"],
+          stateBonus: { positive: 8, neutral: 18, negative: 48 },
+          stateReason: {
+            negative: "消耗态优先修复夜间恢复窗口。",
+            neutral: "状态平时，睡前收尾能稳定节律。",
+          },
+          dimensionRules: [
+            { key: "body", polarity: "negative", points: 14, reason: "身体信号偏耗，先守住睡眠。" },
+            { key: "mind", polarity: "negative", points: 12, reason: "心理反复时，睡前冥想更适合降噪。" },
+          ],
+        },
+        {
+          key: "breath",
+          house: "meditation",
+          title: "正念呼吸",
+          category: "冥想",
+          icon: "呼",
+          summary: "用短呼吸把身体先稳下来。",
+          action: "焦虑或紧绷升高时，做 6 轮 4 秒吸气、6 秒呼气。",
+          steps: ["吸气 4 秒", "呼气 6 秒", "做满 6 轮就停"],
+          stateBonus: { positive: 8, neutral: 24, negative: 38 },
+          stateReason: {
+            negative: "消耗态下，呼吸是最低负担的稳定动作。",
+            neutral: "状态平时，用呼吸观察身体反馈。",
+          },
+          dimensionRules: [{ key: "mind", polarity: "negative", points: 16, reason: "心理维度偏耗时，先让身体稳住。" }],
+        },
+        {
+          key: "tcm",
+          house: "tcm",
+          title: "穴位按揉",
+          category: "中医",
+          icon: "穴",
+          summary: "用低强度按揉照顾肩颈、胸口和睡前紧绷。",
+          action: "今晚只做太冲、内关或风池三选一，每个 1 分钟。",
+          steps: ["选择一个穴位", "力度以舒服为准", "睡前 40 分钟降低屏幕刺激"],
+          stateBonus: { positive: 6, neutral: 18, negative: 34 },
+          stateReason: {
+            negative: "身体负荷高时，先做低成本身体照护。",
+            neutral: "状态平时，按揉能帮助观察身体紧绷。",
+          },
+          dimensionRules: [{ key: "body", polarity: "negative", points: 24, reason: "身体维度偏耗，适合先照顾肩颈和气机。" }],
+        },
+        {
+          key: "philosophy",
+          house: "philosophy",
+          title: "道家收尾",
+          category: "哲学",
+          icon: "止",
+          summary: "少一点控制，把明天的问题交还给明天。",
+          action: "睡前写下一句：今晚只负责恢复，明天再处理明天的问题。",
+          steps: ["列出一个未完成事项", "放入明日容器", "用一句话结束复盘"],
+          stateBonus: { positive: 6, neutral: 26, negative: 28 },
+          stateReason: {
+            negative: "消耗态常伴随抓紧结果，先练习收尾。",
+            neutral: "状态平时，用一句话建立边界。",
+          },
+          dimensionRules: [{ key: "mind", polarity: "negative", points: 18, reason: "心理维度偏耗，哲学收尾能减少反复推演。" }],
+        },
+        {
+          key: "western",
+          house: "philosophy",
+          title: "事实与解释",
+          category: "哲学",
+          icon: "问",
+          summary: "用一个问题区分现实、推测和可控动作。",
+          action: "写下这件事里哪些是事实，哪些只是解释。",
+          steps: ["写一个压力事件", "分出事实和解释", "只留下一个可控动作"],
+          stateBonus: { positive: 4, neutral: 30, negative: 18 },
+          stateReason: {
+            neutral: "状态平时，澄清问题比马上修复更合适。",
+            negative: "消耗态下，只保留一个可控问题。",
+          },
+          dimensionRules: [{ key: "mbti", polarity: "positive", points: 10, reason: "互动偏好已点亮，适合结构化问题。" }],
+        },
+        {
+          key: "painting",
+          house: "art",
+          title: "情绪绘画",
+          category: "艺术",
+          icon: "画",
+          summary: "用颜色和线条表达说不清的感受。",
+          action: "用 3 分钟画出今天的情绪形状，保存或删除都可以。",
+          steps: ["选一个颜色", "画出压力形状", "给画面取一个名字"],
+          stateBonus: { positive: 12, neutral: 18, negative: 22 },
+          stateReason: {
+            negative: "说不清时，非语言表达更低负担。",
+            neutral: "状态平时，用绘画做温和探索。",
+          },
+          dimensionRules: [{ key: "mind", polarity: "negative", points: 14, reason: "心理维度偏耗时，绘画能提供安全出口。" }],
+        },
+        {
+          key: "seasonal",
+          house: "tcm",
+          title: "节律观察",
+          category: "中医",
+          icon: "节",
+          summary: "用节气和作息动作建立生活锚点。",
+          action: "今天只做一个节律动作：早点收尾、少刷屏或轻拉伸。",
+          steps: ["选择一个节律动作", "当天执行一次", "明天观察睡眠和精神"],
+          stateBonus: { positive: 16, neutral: 34, negative: 14 },
+          stateReason: {
+            neutral: "状态平时，先建立一个可观察节律。",
+            positive: "状态好时，用节律维护稳定。",
+          },
+          dimensionRules: [{ key: "spirit", polarity: "neutral", points: 8, reason: "玄学心灵维度适合作为节律叙事参考。" }],
+        },
+      ];
+
+      function getHouseMeta(houseKey) {
+        return WELLNESS_HOUSES.find((house) => house.key === houseKey) || WELLNESS_HOUSES[0];
+      }
+
+      function getDimensionProfile(profileOutput, key) {
+        return profileOutput.dimensionValues.find((item) => item.key === key) || null;
+      }
+
+      function getXinyuStateDiagnosis(profileOutput) {
+        const stateKey = profileOutput.currentState?.value || "neutral";
+        const fallback = XINYU_STATES[stateKey] || XINYU_STATES.neutral;
+        return {
+          key: stateKey,
+          label: profileOutput.currentState?.label || fallback.label,
+          title: fallback.title,
+          description: fallback.description,
+          direction: fallback.direction,
+          recommendation: fallback.recommendation,
+          color: fallback.color,
+        };
+      }
+
+      function getWellnessRecommendations(profileOutput, houseKey = null) {
+        const diagnosis = getXinyuStateDiagnosis(profileOutput);
+        return WELLNESS_TOOLS
+          .filter((tool) => !houseKey || tool.house === houseKey)
+          .map((tool) => {
+            const matchedReasons = [];
+            let score = 10 + (tool.stateBonus[diagnosis.key] || 0);
+            if (tool.stateReason[diagnosis.key]) {
+              matchedReasons.push(tool.stateReason[diagnosis.key]);
+            }
+            tool.dimensionRules.forEach((rule) => {
+              const dimension = getDimensionProfile(profileOutput, rule.key);
+              if (dimension && dimension.polarity === rule.polarity) {
+                score += rule.points;
+                matchedReasons.push(rule.reason);
+              }
+            });
+            const house = getHouseMeta(tool.house);
+            return {
+              tool,
+              house,
+              score,
+              reason: matchedReasons[0] || tool.summary,
+              matchedReasons,
+            };
+          })
+          .sort((a, b) => b.score - a.score || a.tool.title.localeCompare(b.tool.title, "zh-CN"));
+      }
 
       const SOCIAL_ISLANDS = [
         { label: "INFP", color: 0x9ebdff, x: 88, y: 358, prompt: "适合从共同感受开场，少一点结论，多一点回应。" },
@@ -239,6 +488,8 @@
         syncGameplayState() {
           const coverage = this.getCoverage();
           const profile = this.getProfileOutput();
+          const xinyuDiagnosis = getXinyuStateDiagnosis(profile);
+          const wellnessRecommendations = getWellnessRecommendations(profile);
           const state = {
             activeScene: this.currentDemoScene,
             activeIntake: this.gameplay.activeIntake,
@@ -247,8 +498,20 @@
             signals: [...this.gameplay.signals],
             coverage,
             profile,
+            xinyuDiagnosis,
+            wellnessRecommendations: wellnessRecommendations.slice(0, 6).map((item) => ({
+              key: item.tool.key,
+              title: item.tool.title,
+              house: item.house.key,
+              houseLabel: item.house.label,
+              score: item.score,
+              reason: item.reason,
+              action: item.tool.action,
+            })),
             hero: { ...this.gameplay.hero },
             selectedHouse: this.gameplay.selectedHouse,
+            selectedTool: this.gameplay.selectedTool,
+            savedTools: [...this.gameplay.savedTools],
             selectedIsland: this.gameplay.selectedIsland,
             actions: [...this.gameplay.actions],
           };
@@ -259,6 +522,9 @@
           document.body.dataset.signalCount = `${this.gameplay.signals.length}`;
           document.body.dataset.canGenerateProfile = coverage.canGenerateProfile ? "true" : "false";
           document.body.dataset.selectedHouse = this.gameplay.selectedHouse;
+          document.body.dataset.selectedTool = this.gameplay.selectedTool;
+          document.body.dataset.xinyuState = xinyuDiagnosis.key;
+          document.body.dataset.xinyuLabel = xinyuDiagnosis.label;
           document.body.dataset.selectedIsland = this.gameplay.selectedIsland;
           document.body.dataset.actionCount = `${this.gameplay.actions.length}`;
           document.body.dataset.heroBorn = this.gameplay.hero.born ? "true" : "false";
@@ -358,7 +624,8 @@
             : score <= -1
               ? { value: "negative", label: "负", description: "当前更像消耗态，先降低评价压力和身体负荷。" }
               : { value: "neutral", label: "平", description: "当前处在观察与整理之间，适合补齐一两个关键信号。" };
-          return { dimensionValues, currentState };
+          const profile = { dimensionValues, currentState };
+          return { ...profile, xinyuDiagnosis: getXinyuStateDiagnosis(profile) };
         }
 
         commitSignal(stepKey, signalType, value, confidence = "medium") {
@@ -589,6 +856,36 @@
             color: "#f2eaf2",
             lineSpacing: 6,
             wordWrap: { width: 302 },
+          });
+          group.add([g, heading, body]);
+          this.trackSceneObject(group);
+          return group;
+        }
+
+        renderWellnessToolCard(title, lines, color = 0x9ebdff) {
+          const group = this.add.container(20, 608).setDepth(720);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.34);
+          g.fillRoundedRect(-4, 8, 350, 126, 16);
+          g.fillStyle(P.card, 0.95);
+          g.fillRoundedRect(0, 0, 348, 126, 16);
+          g.lineStyle(1, 0xf6ecdf, 0.14);
+          g.strokeRoundedRect(0, 0, 348, 126, 16);
+          g.fillStyle(color, 1);
+          g.fillRoundedRect(18, 18, 26, 26, 8);
+          const heading = this.add.text(58, 17, title, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "16px",
+            fontStyle: "800",
+            color: "#fff7ed",
+            wordWrap: { width: 270 },
+          });
+          const body = this.add.text(20, 54, lines.join("\n"), {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "10.8px",
+            color: "#f2eaf2",
+            lineSpacing: 4,
+            wordWrap: { width: 306 },
           });
           group.add([g, heading, body]);
           this.trackSceneObject(group);
@@ -1176,11 +1473,34 @@
           };
         }
 
+        syncWellnessSelection(profileOutput = this.getProfileOutput()) {
+          const diagnosis = getXinyuStateDiagnosis(profileOutput);
+          const recommendations = getWellnessRecommendations(profileOutput);
+          const selectedExists = recommendations.some((item) => item.tool.key === this.gameplay.selectedTool);
+          if (this.gameplay.wellnessStateKey === diagnosis.key && selectedExists) return false;
+          const top = recommendations[0];
+          if (!top) return false;
+          this.gameplay.wellnessStateKey = diagnosis.key;
+          this.gameplay.selectedHouse = top.house.key;
+          this.gameplay.selectedTool = top.tool.key;
+          return true;
+        }
+
+        getSelectedWellnessRecommendation(profileOutput = this.getProfileOutput()) {
+          const houseRecommendations = getWellnessRecommendations(profileOutput, this.gameplay.selectedHouse);
+          return houseRecommendations.find((item) => item.tool.key === this.gameplay.selectedTool) || houseRecommendations[0] || getWellnessRecommendations(profileOutput)[0];
+        }
+
         renderWellnessScene() {
+          const profileOutput = this.getProfileOutput();
+          if (this.syncWellnessSelection(profileOutput)) {
+            this.syncGameplayState();
+          }
           this.addSeaBand();
           this.addWellnessIsland(195, 375);
           WELLNESS_HOUSES.forEach((house) => this.addHouseHotspot(house));
-          this.renderWellnessPractice();
+          this.renderWellnessRecommendationRail(profileOutput);
+          this.renderWellnessPractice(profileOutput);
         }
 
         addHouseHotspot(house) {
@@ -1188,8 +1508,10 @@
           const zone = this.add.zone(p.x, p.y, 68, 58).setDepth(690).setInteractive({ useHandCursor: true });
           zone.on("pointerdown", () => {
             this.performHeroAction(p.x, p.y + 18, house.color, () => {
+              const top = getWellnessRecommendations(this.getProfileOutput(), house.key)[0];
               this.gameplay.selectedHouse = house.key;
-              this.gameplay.actions.push({ type: "house_focus", house: house.key });
+              if (top) this.gameplay.selectedTool = top.tool.key;
+              this.gameplay.actions.push({ type: "house_focus", house: house.key, tool: this.gameplay.selectedTool });
               this.syncGameplayState();
               this.refreshDemoScene();
             }, { mood: "focus" });
@@ -1206,30 +1528,98 @@
           this.trackSceneObject(label);
         }
 
-        renderWellnessPractice() {
-          const house = WELLNESS_HOUSES.find((item) => item.key === this.gameplay.selectedHouse) || WELLNESS_HOUSES[2];
-          const card = this.renderDemoCard(`${house.label}店长 · 练习卡`, [
-            house.practice,
-            "选择练习后，小人会先走回对应房子，再记录 PracticeAction。",
+        renderWellnessRecommendationRail(profileOutput = this.getProfileOutput()) {
+          const recommendations = getWellnessRecommendations(profileOutput).slice(0, 3);
+          const diagnosis = getXinyuStateDiagnosis(profileOutput);
+          const group = this.add.container(20, 522).setDepth(735);
+          const heading = this.add.text(0, 0, `今日推荐 · 心愈${diagnosis.label}`, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            fontStyle: "800",
+            color: "#fff0c8",
+          });
+          group.add(heading);
+          recommendations.forEach((recommendation, index) => {
+            const x = index * 116;
+            const active = recommendation.tool.key === this.gameplay.selectedTool;
+            const g = this.add.graphics();
+            g.fillStyle(active ? recommendation.house.color : 0x242337, active ? 0.3 : 0.76);
+            g.fillRoundedRect(x, 22, 108, 58, 13);
+            g.lineStyle(1.2, active ? 0xf6ecdf : recommendation.house.color, active ? 0.72 : 0.38);
+            g.strokeRoundedRect(x, 22, 108, 58, 13);
+            const label = this.add.text(x + 13, 30, recommendation.tool.title, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "12px",
+              fontStyle: "800",
+              color: "#fff7ed",
+              wordWrap: { width: 82 },
+            });
+            const houseLabel = this.add.text(x + 13, 56, recommendation.house.label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "10px",
+              color: "#c0b7ca",
+            });
+            const hit = this.add.zone(x + 54, 51, 108, 58).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => {
+              this.gameplay.selectedHouse = recommendation.house.key;
+              this.gameplay.selectedTool = recommendation.tool.key;
+              this.gameplay.actions.push({
+                type: "recommendation_focus",
+                house: recommendation.house.key,
+                tool: recommendation.tool.key,
+                state: diagnosis.key,
+              });
+              this.syncGameplayState();
+              this.refreshDemoScene();
+            });
+            group.add([g, label, houseLabel, hit]);
+          });
+          this.trackSceneObject(group);
+        }
+
+        renderWellnessPractice(profileOutput = this.getProfileOutput()) {
+          const recommendation = this.getSelectedWellnessRecommendation(profileOutput);
+          if (!recommendation) return null;
+          const { tool, house } = recommendation;
+          const diagnosis = getXinyuStateDiagnosis(profileOutput);
+          const saved = this.gameplay.savedTools.includes(tool.key);
+          const card = this.renderWellnessToolCard(`${house.label}店长 · ${tool.title}`, [
+            `心愈诊断：${diagnosis.label} · ${diagnosis.title}`,
+            `为什么：${recommendation.reason}`,
+            `今日动作：${tool.action}`,
+            `步骤：${tool.steps.slice(0, 2).join(" / ")}${saved ? " / 已收藏" : ""}`,
           ], house.color);
           this.addChoiceButton(42, 742, "试一下", house.color, () => {
-            this.runPracticeAction(house, "try", house.color);
+            this.runPracticeAction(recommendation, "try", house.color);
           }, 88, 36);
           this.addChoiceButton(150, 742, "收藏", 0x9ebdff, () => {
-            this.runPracticeAction(house, "save", 0x9ebdff);
+            this.runPracticeAction(recommendation, "save", 0x9ebdff);
           }, 82, 36);
           this.addChoiceButton(252, 742, "稍后", 0xc0b7ca, () => {
-            this.runPracticeAction(house, "dismiss", 0xc0b7ca);
+            this.runPracticeAction(recommendation, "dismiss", 0xc0b7ca);
           }, 82, 36);
           return card;
         }
 
-        runPracticeAction(house, result, color) {
+        runPracticeAction(recommendation, result, color) {
+          const { house, tool } = recommendation;
           const p = this.worldPoint(house.x, house.y);
           this.performHeroAction(p.x, p.y + 18, color, () => {
-            this.gameplay.actions.push({ type: "practice_selected", house: house.key, result });
+            if (result === "save" && !this.gameplay.savedTools.includes(tool.key)) {
+              this.gameplay.savedTools.push(tool.key);
+            }
+            this.gameplay.selectedHouse = house.key;
+            this.gameplay.selectedTool = tool.key;
+            this.gameplay.actions.push({
+              type: "practice_selected",
+              house: house.key,
+              tool: tool.key,
+              result,
+              state: getXinyuStateDiagnosis(this.getProfileOutput()).key,
+            });
             this.gameplay.hero.mood = result === "dismiss" ? "curious" : "focus";
             this.syncGameplayState();
+            if (result === "save") this.refreshDemoScene();
           }, { mood: result === "dismiss" ? "curious" : "focus" });
         }
 
@@ -1732,7 +2122,9 @@
 
         renderProfile(axis) {
           if (this.profileCard) this.profileCard.destroy(true);
+          const profileOutput = this.getProfileOutput();
           const axisProfile = this.getAxisProfile(axis);
+          const xinyuDiagnosis = getXinyuStateDiagnosis(profileOutput);
           const confidenceText = axisProfile.confidence === "low" ? "低置信 · 可补采" : axisProfile.confidence === "high" ? "高置信" : "中置信";
           const evidenceCount = this.gameplay.signals.filter((signal) => signal.dimension_hint.includes(axisProfile.dimension)).length;
 
@@ -1781,15 +2173,21 @@
             lineSpacing: 6,
             wordWrap: { width: 292 },
           });
-          const question = this.add.text(28, 142, evidenceCount > 0 ? `证据火花 ${evidenceCount} 条 · 点其他维度可切换解读` : axis.question, {
+          const stateLine = this.add.text(28, 140, `心愈诊断 ${xinyuDiagnosis.label} · ${xinyuDiagnosis.title}`, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "14px",
+            fontSize: "13px",
             fontStyle: "800",
             color: "#fff0c8",
             wordWrap: { width: 292 },
           });
+          const question = this.add.text(28, 160, evidenceCount > 0 ? `${xinyuDiagnosis.direction} · 证据火花 ${evidenceCount} 条` : xinyuDiagnosis.direction, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            color: "#f2eaf2",
+            wordWrap: { width: 292 },
+          });
 
-          group.add([g, face, label, title, summary, question]);
+          group.add([g, face, label, title, summary, stateLine, question]);
           group.setAlpha(0);
           group.y += 12;
           this.tweens.add({ targets: group, alpha: 1, y: 552, duration: 190, ease: "Sine.easeOut" });
