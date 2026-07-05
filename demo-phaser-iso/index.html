@@ -3893,17 +3893,17 @@
             }).setOrigin(0.5);
             const hit = this.add.zone(x + 38, 13, 76, 26).setInteractive({ useHandCursor: true });
             hit.on("pointerdown", () => {
-              this.gameplay.selectedHouse = house.key;
+              this.gameplay.selectedHouse = item.house.key;
               this.gameplay.selectedTool = item.tool.key;
-              this.gameplay.activeLiveTool = null;
+              this.gameplay.activeLiveTool = item.tool.key;
               this.gameplay.actions.push({
-                type: "house_tool_focus",
-                house: house.key,
+                type: "house_tool_open",
+                house: item.house.key,
                 tool: item.tool.key,
                 source: WELLNESS_LIVE_SOURCES[item.tool.key] || "心愈内置内容",
               });
               this.syncGameplayState();
-              this.refreshDemoScene();
+              this.renderWellnessLiveOverlay(item);
             });
             group.add([bg, text, hit]);
           });
