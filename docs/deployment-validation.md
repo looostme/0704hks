@@ -162,6 +162,31 @@ Deployment note:
 
 - This is the current deployable smoke target while R2 remains unavailable on the Cloudflare account. The full `wrangler.toml` target still keeps the intended R2 binding for later.
 
+## 2026-07-05 V4 Protected API Validation Result
+
+Published the protected API hardening update through the smoke Worker:
+
+```text
+https://0704hks-smoke.070405hks.workers.dev
+Cloudflare Worker version: 33668eb2-6603-4761-8a7e-3f26bf07978e
+```
+
+Passed checks:
+
+- `GET /api/health` returned public readiness only, without exposing secret binding details.
+- `GET /api/health/private` without an access token returned `401`.
+- `GET /api/health/private` with the test access token returned `200` and confirmed `assets=true`, `db=true`, `media=false`, `openai_next_key=true`, and `app_access_token=true`.
+- `POST /api/media` with the test access token returned `503` with an explicit missing R2 binding message in the smoke environment.
+- `POST /api/sessions` with malformed JSON returned `400`.
+- `POST /api/llm-smoke` ignored a user-supplied `model` field and used server-configured `claude-sonnet-5`.
+- `POST /api/asr` called openai-next `gpt-4o-transcribe`, returned `最近睡不好，多梦，也很容易烦。`, generated a `sleep` signal, and routed it to `["tcm_body", "psychology"]`.
+- Remote D1 confirmed `input_voice_remote_v4_001` and `sig_voice_remote_v4_001` were persisted.
+- Secret scan found no test API key or local absolute path leakage in repository files.
+
+Still blocked:
+
+- Full media storage validation remains blocked until R2 is enabled in the Cloudflare Dashboard. `wrangler r2 bucket list` returns Cloudflare API `code: 10042`.
+
 ## 2026-07-05 Local Validation Result
 
 Validated locally with Wrangler 4.107.0 and the temporary openai-next test key passed through `--var`, not written to disk.

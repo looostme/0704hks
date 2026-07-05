@@ -597,7 +597,9 @@ function publicConfig(env) {
 }
 
 function requireApiKey(env) {
-  if (!env.OPENAI_NEXT_API_KEY) throw new Error("Missing OPENAI_NEXT_API_KEY binding.");
+  if (!env.OPENAI_NEXT_API_KEY) {
+    throw new HttpError(503, "Missing OPENAI_NEXT_API_KEY binding; AI routes are disabled.");
+  }
 }
 
 function requireAppAccess(request, env) {
@@ -629,11 +631,11 @@ function constantTimeEqual(left, right) {
 }
 
 function requireDb(env) {
-  if (!env.DB) throw new Error("Missing D1 DB binding.");
+  if (!env.DB) throw new HttpError(503, "Missing D1 DB binding; persistence routes are disabled.");
 }
 
 function requireMedia(env) {
-  if (!env.MEDIA) throw new Error("Missing R2 MEDIA binding.");
+  if (!env.MEDIA) throw new HttpError(503, "Missing R2 MEDIA binding; media routes are disabled.");
 }
 
 async function readJson(request) {
