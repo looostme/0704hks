@@ -1,0 +1,1319 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>四象疗愈计划 - 身心画像</title>
+  <style>
+    :root {
+      --ink: #473217;
+      --muted: rgba(71, 50, 23, 0.68);
+      --gold: #b77a28;
+      --gold-soft: #f4cf83;
+      --panel: rgba(255, 250, 235, 0.72);
+      --line: rgba(174, 122, 47, 0.34);
+      --theme: #78aee8;
+      --theme-deep: #3d72ac;
+      --theme-soft: #e3f3ff;
+      --element: #4d9dd6;
+      --element-soft: #dff4ff;
+      --safe: env(safe-area-inset-bottom, 0px);
+    }
+
+    body.element-metal {
+      --theme: #d8ad57;
+      --theme-deep: #9a6b1e;
+      --theme-soft: #fff1c8;
+      --element: #d7a84c;
+      --element-soft: #fff1c5;
+    }
+
+    body.element-wood {
+      --theme: #79b96c;
+      --theme-deep: #4d8843;
+      --theme-soft: #e8f6d9;
+      --element: #68a85d;
+      --element-soft: #e7f7d8;
+    }
+
+    body.element-water {
+      --theme: #6aa8df;
+      --theme-deep: #3d72ac;
+      --theme-soft: #e2f4ff;
+      --element: #4d9dd6;
+      --element-soft: #dff4ff;
+    }
+
+    body.element-fire {
+      --theme: #e99955;
+      --theme-deep: #b75f26;
+      --theme-soft: #ffe2c7;
+      --element: #e27537;
+      --element-soft: #ffe3ca;
+    }
+
+    body.element-earth {
+      --theme: #c7a15b;
+      --theme-deep: #87682d;
+      --theme-soft: #f4e8c8;
+      --element: #a9833c;
+      --element-soft: #f3e6c6;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 8%, rgba(255,255,255,0.94), transparent 15rem),
+        radial-gradient(circle at 75% 12%, color-mix(in srgb, var(--theme) 24%, transparent), transparent 21rem),
+        linear-gradient(180deg, #d9f2ff 0%, #fff5d9 52%, #f3d79f 100%);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .ambient {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .ambient::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 12% 22%, rgba(255,255,255,0.92) 0 2px, transparent 3px),
+        radial-gradient(circle at 32% 72%, rgba(255,222,142,0.72) 0 2px, transparent 3px),
+        radial-gradient(circle at 72% 24%, rgba(255,255,255,0.88) 0 2px, transparent 3px),
+        radial-gradient(circle at 86% 80%, rgba(255,222,142,0.64) 0 2px, transparent 3px);
+      animation: shimmer 4.2s ease-in-out infinite alternate;
+    }
+
+    .ambient::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -18% -20%;
+      height: 48vh;
+      background:
+        radial-gradient(ellipse at 30% 80%, color-mix(in srgb, var(--theme) 32%, transparent), transparent 58%),
+        radial-gradient(ellipse at 72% 78%, rgba(255, 221, 141, 0.48), transparent 56%);
+      filter: blur(24px);
+      animation: glow 7s ease-in-out infinite alternate;
+    }
+
+    .element-field {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.68;
+    }
+
+    .element-field::before,
+    .element-field::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    body.element-water .element-field::before {
+      background: repeating-radial-gradient(ellipse at 50% 70%, rgba(77,157,214,0.16) 0 2px, transparent 3px 28px);
+      animation: ripple 5s linear infinite;
+    }
+
+    body.element-metal .element-field::before {
+      background:
+        radial-gradient(circle at 28% 18%, rgba(255,255,255,0.9) 0 2px, transparent 3px),
+        radial-gradient(circle at 64% 28%, rgba(255,232,154,0.8) 0 2px, transparent 3px),
+        radial-gradient(circle at 78% 72%, rgba(255,255,255,0.7) 0 2px, transparent 3px);
+      animation: shimmer 3.2s ease-in-out infinite alternate;
+    }
+
+    body.element-wood .element-field::before {
+      background:
+        radial-gradient(ellipse at 50% 80%, rgba(104,168,93,0.18), transparent 36%),
+        linear-gradient(90deg, transparent 0 18%, rgba(104,168,93,0.08) 19% 20%, transparent 21% 100%);
+      background-size: auto, 72px 100%;
+      animation: room-light 6s ease-in-out infinite alternate;
+    }
+
+    body.element-fire .element-field::before {
+      background:
+        radial-gradient(circle at 50% 82%, rgba(255,142,63,0.28), transparent 24%),
+        radial-gradient(circle at 40% 74%, rgba(255,214,128,0.22), transparent 18%);
+      animation: fire 1.8s ease-in-out infinite alternate;
+    }
+
+    body.element-earth .element-field::before {
+      background:
+        radial-gradient(ellipse at 50% 92%, rgba(99,143,64,0.18), transparent 30%),
+        radial-gradient(ellipse at 28% 86%, rgba(99,143,64,0.12), transparent 18%),
+        radial-gradient(ellipse at 76% 88%, rgba(99,143,64,0.12), transparent 18%);
+      animation: grow 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes shimmer {
+      from { opacity: 0.46; transform: scale(1); }
+      to { opacity: 0.96; transform: scale(1.018); }
+    }
+
+    @keyframes glow {
+      from { transform: translateX(-2%) scaleY(0.94); }
+      to { transform: translateX(2%) scaleY(1.08); }
+    }
+
+    @keyframes ripple {
+      to { transform: scale(1.04); opacity: 0.42; }
+    }
+
+    @keyframes room-light {
+      to { transform: translateX(12px); opacity: 0.9; }
+    }
+
+    @keyframes fire {
+      to { transform: translateY(-8px) scale(1.05); opacity: 0.9; }
+    }
+
+    @keyframes grow {
+      to { transform: translateY(-10px); opacity: 0.9; }
+    }
+
+    .phone {
+      width: min(430px, 100%);
+      min-height: 100vh;
+      margin: 0 auto;
+      position: relative;
+      overflow-x: hidden;
+      border-left: 1px solid rgba(174,122,47,0.16);
+      border-right: 1px solid rgba(174,122,47,0.16);
+      background:
+        radial-gradient(circle at 50% 0%, rgba(255,255,255,0.62), transparent 18rem),
+        rgba(255,255,255,0.16);
+    }
+
+    .screen {
+      display: none;
+      min-height: 100vh;
+      padding: 16px 14px calc(24px + var(--safe));
+      animation: enter 320ms ease both;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      min-height: 38px;
+      margin-bottom: 12px;
+    }
+
+    .kicker {
+      color: var(--gold);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+
+    .round,
+    .pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.5);
+      box-shadow: 0 8px 20px rgba(132,86,28,0.08);
+      cursor: pointer;
+    }
+
+    .round {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      font-size: 20px;
+    }
+
+    .pill {
+      min-height: 36px;
+      padding: 0 13px;
+      font-size: 13px;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 462px;
+      overflow: hidden;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 74% 18%, rgba(255,255,255,0.92), transparent 8%),
+        linear-gradient(158deg, color-mix(in srgb, var(--theme) 34%, #e9f7ff), #fff2c9 78%);
+      box-shadow: 0 22px 64px rgba(132,86,28,0.17);
+    }
+
+    .stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(13deg, transparent 0 42%, rgba(255,255,255,0.38) 43%, transparent 46%),
+        radial-gradient(circle at 22% 24%, rgba(255,255,255,0.7) 0 2px, transparent 3px),
+        radial-gradient(circle at 48% 18%, rgba(255,255,255,0.48) 0 2px, transparent 3px),
+        radial-gradient(circle at 80% 38%, rgba(255,255,255,0.5) 0 2px, transparent 3px);
+      animation: pan 8s ease-in-out infinite alternate;
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 54px;
+      width: 66px;
+      height: 136px;
+      transform: translateX(-50%);
+      border-radius: 34px 34px 14px 14px;
+      background:
+        radial-gradient(circle at 50% 16%, #fff7d8 0 13px, transparent 14px),
+        linear-gradient(180deg, rgba(255,249,226,0.94), color-mix(in srgb, var(--theme-deep) 46%, #b77a28));
+      box-shadow: 0 0 70px color-mix(in srgb, var(--theme) 48%, transparent);
+    }
+
+    @keyframes pan {
+      from { transform: translateX(-1.2%) scale(1); opacity: 0.72; }
+      to { transform: translateX(1.2%) scale(1.03); opacity: 1; }
+    }
+
+    .stage-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .mbti {
+      margin: 0;
+      color: var(--theme-deep);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 58px;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: 0;
+    }
+
+    .sub {
+      margin: 8px 0 14px;
+      color: var(--ink);
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .opening {
+      max-width: 282px;
+      min-height: 132px;
+      margin: 0;
+      color: var(--ink);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .typing::after {
+      content: "";
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-left: 3px;
+      vertical-align: -0.12em;
+      background: var(--gold);
+      animation: caret 0.8s step-end infinite;
+    }
+
+    @keyframes caret {
+      50% { opacity: 0; }
+    }
+
+    .glass {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--panel);
+      box-shadow: 0 18px 48px rgba(132,86,28,0.12), inset 0 0 0 1px rgba(255,255,255,0.5);
+      backdrop-filter: blur(18px);
+    }
+
+    .panel {
+      padding: 15px;
+    }
+
+    .lift {
+      position: relative;
+      z-index: 2;
+      margin-top: -86px;
+    }
+
+    .panel-title {
+      margin: 0 0 10px;
+      color: var(--gold);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .field-grid {
+      display: grid;
+      gap: 9px;
+    }
+
+    .field {
+      display: grid;
+      grid-template-columns: 88px 1fr;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid rgba(174,122,47,0.18);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.36);
+      font-size: 13px;
+    }
+
+    .field strong {
+      color: var(--theme-deep);
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 78px;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border: 1px solid rgba(174,122,47,0.24);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.46);
+      font-size: 12px;
+      white-space: nowrap;
+      animation: tag-in 420ms ease both;
+    }
+
+    @keyframes tag-in {
+      from { opacity: 0; transform: translateY(7px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .primary {
+      width: 100%;
+      min-height: 50px;
+      margin-top: 14px;
+      border: 1px solid rgba(174,122,47,0.42);
+      border-radius: 999px;
+      color: #432a10;
+      background: linear-gradient(135deg, #fff2c8, var(--gold-soft));
+      font-weight: 850;
+      box-shadow: 0 14px 30px rgba(132,86,28,0.16);
+      cursor: pointer;
+    }
+
+    .secondary {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid rgba(174,122,47,0.32);
+      border-radius: 999px;
+      color: var(--theme-deep);
+      background: rgba(255,255,255,0.46);
+      font-weight: 760;
+      cursor: pointer;
+    }
+
+    .title {
+      margin: 0 0 5px;
+      color: var(--theme-deep);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      font-weight: 500;
+      line-height: 1.12;
+    }
+
+    .copy {
+      margin: 0 0 15px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .element-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin: 10px 0 14px;
+    }
+
+    .element-btn {
+      min-height: 58px;
+      border: 1px solid rgba(174,122,47,0.28);
+      border-radius: 15px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.44);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .element-btn.active {
+      color: #fffaf0;
+      background: linear-gradient(135deg, var(--theme), var(--theme-deep));
+    }
+
+    .energy-orb {
+      position: relative;
+      display: grid;
+      width: 238px;
+      height: 238px;
+      margin: 6px auto 14px;
+      place-items: center;
+    }
+
+    .ring {
+      position: absolute;
+      border: 1px solid rgba(174,122,47,0.24);
+      border-radius: 50%;
+      animation: breathe 4.4s ease-in-out infinite;
+    }
+
+    .ring:nth-child(1) { inset: 8px; }
+    .ring:nth-child(2) { inset: 34px; animation-delay: -0.9s; }
+    .ring:nth-child(3) { inset: 64px; animation-delay: -1.6s; }
+
+    @keyframes breathe {
+      50% { transform: scale(1.045); border-color: rgba(174,122,47,0.52); }
+    }
+
+    .orb-core {
+      position: relative;
+      display: grid;
+      width: 94px;
+      height: 94px;
+      place-items: center;
+      border-radius: 50%;
+      color: #4b2f11;
+      background: radial-gradient(circle, #fff9dc, var(--gold-soft) 68%, rgba(255,255,255,0.4));
+      box-shadow: 0 0 54px color-mix(in srgb, var(--theme) 42%, transparent);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 24px;
+    }
+
+    .wish-input {
+      width: 100%;
+      min-height: 46px;
+      padding: 0 14px;
+      border: 1px solid rgba(174,122,47,0.32);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.62);
+      outline: none;
+    }
+
+    .wish-input:focus {
+      border-color: var(--theme);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--theme) 16%, transparent);
+    }
+
+    .diagnosis-card {
+      padding: 14px;
+      margin-bottom: 11px;
+    }
+
+    .diagnosis-card h3 {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 8px;
+      color: var(--theme-deep);
+      font-size: 17px;
+    }
+
+    .diagnosis-card h3 span {
+      color: var(--gold);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .diagnosis-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .spectrum {
+      padding: 16px;
+    }
+
+    .point {
+      position: absolute;
+      width: 66px;
+      color: var(--ink);
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .point b {
+      display: block;
+      color: var(--theme-deep);
+      font-size: 12px;
+    }
+
+    .p1 { top: 4px; left: 86px; }
+    .p2 { top: 82px; right: -12px; }
+    .p3 { bottom: 8px; right: 32px; }
+    .p4 { bottom: 8px; left: 32px; }
+    .p5 { top: 82px; left: -12px; }
+
+    .summary {
+      padding: 13px;
+      border: 1px solid rgba(174,122,47,0.18);
+      border-radius: 15px;
+      background: rgba(255,255,255,0.42);
+      color: var(--ink);
+      font-size: 14px;
+    }
+
+    .plan-hero {
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+
+    .plan-hero h3 {
+      margin: 0 0 8px;
+      color: var(--theme-deep);
+      font-size: 18px;
+    }
+
+    .plan-hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .path-list {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .path-card {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 13px;
+      border: 1px solid rgba(174,122,47,0.18);
+      border-radius: 16px;
+      background: rgba(255,255,255,0.42);
+    }
+
+    .path-step {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 50%;
+      color: #fffaf0;
+      background: linear-gradient(135deg, var(--theme), var(--theme-deep));
+      font-weight: 800;
+    }
+
+    .path-card h3 {
+      margin: 0 0 4px;
+      color: var(--theme-deep);
+      font-size: 16px;
+    }
+
+    .path-card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .mini-tool {
+      padding: 6px 9px;
+      border: 1px solid rgba(174,122,47,0.22);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.46);
+      font-size: 12px;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin: 4px 0 8px;
+    }
+
+    .category-tab {
+      flex: 0 0 auto;
+      min-height: 34px;
+      padding: 0 12px;
+      border: 1px solid rgba(174,122,47,0.28);
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255,255,255,0.42);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .category-tab.active {
+      color: #fffaf0;
+      background: linear-gradient(135deg, var(--theme), var(--theme-deep));
+    }
+
+    .tool-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .tool-card {
+      min-height: 142px;
+      padding: 12px;
+      border: 1px solid rgba(174,122,47,0.22);
+      border-radius: 17px;
+      background:
+        radial-gradient(circle at 78% 18%, color-mix(in srgb, var(--theme) 16%, transparent), transparent 38%),
+        rgba(255,255,255,0.48);
+    }
+
+    .tool-icon {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      place-items: center;
+      margin-bottom: 8px;
+      border-radius: 50%;
+      color: #fffaf0;
+      background: linear-gradient(135deg, var(--theme), var(--theme-deep));
+      font-size: 15px;
+    }
+
+    .tool-card h3 {
+      margin: 0 0 5px;
+      color: var(--theme-deep);
+      font-size: 15px;
+    }
+
+    .tool-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (min-width: 760px) {
+      body {
+        display: grid;
+        place-items: center;
+        padding: 20px;
+      }
+
+      .phone {
+        min-height: min(900px, calc(100vh - 40px));
+        max-height: min(900px, calc(100vh - 40px));
+        overflow-y: auto;
+        border-radius: 34px;
+        box-shadow: 0 30px 110px rgba(132,86,28,0.22);
+      }
+
+      .screen {
+        min-height: min(900px, calc(100vh - 40px));
+      }
+    }
+  </style>
+</head>
+<body class="element-water">
+  <div class="ambient" aria-hidden="true"></div>
+  <div class="element-field" aria-hidden="true"></div>
+
+  <main class="phone">
+    <section class="screen active" data-screen="entry">
+      <div class="top">
+        <span class="kicker">GREEN ME 问询已完成</span>
+        <button class="pill" type="button" id="soundBtn">环境音</button>
+      </div>
+
+      <div class="stage">
+        <div class="stage-content">
+          <h1 class="mbti" id="mbtiText">INFP</h1>
+          <p class="sub" id="mbtiSub">外交家 NF · 直觉 × 情感</p>
+          <p class="opening typing" id="entryLine"></p>
+        </div>
+      </div>
+
+      <div class="panel glass lift">
+        <h2 class="panel-title">进入你的身心空间</h2>
+        <div class="field-grid">
+          <div class="field"><strong>压力模式</strong><span id="pressureModeText">向内消化 / 反复思考 / 害怕失控</span></div>
+          <div class="field"><strong>今日提醒</strong><span id="todayReminderText">减少自我评判</span></div>
+          <div class="field"><strong>适合行动</strong><span id="actionText">把一个大问题拆成一个小动作</span></div>
+        </div>
+      </div>
+
+      <button class="primary" type="button" data-go="empathy">进入我的画像</button>
+    </section>
+
+    <section class="screen" data-screen="empathy">
+      <div class="top">
+        <button class="round" type="button" data-go="entry">‹</button>
+        <span class="kicker">01 被看见</span>
+        <button class="pill" type="button" data-go="energy">能量</button>
+      </div>
+
+      <h2 class="title">你不是脆弱</h2>
+      <p class="copy">而是心里有一片很柔软、很需要被理解的地方。</p>
+
+      <div class="panel glass">
+        <h2 class="panel-title">当前状态关键词</h2>
+        <div class="tags" id="slowTags"></div>
+      </div>
+
+      <div class="panel glass" style="margin-top:12px;">
+        <h2 class="panel-title">选择进入能量磁场</h2>
+        <p class="copy">低压交互：用你今天最靠近的元素，进入玄学/能量维度画像。</p>
+        <div class="element-grid">
+          <button class="element-btn" type="button" data-element="metal">金<br>星点</button>
+          <button class="element-btn" type="button" data-element="wood">木<br>房间</button>
+          <button class="element-btn active" type="button" data-element="water">水<br>波纹</button>
+          <button class="element-btn" type="button" data-element="fire">火<br>火光</button>
+          <button class="element-btn" type="button" data-element="earth">土<br>植物</button>
+        </div>
+        <button class="secondary" type="button" data-go="energy">让能量显现</button>
+      </div>
+    </section>
+
+    <section class="screen" data-screen="energy">
+      <div class="top">
+        <button class="round" type="button" data-go="empathy">‹</button>
+        <span class="kicker">02 能量画像</span>
+        <button class="pill" type="button" data-go="mind">心灵</button>
+      </div>
+
+      <h2 class="title">今日能量流向</h2>
+      <p class="copy" id="energyIntro">今天你的能量像一场没有下出来的雨。情绪已经很满，但还没有找到一个安全的出口。</p>
+
+      <div class="spectrum glass">
+        <div class="energy-orb">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="orb-core" id="elementCore">水</div>
+        </div>
+        <div class="field-grid">
+          <div class="field"><strong>今日能量</strong><span id="energyFlowText">水象偏强，土象不足</span></div>
+          <div class="field"><strong>状态隐喻</strong><span id="energyMetaphorText">想得多，落地少</span></div>
+          <div class="field"><strong>今日仪式</strong><span id="ritualText">热饮 + 暖光 + 写下一个愿望</span></div>
+        </div>
+      </div>
+
+      <div class="panel glass" style="margin-top:12px;">
+        <h2 class="panel-title" id="wishTitle">写下今天的愿望</h2>
+        <input class="wish-input" id="wishInput" placeholder="例如：我希望今晚能安心睡一觉">
+      </div>
+
+      <button class="primary" type="button" data-go="mind">带着愿望继续</button>
+    </section>
+
+    <section class="screen" data-screen="mind">
+      <div class="top">
+        <button class="round" type="button" data-go="energy">‹</button>
+        <span class="kicker">03 心灵画像</span>
+        <button class="pill" type="button" data-go="body">身体</button>
+      </div>
+
+      <h2 class="title" id="mindValueTitle">心理状态描述</h2>
+      <p class="copy" id="wishText">我希望今晚能安心睡一觉</p>
+
+      <article class="diagnosis-card glass">
+        <h3>心理状态 <span>被共情</span></h3>
+        <p id="mindDescription">但是你今天的情绪系统处在轻度过载状态。你不是没有方向，而是同时接收了太多期待、任务和不确定性。此刻最需要的不是马上变好，而是先把情绪命名出来。</p>
+      </article>
+
+      <article class="diagnosis-card glass">
+        <h3>情绪判断 <span>心灵</span></h3>
+        <div class="field-grid">
+          <div class="field"><strong>情绪状态</strong><span id="emotionStateText">轻度过载</span></div>
+          <div class="field"><strong>情绪指数</strong><span id="emotionIndexText">52 / 100，中性偏消耗</span></div>
+          <div class="field"><strong>核心情绪</strong><span id="coreEmotionText">焦虑、疲惫、委屈</span></div>
+          <div class="field"><strong>今日提醒</strong><span id="mindReminderText">先命名情绪，再处理问题</span></div>
+        </div>
+      </article>
+
+      <article class="diagnosis-card glass">
+        <h3>长期影响与调整方向 <span>建议</span></h3>
+        <p id="emotionRiskText">如果长期保持这种情绪消耗，可能影响睡眠、消化和行动节律。建议先稳定身体，再用低门槛行动恢复掌控感。</p>
+      </article>
+
+      <button class="primary" type="button" data-go="body">继续看身体信号</button>
+    </section>
+
+    <section class="screen" data-screen="body">
+      <div class="top">
+        <button class="round" type="button" data-go="mind">‹</button>
+        <span class="kicker">04 身体画像</span>
+        <button class="pill" type="button" data-go="spectrum">光谱</button>
+      </div>
+
+      <h2 class="title">你的身体信号</h2>
+      <p class="copy">把身体感受正常化，不把它说成问题，而是一次温柔提醒。</p>
+
+      <article class="diagnosis-card glass">
+        <h3>身体反馈 <span>被接住</span></h3>
+        <p id="bodyDescription">睡眠浅、胃口弱、肩颈紧，可能都是身体在提醒你：最近恢复不足。你的身体不是在拖后腿，它是在帮你发出暂停信号。</p>
+      </article>
+
+      <article class="diagnosis-card glass">
+        <h3>页面字段 <span>身体</span></h3>
+        <div class="field-grid">
+          <div class="field"><strong>身体信号</strong><span id="bodySignalText">睡眠浅 / 胃口弱 / 肩颈紧</span></div>
+          <div class="field"><strong>调养方向</strong><span id="bodyCareText">放松神经 / 温和养胃 / 规律作息</span></div>
+        </div>
+      </article>
+
+      <button class="primary" type="button" data-go="spectrum">生成今日能量光谱</button>
+    </section>
+
+    <section class="screen" data-screen="spectrum">
+      <div class="top">
+        <button class="round" type="button" data-go="body">‹</button>
+        <span class="kicker">05 能量可视化</span>
+        <button class="pill" type="button" data-go="entry">重看</button>
+      </div>
+
+      <h2 class="title">今日能量光谱</h2>
+      <p class="copy">这不是给你打分，而是帮你看见今天最需要被照顾的位置。</p>
+
+      <div class="spectrum glass">
+        <div class="energy-orb">
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="ring"></div>
+          <div class="point p1"><b id="scoreEmotion">42%</b>情绪稳定</div>
+          <div class="point p2"><b id="scoreStress">78%</b>压力负荷</div>
+          <div class="point p3"><b id="scoreAction">46%</b>行动力</div>
+          <div class="point p4"><b id="scoreSocial">35%</b>社交电量</div>
+          <div class="point p5"><b id="scoreBody">38%</b>身体恢复</div>
+          <div class="orb-core" id="spectrumCore">INFP</div>
+        </div>
+        <div class="summary" id="spectrumSummary">身体恢复力偏低，适合先修复，而不是继续透支。</div>
+      </div>
+
+      <button class="primary" type="button" data-go="healing">查看疗愈计划</button>
+    </section>
+
+    <section class="screen" data-screen="healing">
+      <div class="top">
+        <button class="round" type="button" data-go="spectrum">‹</button>
+        <span class="kicker">06 疗愈计划</span>
+        <button class="pill" type="button" data-go="entry">重看</button>
+      </div>
+
+      <h2 class="title">你的疗愈方向</h2>
+      <p class="copy">根据当前 ENFP 问询结果，你最需要先解决身体恢复和情绪稳定，再慢慢恢复行动节奏。</p>
+
+      <div class="plan-hero glass">
+        <h3>先收束能量，再小步行动</h3>
+        <p>你不是缺少动力，而是能量太分散、身体恢复偏低。今天不适合继续燃烧自己，适合先让身体安静下来，再选择一个真正有感觉的小行动。</p>
+      </div>
+
+      <div class="path-list">
+        <article class="path-card">
+          <span class="path-step">日</span>
+          <div>
+            <h3>今日修复计划</h3>
+            <p>目标：先稳住身体和情绪，不追求高效。</p>
+            <div class="mini-tools">
+              <span class="mini-tool">正念呼吸 3 分钟</span>
+              <span class="mini-tool">穴位按揉</span>
+              <span class="mini-tool">疗愈音乐</span>
+              <span class="mini-tool">写下小小新开始</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="path-card">
+          <span class="path-step">周</span>
+          <div>
+            <h3>7 天能量回收</h3>
+            <p>目标：减少情绪外放后的消耗，建立稳定节奏。</p>
+            <div class="mini-tools">
+              <span class="mini-tool">药食同源</span>
+              <span class="mini-tool">身体扫描</span>
+              <span class="mini-tool">道家放下</span>
+              <span class="mini-tool">番茄钟 25 分钟</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="path-card">
+          <span class="path-step">月</span>
+          <div>
+            <h3>30 天行动节律</h3>
+            <p>目标：把热情从“散开”变成“可持续地生长”。</p>
+            <div class="mini-tools">
+              <span class="mini-tool">节气养生</span>
+              <span class="mini-tool">儒家自省</span>
+              <span class="mini-tool">情绪绘画</span>
+              <span class="mini-tool">每周一个小目标</span>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <h2 class="title" style="font-size:26px;">心愈广场推荐</h2>
+      <p class="copy">按你的状态，推荐中医、哲学、冥想与艺术工具。先从一个小练习开始。</p>
+
+      <div class="category-tabs" aria-label="心愈广场分类">
+        <button class="category-tab active" type="button">推荐</button>
+        <button class="category-tab" type="button">中医</button>
+        <button class="category-tab" type="button">哲学</button>
+        <button class="category-tab" type="button">冥想</button>
+        <button class="category-tab" type="button">艺术</button>
+      </div>
+
+      <div class="tool-grid">
+        <article class="tool-card">
+          <span class="tool-icon">穴</span>
+          <h3>穴位按揉</h3>
+          <p>按揉常用穴位，缓解肩颈紧和胸口闷。</p>
+        </article>
+        <article class="tool-card">
+          <span class="tool-icon">食</span>
+          <h3>药食同源</h3>
+          <p>用日常食材和茶饮，做温和调养。</p>
+        </article>
+        <article class="tool-card">
+          <span class="tool-icon">道</span>
+          <h3>道家放下</h3>
+          <p>用“今天到此为止”，松动过度控制。</p>
+        </article>
+        <article class="tool-card">
+          <span class="tool-icon">息</span>
+          <h3>正念呼吸</h3>
+          <p>跟随节律呼吸，让身体先稳下来。</p>
+        </article>
+        <article class="tool-card">
+          <span class="tool-icon">音</span>
+          <h3>疗愈音乐</h3>
+          <p>低刺激自然声与古琴底音，让大脑慢慢安静下来。</p>
+        </article>
+        <article class="tool-card">
+          <span class="tool-icon">画</span>
+          <h3>情绪绘画</h3>
+          <p>用颜色和线条表达感受，不要求画得好。</p>
+        </article>
+      </div>
+
+      <button class="primary" type="button">开始今日修复</button>
+    </section>
+  </main>
+
+  <script>
+    const mockGreenMeResult = {
+      source: "Green Me Skill 模拟问询",
+      userProfile: {
+        mbti: "ENFP",
+        group: "外交家 NF",
+        cognitivePair: "直觉 × 情感",
+        description: "用户最近想法很多，工作和关系里同时接住了太多期待。白天很容易被新的可能性点燃，但晚上会感到疲惫、注意力分散，身体也有睡眠浅和肩颈紧的反馈。"
+      },
+      stateTags: ["热情消耗", "想法很多", "情绪波动", "渴望连接", "注意力分散", "容易自责", "需要自由", "需要被回应"],
+      mbtiInsight: {
+        opening: "你的 ENFP 性格倾向让你很容易被新的可能性点亮，也很容易同时接住太多情绪、关系和想法。你不是三分钟热度，也不是不够稳定，而是最近外放的能量消耗太多了。今天你需要的不是继续燃烧自己，而是找一个温柔的方式，把热情重新带回身体里。",
+        pressureMode: ["想法过多", "情绪外放", "容易被期待牵引"],
+        todayReminder: "先收回自己的能量",
+        action: "从一个让你真正有感觉的小行动开始"
+      },
+      energyInsight: {
+        element: "wood",
+        elementName: "木",
+        intro: "今天你的能量流向像一间有晨光照进来的房间。你还有很多想生长、想尝试的部分，但不适合被太多任务催着向前。",
+        flow: "木象偏强，土象不足",
+        metaphor: "想生长，但缺少落地节奏",
+        ritual: "打开窗户 + 伸展身体 + 写下一个小小的新开始"
+      },
+      mindInsight: {
+        state: "轻度过载",
+        emotionCategory: "中性偏消耗，伴随消极情绪升高",
+        emotionIndex: 52,
+        coreEmotions: ["兴奋后的疲惫", "焦虑", "自责"],
+        reminder: "先收束能量，再选择行动",
+        possibleRisk: "如果长期维持这种“兴奋-消耗-自责”的循环，可能会让睡眠质量下降、注意力更分散，也更容易在关系和任务之间反复内耗。",
+        adjustmentDirection: "最适合的调整方向是先降低刺激、恢复身体，再用一个小而有感的行动承接热情，而不是继续同时打开太多可能性。",
+        description: "但是你今天的情绪系统处在轻度过载状态。你不是没有方向，而是同时被太多可能性、关系期待和未完成事项拉扯。此刻最需要的不是马上做出完美选择，而是先把能量收回来，再选择一个真正让你有感觉的小行动。"
+      },
+      bodyInsight: {
+        signals: ["睡眠浅", "肩颈紧", "精力忽高忽低"],
+        careDirection: ["降低刺激", "稳定作息", "轻运动"],
+        description: "睡眠浅、肩颈紧、精力忽高忽低，可能都是身体在提醒你：外放能量已经消耗太多。你不是没有活力，而是需要先把能量收回来，再重新出发。"
+      },
+      scores: {
+        emotionStability: 48,
+        stressLoad: 72,
+        actionPower: 68,
+        socialBattery: 55,
+        bodyRecovery: 42
+      },
+      summary: "你的行动力和连接欲还在，但身体恢复力偏低。今天适合先收束能量，再选择一个真正让你有感的小行动。"
+    };
+
+    const elementProfiles = {
+      metal: {
+        elementName: "金",
+        mysticMeaning: "金象能量代表秩序、边界和清晰感",
+        intro: "今天你的能量流向像夜空里一串清亮的星点。你很想把事情理清楚，但也容易因为标准太高而变得紧绷。",
+        flow: "金象偏强，木象不足",
+        metaphor: "想要秩序，但弹性不足",
+        ritual: "整理桌面 + 深呼吸 + 写下一个可放过自己的标准",
+        inputTitle: "写下一个可放过自己的标准",
+        mindTitle: "你放过自己的标准是",
+        analysisLabel: "你想放过自己的标准",
+        inputPlaceholder: "例如：今天我允许自己不把每件事做到满分",
+        defaultInput: "今天我允许自己不把每件事做到满分"
+      },
+      wood: {
+        elementName: "木",
+        mysticMeaning: "木象能量代表生长、探索和重新开始",
+        intro: "今天你的能量流向像一间有晨光照进来的房间。你还有很多想生长、想尝试的部分，但不适合被太多任务催着向前。",
+        flow: "木象偏强，土象不足",
+        metaphor: "想生长，但缺少落地节奏",
+        ritual: "打开窗户 + 伸展身体 + 写下一个小小的新开始",
+        inputTitle: "写下一个小小的新开始",
+        mindTitle: "你的小小新开始是",
+        analysisLabel: "你的小小新开始",
+        inputPlaceholder: "例如：今天我先整理书桌的一角",
+        defaultInput: "今天我先整理书桌的一角"
+      },
+      water: {
+        elementName: "水",
+        mysticMeaning: "水象能量代表情绪流动、直觉和安全出口",
+        intro: "今天你的能量流向像一场没有下出来的雨。情绪已经很满，但还没有找到一个安全的出口。",
+        flow: "水象偏强，土象不足",
+        metaphor: "想得多，落地少",
+        ritual: "热饮 + 暖光 + 写下一个愿望",
+        inputTitle: "写下今天的愿望",
+        mindTitle: "你的心愿是",
+        analysisLabel: "你的心愿",
+        inputPlaceholder: "例如：我希望今晚能安心睡一觉",
+        defaultInput: "我希望今晚能安心睡一觉"
+      },
+      fire: {
+        elementName: "火",
+        mysticMeaning: "火象能量代表表达、释放和重新点燃生命力",
+        intro: "今天你的能量流向像一簇被风吹动的小火光。内在有很多想表达、想行动的冲动，但也需要一个温柔的边界来承接。",
+        flow: "火象偏强，水象不足",
+        metaphor: "情绪升温，安定感不足",
+        ritual: "调暗灯光 + 慢呼吸 + 写下此刻最想释放的一句话",
+        inputTitle: "写下此刻最想释放的一句话",
+        mindTitle: "你想释放的是",
+        analysisLabel: "你想释放的这句话",
+        inputPlaceholder: "例如：我想把今天憋住的情绪慢慢放下来",
+        defaultInput: "我想把今天憋住的情绪慢慢放下来"
+      },
+      earth: {
+        elementName: "土",
+        mysticMeaning: "土象能量代表稳定、承托和把自己重新放回现实",
+        intro: "今天你的能量流向像一株正在慢慢扎根的植物。你需要的不是立刻变好，而是先让身体和生活重新稳定下来。",
+        flow: "土象偏弱，需要补充稳定感",
+        metaphor: "需要扎根，不宜透支",
+        ritual: "热食 + 早睡计划 + 写下一个能完成的小行动",
+        inputTitle: "写下一个能完成的小行动",
+        mindTitle: "你的小行动是",
+        analysisLabel: "你选择的小行动",
+        inputPlaceholder: "例如：今晚 23:30 前上床，不再刷手机",
+        defaultInput: "今晚 23:30 前上床，不再刷手机"
+      }
+    };
+
+    const entryCopy = mockGreenMeResult.mbtiInsight.opening;
+    const tags = mockGreenMeResult.stateTags;
+    const entryLine = document.getElementById("entryLine");
+    const slowTags = document.getElementById("slowTags");
+    const wishInput = document.getElementById("wishInput");
+    const wishText = document.getElementById("wishText");
+    let timer;
+    let audioCtx;
+    let osc;
+    let selectedElement = mockGreenMeResult.energyInsight.element;
+
+    function buildMindAnalysis(wish) {
+      const element = elementProfiles[selectedElement];
+      const profile = mockGreenMeResult.userProfile;
+      const mind = mockGreenMeResult.mindInsight;
+      const body = mockGreenMeResult.bodyInsight;
+      const algorithm = getEmotionAlgorithm(mockGreenMeResult);
+      const elementNeed = {
+        metal: "你潜意识里可能在寻找一种“可控的秩序感”：希望事情变清楚，也希望自己不用再被高标准追着走。",
+        wood: "你潜意识里可能在寻找一种“重新生长的许可”：不是马上改变人生，而是先从一个很小、很具体的新开始里找回生命力。",
+        water: "你潜意识里可能在寻找一种“安全的情绪出口”：不是压住感受，而是让那些说不清的委屈、疲惫和担心慢慢流出来。",
+        fire: "你潜意识里可能在寻找一种“被允许表达的空间”：那些被忍住的话、被压下的冲动，需要用更温和的方式释放出来。",
+        earth: "你潜意识里可能在寻找一种“稳定的承托感”：先让身体和生活落地，再去处理那些更复杂的情绪和任务。"
+      };
+
+      return `${element.analysisLabel}是“${wish}”。结合 Green Me 问询里你提到的“${profile.description}”，以及你刚刚选择的${element.mysticMeaning}，可以看到你今天的心理系统处在${mind.state}状态，情绪指数约为 ${algorithm.index}/100，属于${mind.emotionCategory}。作为 ${profile.mbti}，你很容易被新的可能性点亮，也会把关系期待、未完成事项和自我要求同时放进心里。${elementNeed[selectedElement]} 身体也通过${body.signals.join("、")}提醒你需要暂停。若长期保持这种状态，${mind.possibleRisk} 今天最好的行动计划不是继续加速，而是先做 3 分钟正念呼吸，再完成一个和“${wish}”有关的低门槛动作。`;
+    }
+
+    function getEmotionAlgorithm(data) {
+      const positive = data.scores.actionPower * 0.25 + data.scores.socialBattery * 0.15;
+      const negative = data.scores.stressLoad * 0.3 + (100 - data.scores.bodyRecovery) * 0.2;
+      const neutral = data.scores.emotionStability * 0.3;
+      const index = Math.round(Math.max(0, Math.min(100, 50 + positive + neutral - negative)));
+      return {
+        index,
+        text: `算法标准：积极情绪参考行动力与社交电量，能提升创造力和问题解决能力；消极情绪参考压力负荷与身体恢复缺口，适度是预警，长期可能影响睡眠、消化和心理健康；中性情绪参考情绪稳定度，有助于客观，但长期淡漠需要留意。当前估算：积极支撑 ${Math.round(positive)}，消耗压力 ${Math.round(negative)}，稳定基线 ${Math.round(neutral)}，综合情绪指数 ${index}/100。`
+      };
+    }
+
+    function renderFromDiagnosis(data) {
+      document.body.className = `element-${data.energyInsight.element}`;
+      document.getElementById("mbtiText").textContent = data.userProfile.mbti;
+      document.getElementById("mbtiSub").textContent = `${data.userProfile.group} · ${data.userProfile.cognitivePair}`;
+      document.getElementById("pressureModeText").textContent = data.mbtiInsight.pressureMode.join(" / ");
+      document.getElementById("todayReminderText").textContent = data.mbtiInsight.todayReminder;
+      document.getElementById("actionText").textContent = data.mbtiInsight.action;
+      document.getElementById("energyIntro").textContent = data.energyInsight.intro;
+      document.getElementById("elementCore").textContent = data.energyInsight.elementName;
+      document.getElementById("energyFlowText").textContent = data.energyInsight.flow;
+      document.getElementById("energyMetaphorText").textContent = data.energyInsight.metaphor;
+      document.getElementById("ritualText").textContent = data.energyInsight.ritual;
+      document.getElementById("mindDescription").textContent = data.mindInsight.description;
+      document.getElementById("emotionStateText").textContent = data.mindInsight.state;
+      const algorithm = getEmotionAlgorithm(data);
+      document.getElementById("emotionIndexText").textContent = `${algorithm.index} / 100，${data.mindInsight.emotionCategory}`;
+      document.getElementById("coreEmotionText").textContent = data.mindInsight.coreEmotions.join("、");
+      document.getElementById("mindReminderText").textContent = data.mindInsight.reminder;
+      document.getElementById("emotionRiskText").textContent = `${data.mindInsight.possibleRisk} ${data.mindInsight.adjustmentDirection}`;
+      document.getElementById("bodyDescription").textContent = data.bodyInsight.description;
+      document.getElementById("bodySignalText").textContent = data.bodyInsight.signals.join(" / ");
+      document.getElementById("bodyCareText").textContent = data.bodyInsight.careDirection.join(" / ");
+      document.getElementById("scoreEmotion").textContent = `${data.scores.emotionStability}%`;
+      document.getElementById("scoreStress").textContent = `${data.scores.stressLoad}%`;
+      document.getElementById("scoreAction").textContent = `${data.scores.actionPower}%`;
+      document.getElementById("scoreSocial").textContent = `${data.scores.socialBattery}%`;
+      document.getElementById("scoreBody").textContent = `${data.scores.bodyRecovery}%`;
+      document.getElementById("spectrumCore").textContent = data.userProfile.mbti;
+      document.getElementById("spectrumSummary").textContent = data.summary;
+      document.querySelectorAll(".element-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.element === data.energyInsight.element);
+      });
+      setElement(data.energyInsight.element);
+    }
+
+    function typeText(text) {
+      clearInterval(timer);
+      entryLine.textContent = "";
+      let i = 0;
+      timer = setInterval(() => {
+        entryLine.textContent = text.slice(0, i);
+        i += 1;
+        if (i > text.length) clearInterval(timer);
+      }, 28);
+    }
+
+    function revealTags() {
+      slowTags.innerHTML = "";
+      tags.forEach((tag, index) => {
+        setTimeout(() => {
+          const node = document.createElement("span");
+          node.className = "tag";
+          node.textContent = tag;
+          slowTags.appendChild(node);
+        }, index * 180);
+      });
+    }
+
+    function go(screenName) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.toggle("active", screen.dataset.screen === screenName);
+      });
+      document.querySelector(".phone").scrollTop = 0;
+      if (screenName === "entry") typeText(entryCopy);
+      if (screenName === "empathy") revealTags();
+      if (screenName === "mind") {
+        const wish = wishInput.value.trim() || elementProfiles[selectedElement].defaultInput;
+        document.getElementById("mindValueTitle").textContent = elementProfiles[selectedElement].mindTitle;
+        wishText.textContent = wish;
+        document.getElementById("mindDescription").textContent = buildMindAnalysis(wish);
+      }
+    }
+
+    function setElement(element) {
+      selectedElement = element;
+      document.body.className = `element-${element}`;
+      document.querySelectorAll(".element-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.element === element);
+      });
+      const profile = elementProfiles[element];
+      document.getElementById("energyIntro").textContent = profile.intro;
+      document.getElementById("elementCore").textContent = profile.elementName;
+      document.getElementById("energyFlowText").textContent = profile.flow;
+      document.getElementById("energyMetaphorText").textContent = profile.metaphor;
+      document.getElementById("ritualText").textContent = profile.ritual;
+      document.getElementById("wishTitle").textContent = profile.inputTitle;
+      document.getElementById("wishInput").placeholder = profile.inputPlaceholder;
+    }
+
+    document.querySelectorAll("[data-go]").forEach(button => {
+      button.addEventListener("click", () => go(button.dataset.go));
+    });
+
+    document.querySelectorAll(".element-btn").forEach(button => {
+      button.addEventListener("click", () => setElement(button.dataset.element));
+    });
+
+    document.getElementById("soundBtn").addEventListener("click", () => {
+      if (osc) {
+        osc.stop();
+        osc = null;
+        return;
+      }
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.04;
+      gain.connect(audioCtx.destination);
+      osc = audioCtx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.value = 174;
+      osc.connect(gain);
+      osc.start();
+    });
+
+    renderFromDiagnosis(mockGreenMeResult);
+    typeText(entryCopy);
+  </script>
+</body>
+</html>
