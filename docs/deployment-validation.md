@@ -62,6 +62,15 @@ curl http://127.0.0.1:8787/api/llm-smoke \
   -d '{"prompt":"请只输出 JSON：{\"ok\":true,\"message\":\"worker llm smoke passed\"}"}'
 ```
 
+Repeatable remote smoke check:
+
+```bash
+APP_ACCESS_TOKEN=<test-access-token> node scripts/verify_worker_smoke.mjs
+APP_ACCESS_TOKEN=<test-access-token> node scripts/verify_worker_smoke.mjs --with-ai --audio /path/to/voice.m4a
+```
+
+If the shell uses proxy environment variables and Node fetch cannot connect, prefix the command with `NODE_USE_ENV_PROXY=1`.
+
 ## Remote Note
 
 Remote deploy needs:
