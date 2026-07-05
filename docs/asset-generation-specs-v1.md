@@ -1,90 +1,90 @@
-# Asset Generation Specs V1
+# AI 生图素材制作单 V1
 
-## Purpose
+## 用途
 
-This document turns the v2 Phaser spike into concrete AI image-generation requests. It is written for the art / AI asset track, not for final product copy.
+这份文档把 v2 Phaser 原型拆成可以直接交给 AI 生图 / 美术同学执行的素材需求。它不是产品文案，而是素材生产单。
 
-The current playable prototype is:
+当前可玩原型：
 
 ```text
 demo-phaser-iso/index.html
-design viewport: 390x844
-render backing: 1560x3376
-world scale target: small / pulled-back isometric
-interaction grammar: tap target -> protagonist moves -> arrival feedback -> state/reveal
+设计视口：390x844
+渲染 backing：1560x3376
+世界尺度：小世界 / 拉远等距视角
+交互语法：点击目标 -> 主角移动 -> 到达反馈 -> 状态/内容揭示
 ```
 
-The goal is to get closer to the small, delicate, illustrated feeling of the Love Lights reference while keeping the assets original to this project. Do not prompt "copy Love Lights style". Use these concrete traits instead:
+目标是接近 Love Lights 参考里的“小、精细、插画化、内心世界”质感，但不要提示“照抄 Love Lights”。提示词里使用这些具体特征：
 
-- small isometric world
-- pulled-back camera
-- clean vector-like illustration
-- soft hand-painted detail
-- readable silhouettes at mobile size
-- quiet inner-world mood
-- modular transparent sprites for interactive objects
+- 小型等距世界
+- 拉远镜头
+- 干净的矢量插画感
+- 柔和手绘质感
+- 手机小尺寸下轮廓清楚
+- 安静的内心世界氛围
+- 交互对象必须是可拆分透明素材
 
-## Global Art Contract
+## 全局风格约束
 
-Use this shared contract for every generated asset in this batch.
+每个素材都遵守这套通用约束。
 
 ```yaml
 global_style:
-  projection: isometric, pulled-back, small-world
-  camera: fixed three-quarter isometric, no perspective distortion
-  line_quality: clean vector-like edges, slightly organic, not pixel art
-  detail_level: delicate but readable when displayed at 24-180 px
-  lighting: soft upper-left key light, subtle warm rim light, no hard realism
-  material: illustrated paper / soft gouache / vector hybrid
+  projection: 等距 isometric，拉远，小世界
+  camera: 固定 3/4 等距视角，不要强透视
+  line_quality: 干净矢量边缘，略带手绘感，不要像素风
+  detail_level: 精细，但缩到 24-180 px 仍能看清
+  lighting: 左上方柔光，轻微暖边光，不要硬写实
+  material: 纸感插画 / 柔和 gouache / 矢量混合
   palette_base:
-    background: deep plum night, muted indigo, soft ink blue
-    warm: cream, peach, muted coral
-    cool: pale blue, mint green, soft lavender
-    accent: four dimension colors from the prototype
+    background: 深梅子夜色、低饱和靛蓝、柔墨蓝
+    warm: 奶油白、桃色、低饱和珊瑚
+    cool: 淡蓝、薄荷绿、柔薰衣草紫
+    accent: 沿用原型四维颜色
   text_inside_image: false
   forbidden:
-    - Chinese or English text
-    - UI chrome, buttons, cards, speech bubbles
-    - watermarks, logos, signatures
-    - medical symbols such as red crosses, hospital icons, syringes
-    - fortune-telling fatalism symbols that feel threatening
-    - oversized character close-ups
-    - cropped objects or dark unreadable silhouettes
+    - 中英文文字
+    - UI 外壳、按钮、卡片、气泡
+    - 水印、logo、签名
+    - 红十字、医院、针筒等医疗符号
+    - 威胁感强的宿命/算命符号
+    - 大头近景角色
+    - 裁切不完整或过暗读不清的物体
 ```
 
-## Output Rules
+## 输出规则
 
-- Use transparent PNG or WebP for interactive sprites.
-- Use full rectangular PNG/WebP only for background plates.
-- Leave safe padding around transparent sprites so glow and shadows are not clipped.
-- Generate at 3x-4x the display size, then downsample in the asset pipeline.
-- Do not bake labels into images. Phaser will render all text.
-- Keep all interaction hit areas in code; do not rely on transparent alpha.
+- 交互素材使用透明 PNG/WebP。
+- 背景板才使用完整矩形 PNG/WebP。
+- 透明素材要留安全边距，避免发光、阴影被裁掉。
+- 生成尺寸建议为展示尺寸的 3-4 倍，再在资产管线里降采样。
+- 图片里不要包含标签，所有文字由 Phaser 渲染。
+- 命中区留在代码里，不依赖图片透明区域判断交互。
 
-## Batch Priority
+## 第一批优先级
 
-| Priority | Asset group | Why first |
+| 优先级 | 素材组 | 为什么先做 |
 |---|---|---|
-| P0 | Protagonist orb / child / shadow | The through-line makes the demo feel like a game. |
-| P0 | MBTI landing gate and light effects | First 5 seconds establish the metaphor. |
-| P1 | Profile room plate and dimension orbs | This is the product proof: four-dimensional output. |
-| P1 | Wellness island base and four houses | This is the post-result action hub. |
-| P2 | Personality islands and sea plate | Important, but can reuse more shapes initially. |
-| P2 | Body / Ba Zi / psychology collection objects | Useful after the core loop feels polished. |
+| P0 | 主角光团 / 小人 / 影子 | 主角贯穿是游戏感核心。 |
+| P0 | MBTI 降世门 / 光效 | 前 5 秒决定用户是否进入世界。 |
+| P1 | 结果房间 / 四维宝石 | 四维画像是产品证明点。 |
+| P1 | 四屋岛 / 四间房子 | 结果后的行动入口。 |
+| P2 | 人格岛 / 海面 | 社交模块重要，但早期可复用形状。 |
+| P2 | 身体、八字、问答采集物件 | 核心循环精致后再替换。 |
 
-## P0: Protagonist
+## P0：主角素材
 
 ### `protagonist_orb`
 
 ```yaml
 asset_id: protagonist_orb
-scene: shared / MBTI light descent
-product_role: pre-birth controllable light that becomes the protagonist
+scene: shared / MBTI 光团降世
+product_role: 出生前可控光团，之后变成主角小人
 interactive: true
 asset_type: character_sprite
 camera:
   projection: isometric
-  angle: pulled-back small-world
+  angle: 拉远小世界
   target_display_size_px: 34x34
 output:
   file_format: png
@@ -92,30 +92,30 @@ output:
   transparent_background: true
   safe_padding_px: 48
 style:
-  mood: gentle arrival, curious, alive
-  palette: cream core, pale blue aura, very soft pink secondary aura
-  line_quality: clean glow edge, no jagged pixels
-  material_detail: layered translucent light, tiny inner spark
-  lighting: self-lit, soft halo, no harsh bloom
+  mood: 温柔降临、好奇、有生命感
+  palette: 奶油白核心、淡蓝光晕、非常轻的粉色副光晕
+  line_quality: 干净发光边缘，不要锯齿
+  material_detail: 半透明多层光、微小内核火花
+  lighting: 自发光、柔光晕，不要强镜头光斑
 content:
   required_objects:
-    - one small luminous orb
-    - subtle elliptical contact glow below it
-    - 2-4 tiny companion spark dots orbiting close to the orb
+    - 一个小型发光光团
+    - 下方轻微椭圆接触光
+    - 2-4 个靠近光团的小火花
   forbidden_objects:
-    - face, hands, wings, text, symbol, zodiac glyph
+    - 脸、手、翅膀、文字、符号、星座 glyph
   text_inside_image: false
 layers_needed:
-  - transparent sprite
+  - 透明单图
 animation_use: breathing / hover
-phaser_notes: Anchor at center. Display around 34 px wide before birth. Tween y by 3-5 px for idle.
-negative_prompt: text, logo, watermark, photorealistic lens flare, giant starburst, cropped glow
+phaser_notes: 锚点居中，出生前约 34 px 宽，idle 时 y 方向浮动 3-5 px。
+negative_prompt: 文字、logo、水印、写实镜头光斑、巨大星爆、裁切光晕
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric game character sprite: a luminous orb before it becomes a character. It will be displayed at about 34x34 px inside a 390x844 mobile Phaser scene. Camera is pulled back; the orb should feel tiny, delicate, and readable. Required: cream glowing core, pale blue soft aura, faint pink secondary aura, 2-4 tiny orbiting sparks, small contact glow below. Style is clean vector-like illustrated, soft gouache texture, original inner-world fantasy. Output transparent PNG, 256x256, safe padding, no text, no watermark, no UI, no face, no wings, no zodiac symbols.
+生成一个小型等距游戏角色素材：出生前的发光光团。它会在 390x844 的手机 Phaser 场景中以约 34x34 px 显示，所以必须小而清楚。需要奶油白发光核心、淡蓝柔光晕、很轻的粉色副光晕、2-4 个近距离环绕的小火花、下方小接触光。风格是干净矢量插画边缘 + 柔和手绘质感，原创内心世界幻想感。输出透明 PNG，256x256，留安全边距。不要文字、水印、UI、脸、翅膀、星座符号。
 ```
 
 ### `protagonist_child_idle`
@@ -123,12 +123,12 @@ Create a tiny isometric game character sprite: a luminous orb before it becomes 
 ```yaml
 asset_id: protagonist_child_idle
 scene: shared
-product_role: main character after the light descends
+product_role: 光团降世后的主角小人
 interactive: true
 asset_type: character_sprite
 camera:
   projection: isometric
-  angle: 3/4 front, tiny mobile game character
+  angle: 3/4 正面，小型手机游戏角色
   target_display_size_px: 34x52
 output:
   file_format: png
@@ -136,31 +136,29 @@ output:
   transparent_background: true
   safe_padding_px: 48
 style:
-  mood: gentle, curious, non-clinical, inner-world traveler
-  palette: deep plum hair/cloak, muted rose body, cream face, small blue-pink chest light
-  line_quality: simple readable silhouette, delicate edge highlights
-  material_detail: soft cloth, tiny glowing chest mark, no busy costume
-  lighting: upper-left soft light with subtle under-shadow
+  mood: 温柔、好奇、非临床、内心世界旅人
+  palette: 深梅子色头发/兜帽、低饱和玫瑰色衣服、奶油色脸、小型蓝粉胸口光
+  line_quality: 简单清楚的轮廓，精细边缘高光
+  material_detail: 柔软布料、胸口小光点，服装不要复杂
+  lighting: 左上柔光，脚下轻微阴影
 content:
   required_objects:
-    - small childlike protagonist
-    - rounded head and simple hair/hood silhouette
-    - compact body suitable for isometric walking
-    - one tiny chest glow that can inherit scene accent color later
+    - 小型孩童感主角
+    - 圆头和简单头发/兜帽轮廓
+    - 紧凑身体，适合等距行走
+    - 一个可后续随场景变色的胸口小光点
   forbidden_objects:
-    - realistic face, adult body proportions, weapons, medical outfit, text
+    - 写实五官、成人比例、武器、医生/护士服、文字
   text_inside_image: false
-layers_needed:
-  - transparent sprite
 animation_use: idle breathing
-phaser_notes: Anchor near feet center. Keep facial detail minimal; eyes can be two tiny dark dots only.
-negative_prompt: anime close-up, large eyes, detailed portrait, weapon, doctor, nurse, text, logo, watermark
+phaser_notes: 锚点放在脚底中心附近。五官极简，眼睛最多是两个小暗点。
+negative_prompt: 动漫大头、夸张大眼、肖像近景、武器、医生、护士、文字、logo、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric mobile game protagonist sprite after a light has become a small person. It will display at about 34x52 px inside a 390x844 Phaser scene, so the silhouette must be readable when very small. The character is gentle and curious, childlike but not childish, with deep plum hair or hood, muted rose clothing, cream face, and a tiny blue-pink glowing chest mark. Use clean vector-like illustrated edges with soft hand-painted texture. Output transparent PNG, 256x256, centered with feet near lower center, no text, no watermark, no UI, no weapons, no medical clothing, no oversized portrait face.
+生成一个小型等距手机游戏主角素材：光团变成的小人。它会在 390x844 的 Phaser 场景中以约 34x52 px 显示，所以轮廓必须非常清楚。角色温柔、好奇，有孩童感但不要幼稚；深梅子色头发或兜帽、低饱和玫瑰色衣服、奶油色脸、胸口有一个很小的蓝粉发光点。风格是干净矢量插画边缘 + 柔和手绘质感。输出透明 PNG，256x256，脚底靠近画面下方中心。不要文字、水印、UI、武器、医疗服装、夸张肖像脸。
 ```
 
 ### `protagonist_child_walk_sheet`
@@ -168,91 +166,87 @@ Create a tiny isometric mobile game protagonist sprite after a light has become 
 ```yaml
 asset_id: protagonist_child_walk_sheet
 scene: shared
-product_role: optional walk cycle for click-to-move
+product_role: 点击移动时使用的可选走路帧
 interactive: true
 asset_type: character_sprite
 camera:
   projection: isometric
-  angle: side-biased 3/4 walk, usable mirrored left/right
-  target_display_size_px: each frame 34x52
+  angle: 侧向偏 3/4 行走，可水平镜像
+  target_display_size_px: 每帧 34x52
 output:
   file_format: png
   canvas_px: 1024x256
   transparent_background: true
-  safe_padding_px: 32 per frame
+  safe_padding_px: 每帧 32
 style:
-  mood: quiet walking, soft bounce
-  palette: same as protagonist_child_idle
-  line_quality: consistent frame-to-frame silhouette
-  material_detail: minimal, no fluttering noise
-  lighting: consistent upper-left
+  mood: 安静行走，轻微弹跳
+  palette: 与 protagonist_child_idle 保持一致
+  line_quality: 每帧轮廓一致
+  material_detail: 极简，不要抖动噪声
+  lighting: 左上光源一致
 content:
   required_objects:
-    - 4 equally spaced frames in a horizontal sprite sheet
-    - same character proportions as idle
-    - clear foot contact shifts
-    - no background
+    - 横向 4 帧 sprite sheet
+    - 与 idle 同一角色比例
+    - 脚步接触变化清楚
+    - 无背景
   forbidden_objects:
-    - frame numbers, grid lines, text, shadows baked too wide
+    - 帧编号、网格线、文字、过宽内嵌阴影
   text_inside_image: false
-layers_needed:
-  - transparent sprite sheet
 animation_use: sprite_sheet
-phaser_notes: 4 frames, frame size 256x256. Phaser can mirror horizontally for left movement.
-negative_prompt: inconsistent character, different costume per frame, text, frame labels, cropped limbs
+phaser_notes: 4 帧，每帧 256x256。Phaser 可水平镜像用于向左移动。
+negative_prompt: 每帧角色不一致、服装变化、文字、帧标签、裁切肢体
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a 4-frame horizontal sprite sheet for the tiny isometric protagonist walking. Canvas 1024x256, transparent background, each frame exactly 256x256. The character matches the idle sprite: deep plum hair or hood, muted rose clothing, cream face, tiny blue-pink chest glow. Show a subtle walk cycle with readable foot contact changes, suitable to display each frame at about 34x52 px. Keep proportions consistent across frames. No background, no text, no frame labels, no grid lines, no watermark.
+生成一个 4 帧横向 sprite sheet，用于小型等距主角走路。画布 1024x256，透明背景，每帧严格 256x256。角色与 idle 版一致：深梅子色头发或兜帽、低饱和玫瑰色衣服、奶油色脸、胸口有很小的蓝粉光点。表现轻微走路循环，脚步接触变化要清楚，适合每帧缩到约 34x52 px。四帧比例必须一致。不要背景、文字、帧编号、网格线、水印。
 ```
 
-## P0: MBTI Light Descent
+## P0：MBTI 光团降世
 
 ### `mbti_sky_plate`
 
 ```yaml
 asset_id: mbti_sky_plate
 scene: MbtiLightDescentScene
-product_role: background plate for first arrival scene
+product_role: 第一次降临场景背景板
 interactive: false
 asset_type: background_plate
 camera:
-  projection: isometric world implied, not a flat space wallpaper
-  angle: pulled-back, vertical mobile composition
-  target_display_size_px: 390x390 playable upper-middle area
+  projection: 暗示等距世界，不要纯太空壁纸
+  angle: 拉远，竖向手机构图
+  target_display_size_px: 390x390 可玩上半区
 output:
   file_format: png
   canvas_px: 1560x1560
   transparent_background: false
   safe_padding_px: 0
 style:
-  mood: quiet night, inner-space, soft descent
-  palette: deep plum, ink blue, muted lavender, small cream stars
-  line_quality: soft illustrated plate, no hard grid
-  material_detail: subtle mist, faint constellation lines, tiny dust motes
-  lighting: central soft glow near landing area
+  mood: 安静夜色、内心宇宙、柔和降临
+  palette: 深梅子色、墨蓝、低饱和薰衣草紫、小奶油色星点
+  line_quality: 柔和插画背景，不要硬网格
+  material_detail: 淡雾、微弱星座线、小尘埃
+  lighting: 中央降落区有柔光
 content:
   required_objects:
-    - abstract inner-sky field
-    - faint constellation arcs
-    - empty central landing area reserved for gate sprite
-    - darker lower area so the protagonist can read clearly
+    - 抽象内心夜空
+    - 微弱星座弧线
+    - 中央预留 landing gate 的空位
+    - 下方稍暗，方便主角读清
   forbidden_objects:
-    - UI cards, text, planets with zodiac labels, realistic galaxy photo
+    - UI 卡片、文字、带星座名的星球、写实银河照片
   text_inside_image: false
-layers_needed:
-  - background
 animation_use: static / slow parallax
-phaser_notes: Place behind MBTI scene objects. Do not include gate or clickable lights.
-negative_prompt: photorealistic galaxy, text, UI, horoscope wheel, tarot, crowded stars, high contrast noise
+phaser_notes: 放在 MBTI 场景物件后面。不要把 gate 或可点击光团画进去。
+negative_prompt: 写实银河、文字、UI、星盘、塔罗、过密星点、高对比噪声
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a vertical square background plate for a tiny isometric inner-world MBTI light descent scene. It will sit in the upper-middle of a 390x844 mobile Phaser screen and be rendered from a 1560x1560 source. Mood is quiet night and inner-space, with deep plum, ink blue, muted lavender, faint constellation arcs, tiny cream dust motes, and a soft central landing glow. Leave the center readable and mostly empty for a separate landing gate sprite. No UI, no text, no zodiac labels, no tarot, no photorealistic galaxy. Output full rectangular PNG, 1560x1560.
+生成一个竖向方形背景板，用于小型等距内心世界的 MBTI 光团降世场景。它会放在 390x844 手机 Phaser 屏幕的上半区，源图 1560x1560。氛围是安静夜色和内心宇宙，深梅子色、墨蓝、低饱和薰衣草紫、微弱星座弧线、少量奶油色尘埃星点，中央留出可读的降落柔光区域。不要画 landing gate 或可点击光团。不要 UI、文字、星座标签、塔罗、写实银河。输出完整矩形 PNG，1560x1560。
 ```
 
 ### `landing_gate`
@@ -260,12 +254,12 @@ Create a vertical square background plate for a tiny isometric inner-world MBTI 
 ```yaml
 asset_id: landing_gate
 scene: MbtiLightDescentScene
-product_role: target where the light returns and becomes protagonist
+product_role: 光团回到这里并变成主角
 interactive: true
 asset_type: object_sprite
 camera:
   projection: isometric
-  angle: small platform, top visible
+  angle: 小平台，可见顶面
   target_display_size_px: 90x58
 output:
   file_format: png
@@ -273,45 +267,43 @@ output:
   transparent_background: true
   safe_padding_px: 64
 style:
-  mood: safe arrival, ceremonial but simple
-  palette: muted violet stone, pale blue inner glow, cream edge highlights
-  line_quality: clean thin outline, soft bevels
-  material_detail: stone / paper-cut platform, faint inset light
-  lighting: inner blue glow, upper-left key light
+  mood: 安全降落，有仪式感但简单
+  palette: 低饱和紫石、淡蓝内光、奶油色边缘高光
+  line_quality: 干净细描边、柔和倒角
+  material_detail: 石质 / 纸雕平台、轻微内嵌光
+  lighting: 内部蓝光 + 左上柔光
 content:
   required_objects:
-    - small isometric diamond platform
-    - subtle portal line or landing mark in the center
-    - no doors or large architecture
+    - 小型等距菱形平台
+    - 中央有轻微 portal 线或降落标记
+    - 不要巨大建筑或门洞
   forbidden_objects:
-    - text, runes, zodiac symbols, religious symbols, UI labels
+    - 文字、符文、星座符号、宗教符号、UI 标签
   text_inside_image: false
-layers_needed:
-  - transparent sprite
 animation_use: click_reveal / glow pulse
-phaser_notes: Hit area should be larger than visible sprite. Anchor center.
-negative_prompt: text, rune letters, horoscope signs, giant portal, stone arch, watermark
+phaser_notes: 命中区在代码里放大。锚点居中。
+negative_prompt: 文字、符文字母、星座符号、巨大传送门、石拱门、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a small isometric landing gate sprite for a mobile Phaser game. It is a tiny diamond-shaped platform where a light orb lands and becomes a character. Display size about 90x58 px. Required: muted violet stone or paper-cut platform, pale blue inner glow, cream edge highlights, simple central landing mark. It should feel safe and ceremonial but not religious or mystical-fatalistic. Output transparent PNG, 512x384, with safe padding. No text, no runes, no zodiac signs, no UI, no watermark.
+生成一个小型等距 landing gate 素材，用于手机 Phaser 游戏。它是光团降落并变成小人的菱形平台，显示尺寸约 90x58 px。需要低饱和紫色石质或纸雕平台、淡蓝内光、奶油色边缘高光、简单中央降落标记。感觉安全、有一点仪式感，但不要宗教感或宿命感。输出透明 PNG，512x384，留安全边距。不要文字、符文、星座符号、UI、水印。
 ```
 
-## P1: Profile Room
+## P1：结果房间
 
 ### `profile_room_plate`
 
 ```yaml
 asset_id: profile_room_plate
 scene: ProfileRoomScene
-product_role: four-dimensional result room background, without dimension orbs
+product_role: 四维结果房间背景，不包含维度宝石
 interactive: false
 asset_type: background_plate
 camera:
   projection: isometric
-  angle: small room, two walls and floor visible
+  angle: 小房间，两面墙和地板可见
   target_display_size_px: 300x270
 output:
   file_format: png
@@ -319,43 +311,41 @@ output:
   transparent_background: true
   safe_padding_px: 96
 style:
-  mood: inner room, reflective, warm but not clinical
-  palette: plum walls, muted rose floor, cream details, soft blue lamp glow
-  line_quality: delicate illustrated geometry, clean edges
-  material_detail: tiny books, mirror, table, plant, lamp, subtle floor lines
-  lighting: warm lamp plus cool ambient glow
+  mood: 内心房间、反思、温暖但非临床
+  palette: 梅子色墙、低饱和玫瑰色地板、奶油细节、柔蓝灯光
+  line_quality: 精细插画几何，边缘干净
+  material_detail: 小书、镜子、桌子、植物、灯、细地板线
+  lighting: 暖灯 + 冷环境光
 content:
   required_objects:
-    - isometric room with floor and two walls
-    - central empty walking space for protagonist
-    - four reserved positions for dimension orbs
-    - tiny table / lamp / mirror / shelf props
+    - 等距房间，含地板和两面墙
+    - 中央留空，主角可以行走
+    - 预留四个维度宝石位置
+    - 小桌子 / 灯 / 镜子 / 书架 / 植物等细节
   forbidden_objects:
-    - text, medical charts, diagnosis UI, large character, baked dimension labels
+    - 文字、医疗图表、诊断 UI、大角色、烘焙进去的维度标签
   text_inside_image: false
-layers_needed:
-  - transparent room plate
 animation_use: static
-phaser_notes: Dimension orbs, protagonist, beams, and cards remain separate Phaser objects.
-negative_prompt: text, dashboard UI, hospital room, giant report card, people, watermark, cropped room
+phaser_notes: 维度宝石、主角、光束、卡片都保持 Phaser 独立对象。
+negative_prompt: 文字、仪表盘 UI、医院房间、巨大报告卡、人物、水印、裁切房间
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a small isometric inner-room background plate for a four-dimensional profile result scene. It will display around 300x270 px in a 390x844 mobile Phaser game. The room should have two walls and a floor, plum walls, muted rose floor, cream details, a warm lamp, a tiny mirror/shelf/table/plant, and an empty central walking area. Reserve four small positions for separate dimension orb sprites, but do not include the orbs or labels. Style: clean vector-like illustrated geometry with soft hand-painted detail, reflective and warm, not clinical. Output transparent PNG, 1200x1080, safe padding. No text, no UI cards, no medical charts, no people, no watermark.
+生成一个小型等距内心房间背景板，用于四维画像结果场景。它会在 390x844 手机 Phaser 游戏中显示约 300x270 px。房间要有两面墙和地板，梅子色墙、低饱和玫瑰色地板、奶油色细节、暖灯、很小的镜子/书架/桌子/植物，中间留出主角行走空间。预留四个小位置给后续独立的维度宝石素材，但不要画宝石或标签。风格是干净矢量插画几何 + 柔和手绘细节，温暖反思，不要临床感。输出透明 PNG，1200x1080，留安全边距。不要文字、UI 卡片、医疗图表、人物、水印。
 ```
 
-### Dimension Orb Family
+### 四维宝石素材组
 
-Generate these four assets with the same geometry, changing only accent color and tiny internal motif:
+四个素材使用同一几何结构，只换强调色和内部小母题。
 
-| asset_id | Dimension | Accent | Internal motif |
+| asset_id | 维度 | 强调色 | 内部母题 |
 |---|---|---|---|
-| `dimension_orb_body` | 中医身体 | mint green | pulse leaf / body rhythm wave |
-| `dimension_orb_mind` | 阿德勒心理 | warm amber | small lamp / path knot |
-| `dimension_orb_spirit` | 玄学心灵 | soft pink | timing crescent / reflective star |
-| `dimension_orb_mbti` | MBTI | pale blue | mirror facet / dialogue spark |
+| `dimension_orb_body` | 中医身体 | 薄荷绿 | 脉冲叶片 / 身体节律波 |
+| `dimension_orb_mind` | 阿德勒心理 | 暖琥珀 | 小灯 / 路径结 |
+| `dimension_orb_spirit` | 玄学心灵 | 柔粉色 | 时间弯月 / 反思星点 |
+| `dimension_orb_mbti` | MBTI | 淡蓝色 | 镜面切片 / 对话火花 |
 
 ```yaml
 asset_type: object_sprite
@@ -364,29 +354,29 @@ output_canvas_px: 256x256
 transparent_background: true
 safe_padding_px: 48
 animation_use: hover / selected glow
-phaser_notes: Use one common anchor center. Selection ring can be drawn in Phaser or generated separately.
-negative_prompt: text, letters, MBTI type labels, medical icon, astrology glyph, watermark
+phaser_notes: 四个宝石统一中心锚点。选中环可以 Phaser 画，也可以后续单独生成。
+negative_prompt: 文字、字母、MBTI 类型标签、医疗 icon、星座 glyph、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create one tiny isometric floating crystal orb for a mobile Phaser profile room. Display size about 34x44 px, source 256x256 transparent PNG. Use the same diamond/gem geometry for all variants. Variant: [dimension name], accent color [color], with a very subtle internal motif [motif]. The object should have a dark tiny core, colored translucent gem body, cream highlight, and soft glow. No text, no labels, no MBTI letters, no medical symbols, no astrology glyphs, no watermark.
+生成一个小型等距漂浮水晶宝石，用于手机 Phaser 的四维画像房间。显示尺寸约 34x44 px，源图 256x256 透明 PNG。四个变体使用同一钻石/宝石几何。当前变体：[维度名]，强调色：[颜色]，内部有非常轻微的母题：[母题]。物体需要暗色小核心、彩色半透明宝石体、奶油色高光、柔和光晕。不要文字、标签、MBTI 字母、医疗符号、星座 glyph、水印。
 ```
 
-## P1: Wellness Island
+## P1：四屋岛
 
 ### `wellness_island_base`
 
 ```yaml
 asset_id: wellness_island_base
 scene: WellnessIslandScene
-product_role: island base without houses or shopkeepers
+product_role: 不含房子和店长的岛屿底座
 interactive: false
 asset_type: background_plate
 camera:
   projection: isometric
-  angle: pulled-back island, top visible
+  angle: 拉远岛屿，可见顶面
   target_display_size_px: 300x230
 output:
   file_format: png
@@ -394,43 +384,41 @@ output:
   transparent_background: true
   safe_padding_px: 96
 style:
-  mood: gentle action hub, restorative, quiet island
-  palette: muted green land, dark teal water edge, cream path, plum shadows
-  line_quality: clean island silhouette, soft texture
-  material_detail: four empty house pads, tiny path branches, plants, stones
-  lighting: same upper-left light as profile room
+  mood: 温柔行动中心、调理、安静岛屿
+  palette: 低饱和绿色陆地、深青水边、奶油色路径、梅子阴影
+  line_quality: 清楚岛屿轮廓，柔和质感
+  material_detail: 四个空房屋底座、细路径、小植物、小石头
+  lighting: 与结果房间一致的左上光
 content:
   required_objects:
-    - one small isometric island
-    - four empty pads for separate houses
-    - path connecting house pads
-    - clear landing/walking space near each pad
+    - 一个小型等距岛屿
+    - 四个空房屋底座
+    - 连接房屋底座的路径
+    - 每个底座前都有主角落脚空间
   forbidden_objects:
-    - houses, shopkeepers, text, UI, hospital symbols
+    - 房子、店长、文字、UI、医院符号
   text_inside_image: false
-layers_needed:
-  - transparent island base
-animation_use: static / subtle water edge later
-phaser_notes: Houses and keepers are separate sprites. The protagonist stands in front of each house.
-negative_prompt: text, full UI, buildings baked in, giant trees covering pads, hospital, watermark
+animation_use: static / later subtle water edge
+phaser_notes: 房子和店长都是独立素材。主角站在每间房子前方。
+negative_prompt: 文字、完整 UI、内嵌建筑、遮挡底座的大树、医院、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a small isometric island base for a wellness/action hub in a mobile Phaser game. It will display about 300x230 px. The island has muted green land, dark teal water edge, cream walking paths, plum shadows, tiny plants and stones, and four empty house pads connected by paths. Do not include houses or characters; they will be separate sprites. Keep clear landing space in front of each pad for a tiny protagonist. Output transparent PNG, 1200x920, safe padding. No text, no UI, no hospital symbols, no watermark.
+生成一个小型等距岛屿底座，用于手机 Phaser 的调理/行动中心。显示尺寸约 300x230 px。岛屿包含低饱和绿色陆地、深青色水边、奶油色路径、梅子色阴影、小植物和小石头，以及四个空房屋底座，路径连接四个底座。不要画房子或角色，它们会作为独立素材导入。每个房屋底座前要留出一个小主角站立空间。输出透明 PNG，1200x920，留安全边距。不要文字、UI、医院符号、水印。
 ```
 
-### Four House Sprites
+### 四间房子素材组
 
-Generate each house as a separate transparent sprite with the same footprint and lighting.
+每间房子单独生成，保持相同 footprint 和光源。
 
-| asset_id | Role | Silhouette | Accent |
+| asset_id | 角色 | 轮廓 | 强调色 |
 |---|---|---|---|
-| `house_tcm` | 中医 | herb apothecary hut, small roof vent, plant shelf | mint green |
-| `house_philosophy` | 哲学 | tiny study / observatory hut, book-window shape | warm amber |
-| `house_meditation` | 冥想 | quiet round-roof pavilion, soft curtain doorway | pale blue |
-| `house_art` | 艺术 | small atelier, angled roof, color panes | soft pink |
+| `house_tcm` | 中医 | 草药小屋、小通风口、植物架 | 薄荷绿 |
+| `house_philosophy` | 哲学 | 小书房/观测屋、书本形窗户 | 暖琥珀 |
+| `house_meditation` | 冥想 | 圆顶静修亭、柔软帘门 | 淡蓝 |
+| `house_art` | 艺术 | 小画室、斜屋顶、彩色窗片 | 柔粉 |
 
 ```yaml
 asset_type: object_sprite
@@ -439,17 +427,17 @@ output_canvas_px: 384x384
 transparent_background: true
 safe_padding_px: 56
 animation_use: hover / selected bounce
-phaser_notes: Keep bottom footprint consistent so all houses sit on island pads.
-negative_prompt: text, signs, shop names, crosses, religious icons, huge chimney smoke, watermark
+phaser_notes: 底部 footprint 保持一致，方便放到 island pads 上。
+negative_prompt: 文字、招牌、店名、十字架、宗教 icon、巨大烟囱烟雾、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric house sprite for a mobile Phaser wellness island. It will display about 54x58 px, so the silhouette must be distinct and readable. House type: [TCM herb apothecary / philosophy study / meditation pavilion / art atelier]. Use the shared style: clean vector-like illustrated, soft gouache texture, upper-left lighting, muted body color with [accent color] roof or detail. The house must have a consistent small isometric footprint and transparent background. Output 384x384 PNG with safe padding. No text, no shop sign, no medical cross, no religious symbol, no watermark.
+生成一个小型等距房子素材，用于手机 Phaser 的四屋调理岛。显示尺寸约 54x58 px，轮廓必须在小尺寸下清楚可辨。房子类型：[中医草药小屋 / 哲学书房 / 冥想亭 / 艺术画室]。共享风格：干净矢量插画、柔和手绘质感、左上光源、低饱和主体色，屋顶或细节使用 [强调色]。房子需要统一的小型等距底部 footprint，透明背景。输出 384x384 PNG，留安全边距。不要文字、招牌、医疗十字、宗教符号、水印。
 ```
 
-### Shopkeeper Family
+### 店长素材组
 
 ```yaml
 asset_ids:
@@ -458,33 +446,33 @@ asset_ids:
   - keeper_meditation
   - keeper_art
 scene: WellnessIslandScene
-product_role: small house owner characters revealed on focus
+product_role: 聚焦房屋后出现的小店长
 asset_type: character_sprite
 target_display_size_px: 24x34
 output_canvas_px: 256x256
 transparent_background: true
 safe_padding_px: 56
 style:
-  mood: kind guide, not doctor, not therapist authority
-  silhouette: tiny, distinct by accessory not text
-phaser_notes: Keep them smaller than protagonist or equal size; reveal by stepping out / bounce.
-negative_prompt: white coat, stethoscope, clipboard, text, speech bubble, boss-like authority pose
+  mood: 温柔引导者，不是医生/治疗师权威
+  silhouette: 很小，通过配饰区分，不靠文字
+phaser_notes: 尺寸要小于或接近主角；用走出/弹跳方式 reveal。
+negative_prompt: 白大褂、听诊器、夹板、文字、气泡、权威训话姿势
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric shopkeeper character sprite for a wellness island. Display size about 24x34 px, source 256x256 transparent PNG. Character role: [TCM herb keeper / philosophy keeper / meditation keeper / art keeper]. The character is a kind guide, not a doctor or therapist. Use a distinct accessory or silhouette: herb pouch, small book, soft shawl, paint apron. Keep details readable at very small size. No text, no speech bubble, no white coat, no stethoscope, no clipboard, no watermark.
+生成一个小型等距店长角色素材，用于四屋调理岛。显示尺寸约 24x34 px，源图 256x256 透明 PNG。角色类型：[中医草药店长 / 哲学店长 / 冥想店长 / 艺术店长]。角色是温柔引导者，不是医生或治疗师权威。通过小配饰或轮廓区分：草药袋、小书、柔软披肩、画画围裙。细节要在很小尺寸下仍可读。不要文字、气泡、白大褂、听诊器、夹板、水印。
 ```
 
-## P2: Personality Archipelago
+## P2：人格岛
 
 ### `sea_plate_loopable`
 
 ```yaml
 asset_id: sea_plate_loopable
 scene: PersonalityArchipelagoScene
-product_role: draggable horizontal sea background
+product_role: 可横向拖动的人格岛海面背景
 interactive: false
 asset_type: background_plate
 target_display_size_px: 390x320
@@ -494,25 +482,25 @@ output:
   transparent_background: false
   safe_padding_px: 0
 style:
-  mood: calm social exploration
-  palette: deep ink blue water, subtle lavender wave lines, faint warm reflections
+  mood: 平静社交探索
+  palette: 深墨蓝水面、低对比薰衣草波纹、微弱暖反光
 content:
   required_objects:
-    - gentle horizontal wave lines
-    - low contrast texture
-    - no land or UI
+    - 柔和水平波浪线
+    - 低对比纹理
+    - 不含岛屿和 UI
   forbidden_objects:
-    - text, map labels, giant waves, boats, realistic ocean photo
-phaser_notes: Can be moved behind islands or used as static background for carousel.
+    - 文字、地图标签、巨浪、船、写实海面照片
+phaser_notes: 可作为岛屿 carousel 后景，也可静态铺底。
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a calm illustrated sea background plate for a tiny personality island carousel in a mobile Phaser game. Display area about 390x320 px, source 1560x1280. Use deep ink blue water, subtle lavender wave lines, faint warm reflections, low contrast texture. It should support small islands moving horizontally on top. No islands, no boats, no text, no map labels, no UI, no photorealistic ocean, no watermark.
+生成一个平静插画海面背景板，用于手机 Phaser 的人格岛横向 carousel。显示区域约 390x320 px，源图 1560x1280。使用深墨蓝水面、低对比薰衣草波纹、微弱暖反光、柔和纹理。它要支持多个小岛在上方横向移动。不要岛、船、文字、地图标签、UI、写实海面、水印。
 ```
 
-### Personality Island Set
+### 人格岛素材组
 
 ```yaml
 asset_ids:
@@ -526,25 +514,25 @@ output_canvas_px: 512x512
 transparent_background: true
 safe_padding_px: 80
 style:
-  mood: small living place, social archetype, friendly distance
-  palette: muted green land, colored roof accents, dark teal underside
+  mood: 小型生活地点、社交原型、友好距离感
+  palette: 低饱和绿色陆地、彩色屋顶强调、深青底部
 content:
   required_objects:
-    - tiny island base
-    - one small house or dock-compatible empty spot
-    - clear front landing area
+    - 小型岛屿底座
+    - 一个小房子或可放房子的空位
+    - 前方有清楚落脚区
   forbidden_objects:
-    - text labels, MBTI letters, huge people, UI badges
-phaser_notes: Phaser will place text labels separately. Keep variants similar in scale.
+    - 文字标签、MBTI 字母、巨大人物、UI 徽章
+phaser_notes: Phaser 单独放文字标签。不同变体尺寸要接近。
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric personality island sprite for a mobile Phaser social carousel. Display size about 82x72 px, source 512x512 transparent PNG. The island should feel like a small living place: muted green land, dark teal underside, one tiny house or house pad, a clear front landing/dock area where the protagonist can stand. Make three variants with different island silhouettes but consistent scale. No text, no MBTI letters, no UI badges, no giant character, no watermark.
+生成一个小型等距人格岛素材，用于手机 Phaser 社交 carousel。显示尺寸约 82x72 px，源图 512x512 透明 PNG。岛屿像一个小型生活地点：低饱和绿色陆地、深青色底部、一个小房子或可放房子的区域、前方有主角可站立的 dock/落脚点。生成三个不同岛屿轮廓变体，但比例保持一致。不要文字、MBTI 字母、UI 徽章、巨大角色、水印。
 ```
 
-### `island_selection_ring` And `island_dock_marker`
+### `island_selection_ring` / `island_dock_marker`
 
 ```yaml
 asset_ids:
@@ -556,86 +544,80 @@ target_display_size_px: ring 110x70, marker 36x18
 output_canvas_px: 512x256
 transparent_background: true
 style:
-  mood: soft selection, not a hard game target
-  palette: cream line, faint accent glow
-phaser_notes: Ring should sit behind selected island. Dock marker should sit below/front of island.
-negative_prompt: text, arrow labels, UI button, harsh neon, watermark
+  mood: 柔和选中，不像硬游戏准星
+  palette: 奶油色线条、轻微强调色光
+phaser_notes: ring 放在选中岛后方，dock marker 放在岛屿前下方。
+negative_prompt: 文字、箭头标签、UI 按钮、强霓虹、水印
 ```
 
-Prompt:
+可复制提示词：
 
 ```text
-Create two transparent effect sprites for a tiny isometric personality island carousel: a soft cream elliptical selection ring with faint accent glow, and a small dock/landing marker where a tiny protagonist can stand. Output transparent PNG, 512x256, with both effects separated and enough padding. Style is delicate illustrated, not harsh neon. No text, no arrows, no UI button, no watermark.
+生成两个透明效果素材，用于小型等距人格岛 carousel：一个柔和奶油色椭圆选中环，带轻微强调色光；一个小型 dock/落脚标记，给主角站立。输出透明 PNG，512x256，两个效果分开并留足边距。风格精细插画，不要强霓虹。不要文字、箭头、UI 按钮、水印。
 ```
 
-## P2: Collection Object Sets
+## P2：采集场景物件
 
-### Body Courtyard Objects
+### 身体庭院物件
 
-Generate as separate transparent sprites, each target display size around `42x42`, source `256x256`:
+每个物件单独生成透明图，目标显示约 `42x42`，源图 `256x256`。
 
-| asset_id | Signal | Required visual |
+| asset_id | 信号 | 视觉要求 |
 |---|---|---|
-| `body_moon_pool` | sleep | tiny moon pool, ripple, pale blue glow |
-| `body_warm_cool_basin` | cold/heat | half warm stove, half cool basin, amber/mint contrast |
-| `body_rice_bowl` | digestion | small bowl, faint steam, cream/mint highlights |
-| `body_stone_bench` | fatigue | small soft stone bench, lowered shadow, pink-lavender tint |
+| `body_moon_pool` | 睡眠 | 小月池、涟漪、淡蓝光 |
+| `body_warm_cool_basin` | 冷热 | 半暖炉、半冷盆，琥珀/薄荷对比 |
+| `body_rice_bowl` | 消化 | 小碗、轻蒸汽、奶油/薄荷高光 |
+| `body_stone_bench` | 疲劳 | 柔和小石凳、低阴影、粉紫色调 |
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny transparent isometric body-courtyard object sprite for a mobile Phaser collection scene. Object: [moon pool / warm-cool basin / rice bowl / stone bench]. Display size about 42x42 px, source 256x256 PNG. It should represent [sleep / cold-heat sense / digestion / fatigue] as a gentle body signal, not a diagnosis. Use clean illustrated edges, soft texture, upper-left lighting. No text, no medical symbols, no organs, no hospital imagery, no watermark.
+生成一个小型透明等距身体庭院物件，用于手机 Phaser 采集场景。物件：[月池 / 冷热盆 / 米碗 / 石凳]。显示尺寸约 42x42 px，源图 256x256 PNG。它表示 [睡眠 / 冷热体感 / 消化 / 疲劳] 这种温和身体线索，不是诊断。使用干净插画边缘、柔和质感、左上光源。不要文字、医疗符号、器官、医院意象、水印。
 ```
 
-### Ba Zi Observatory Objects
+### 八字/时间观星台物件
 
-Generate as separate transparent sprites:
-
-| asset_id | Display | Purpose |
+| asset_id | 显示尺寸 | 用途 |
 |---|---:|---|
-| `bazi_star_clock` | 96x96 | main observatory object |
-| `bazi_birth_lantern_lit` | 36x48 | confident provided time |
-| `bazi_birth_lantern_uncertain` | 36x48 | low-confidence uncertain time |
-| `bazi_skip_dock` | 48x28 | explicit skip landing |
+| `bazi_star_clock` | 96x96 | 主观星台物件 |
+| `bazi_birth_lantern_lit` | 36x48 | 已提供时间，高置信 |
+| `bazi_birth_lantern_uncertain` | 36x48 | 时间不确定，低置信 |
+| `bazi_skip_dock` | 48x28 | 显式跳过落脚点 |
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric time-observatory object for a mobile Phaser collection scene. Asset: [star clock / birth lantern lit / birth lantern uncertain / skip dock]. It is used for reflective timing input only, not deterministic fortune telling. Use muted violet stone, soft pink and cream light, clean vector-like illustrated edges. No text, no astrology glyphs, no ominous symbols, no tarot cards, no watermark. Transparent PNG, source size [512x512 for star clock or 256x256 for lantern/dock].
+生成一个小型等距时间观星台物件，用于手机 Phaser 采集场景。素材：[星钟 / 点亮出生时间灯 / 不确定出生时间灯 / 跳过 dock]。它用于反思性的时间输入，不是决定论算命。使用低饱和紫色石质、柔粉和奶油光、干净矢量插画边缘。不要文字、星座 glyph、威胁感符号、塔罗牌、水印。透明 PNG，星钟源图 512x512，灯/dock 源图 256x256。
 ```
 
-### Psychology Echo Path Objects
+### 心理回声小径物件
 
-Generate as separate transparent sprites:
-
-| asset_id | Display | Purpose |
+| asset_id | 显示尺寸 | 用途 |
 |---|---:|---|
-| `psychology_echo_path_plate` | 220x140 | small path / bridge plate |
-| `psychology_stepping_stone_a` | 48x32 | repeated pattern |
-| `psychology_stepping_stone_b` | 48x32 | what it protects |
-| `psychology_stepping_stone_c` | 48x32 | small experiment |
-| `evidence_spark` | 18x18 | reusable signal spark |
+| `psychology_echo_path_plate` | 220x140 | 小径/桥背景板 |
+| `psychology_stepping_stone_a` | 48x32 | 反复模式 |
+| `psychology_stepping_stone_b` | 48x32 | 在保护什么 |
+| `psychology_stepping_stone_c` | 48x32 | 小实验 |
+| `evidence_spark` | 18x18 | 可复用证据火花 |
 
-Prompt:
+可复制提示词：
 
 ```text
-Create a tiny isometric echo-path object for a mobile Phaser psychology collection scene. Asset: [path plate / stepping stone / evidence spark]. The mood is reflective and gentle, representing a small question or self-observation, not therapy diagnosis. Use muted violet path material, warm amber highlights, clean illustrated edges, soft shadow. No text, no brain icons, no medical or therapy symbols, no speech bubbles, no watermark. Transparent PNG, source size [as specified].
+生成一个小型等距回声小径物件，用于手机 Phaser 心理采集场景。素材：[小径背景 / 踏石 / 证据火花]。氛围是温柔反思，表示一个小问题或自我观察，不是心理诊断。使用低饱和紫色路径材质、暖琥珀高光、干净插画边缘、柔和阴影。不要文字、脑 icon、医疗或治疗符号、对话气泡、水印。透明 PNG，尺寸按规格。
 ```
 
-## Acceptance Checklist
+## 导入前验收清单
 
-Before importing any generated asset into Phaser:
+- 图片里没有文字、水印、logo、UI 外壳或不该出现的符号。
+- 缩到目标显示尺寸后仍能读清。
+- 透明素材有足够安全边距，发光和阴影不被裁。
+- 可交互对象是单独文件，没有被烘焙进背景板。
+- 房子和岛屿不靠文字也能区分。
+- 主角能在所有背景前读清。
+- 所有素材使用同一镜头角度和左上光源。
+- 文件名可以直接使用 `asset_id`。
 
-- The asset contains no text, watermark, logo, UI chrome, or unwanted symbols.
-- The asset still reads when downscaled to its target display size.
-- Transparent sprites have enough safe padding for glow/shadow.
-- Interactive objects are separate files, not baked into background plates.
-- House and island silhouettes are distinguishable without labels.
-- The protagonist is readable in front of all scene backgrounds.
-- All assets use the same camera angle and upper-left lighting.
-- The files can be named exactly by `asset_id`.
-
-## Suggested File Layout
+## 建议文件结构
 
 ```text
 public/assets/v1/
