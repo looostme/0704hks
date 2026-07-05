@@ -3,6 +3,10 @@ work/
 outputs/
 __pycache__/
 *.pyc
+.dev.vars
+.wrangler/
+node_modules/
+.DS_Store
 *.sqlite-wal
 *.sqlite-shm
 page-*.png

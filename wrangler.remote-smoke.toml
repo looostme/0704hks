@@ -1,0 +1,21 @@
+name = "0704hks-smoke"
+main = "workers/api/src/index.js"
+compatibility_date = "2026-07-01"
+workers_dev = true
+
+[assets]
+directory = "./demo-phaser-iso"
+binding = "ASSETS"
+
+[vars]
+OPENAI_NEXT_BASE_URL = "https://api.openai-next.com"
+OPENAI_NEXT_MODEL = "claude-sonnet-5"
+OPENAI_NEXT_ASR_MODELS = "gpt-4o-transcribe,whisper-1"
+OPENAI_NEXT_ASR_LANGUAGE = "zh"
+OPENAI_NEXT_ASR_MAX_AUDIO_MB = "24"
+MEDIA_MAX_IMAGE_MB = "10"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "0704hks"
+database_id = "fcf2685d-6e66-4497-86f4-5b05f287f5f2"

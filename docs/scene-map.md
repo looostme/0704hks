@@ -8,14 +8,14 @@ The product should feel like a small isometric inner-world journey rather than a
 
 ## Current Spike Status
 
-`demo-phaser-iso/index.html` currently implements a no-build mobile Phaser demo with four switchable scenes:
+`demo-phaser-iso/index.html` currently implements a no-build mobile Phaser demo with four switchable scenes and a protagonist-throughline:
 
 - `采集`: MBTI 光团降世.
 - `结果`: four-dimensional room, including selectable dimension nodes and a profile card.
 - `调理`: four-house island for TCM, philosophy, meditation, and art.
 - `社交`: personality islands on a sea surface with horizontal drag browsing.
 
-The current scale target is deliberately small: `WORLD_SCALE = 0.58`, with a `390x844` mobile design viewport and `4x` backing canvas. Future scene work should preserve this small-world feeling while increasing asset detail.
+The protagonist starts as the MBTI light, becomes a small character after the first commit, and then moves to clicked targets across the other scenes. The current scale target is deliberately small: `WORLD_SCALE = 0.58`, with a `390x844` mobile design viewport and `4x` backing canvas. Future scene work should preserve this small-world feeling while increasing asset detail.
 
 The next phase is documented in `docs/interaction-asset-plan.md`: improve game-like interactions first, then generate fine assets from detailed scene/object specs.
 
@@ -37,9 +37,9 @@ Confirmed collection scenes:
 | Collection step | Scene metaphor | Notes |
 |---|---|---|
 | MBTI | 光团降世 | The user/personality signal appears as a light cluster descending into the world. |
-| Body | TBD | Should collect body signals such as sleep, digestion, cold/heat, fatigue, and physical rhythm. |
-| Ba Zi / Xuanxue | TBD | Should collect birth-related or reflective timing signals only when user provides them. |
-| Q&A | TBD | Should cover grill-me style minimal follow-up questions across weak dimensions. |
+| Body | 身体庭院 | Code-drawn demo metaphor for sleep, digestion, cold/heat, fatigue, and physical rhythm. |
+| Ba Zi / Xuanxue | 时间观星台 | Code-drawn demo metaphor for birth-related or reflective timing signals when user provides them. |
+| Q&A | 回声小径 | Code-drawn demo metaphor for grill-me style minimal follow-up questions across weak dimensions. |
 
 Implementation notes:
 
@@ -157,15 +157,14 @@ Recommended order:
 
 The first four items already exist as rough visual demos in `demo-phaser-iso/index.html`; the next pass should turn them into cleaner TypeScript Phaser scenes after the app scaffold exists.
 
-Next priority is not more static scene count. It is interaction depth plus asset specificity:
+Next priority is not more static scene count. It is protagonist-led interaction depth plus asset specificity:
 
-1. Make each scene playable through tap, drag, hold, reveal, and micro-reward loops.
-2. Prepare detailed AI asset specs before generating images.
+1. Preserve `tap target -> protagonist moves -> arrival feedback -> state/reveal`.
+2. Add richer tap, drag, hold, reveal, and micro-reward loops.
+3. Prepare detailed AI asset specs before generating images.
 
 ## Open Questions
 
-- Body collection scene metaphor.
-- Ba Zi / Xuanxue collection scene metaphor.
-- Q&A collection scene metaphor.
+- Whether to keep the current demo metaphors for Body, Ba Zi / Xuanxue, and Q&A.
 - Whether current state `正 / 负 / 平` appears as room weather, central object, lighting, or an explicit badge.
 - House/shopkeeper art direction and naming.

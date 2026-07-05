@@ -155,6 +155,45 @@
         },
       ];
 
+      const INTAKE_STEPS = [
+        { key: "mbti", label: "MBTI", dimension: "mbti", title: "光团降世", color: 0x9ebdff },
+        { key: "body", label: "身体", dimension: "tcm_body", title: "身体庭院", color: 0x8edab2 },
+        { key: "bazi", label: "八字", dimension: "xuanxue_spirit", title: "时间观星台", color: 0xf593bb },
+        { key: "psychology", label: "问答", dimension: "psychology", title: "回声小径", color: 0xf2b263 },
+      ];
+
+      const INITIAL_GAMEPLAY_STATE = {
+        activeIntake: "mbti",
+        submitted: {},
+        skipped: [],
+        signals: [],
+        hero: {
+          born: false,
+          scene: "intake",
+          x: 195,
+          y: 310,
+          facing: "right",
+          mood: "orb",
+        },
+        selectedHouse: "meditation",
+        selectedIsland: "INFP",
+        actions: [],
+      };
+
+      const WELLNESS_HOUSES = [
+        { key: "tcm", label: "中医", dimension: "tcm_body", color: 0x8edab2, x: 124, y: 386, practice: "今晚把睡前 20 分钟留给身体降噪。" },
+        { key: "philosophy", label: "哲学", dimension: "psychology", color: 0xf2b263, x: 228, y: 350, practice: "把「必须做好」改写成一个可验证的小命题。" },
+        { key: "meditation", label: "冥想", dimension: "current_state", color: 0x9ebdff, x: 192, y: 336, practice: "做 6 次慢呼吸，只观察身体哪里最紧。" },
+        { key: "art", label: "艺术", dimension: "mbti", color: 0xf593bb, x: 246, y: 394, practice: "用三个颜色画出今天的情绪天气。" },
+      ];
+
+      const SOCIAL_ISLANDS = [
+        { label: "INFP", color: 0x9ebdff, x: 88, y: 358, prompt: "适合从共同感受开场，少一点结论，多一点回应。" },
+        { label: "ENFJ", color: 0xf593bb, x: 210, y: 342, prompt: "适合给出明确邀请，也留一个可以拒绝的出口。" },
+        { label: "ISTJ", color: 0xf2b263, x: 328, y: 374, prompt: "适合从具体安排和可信承诺开始建立连接。" },
+        { label: "ENTP", color: 0x8edab2, x: 450, y: 340, prompt: "适合用一个轻巧问题打开讨论，而不是直接定性。" },
+      ];
+
       class MobileInnerRoomScene extends Phaser.Scene {
         constructor() {
           super("MobileInnerRoomScene");
@@ -167,6 +206,12 @@
           this.profileCard = null;
           this.beam = null;
           this.currentDemoScene = null;
+          this.gameplay = JSON.parse(JSON.stringify(INITIAL_GAMEPLAY_STATE));
+          this.intakeStepButtons = [];
+          this.focusedPair = [];
+          this.heroActor = null;
+          this.heroIdleTween = null;
+          this.heroBusy = false;
         }
 
         create() {
@@ -187,7 +232,166 @@
           this.addBackground();
           this.addHeader();
           this.renderSceneTabs();
+          this.syncGameplayState();
           this.showDemoScene("intake");
+        }
+
+        syncGameplayState() {
+          const coverage = this.getCoverage();
+          const profile = this.getProfileOutput();
+          const state = {
+            activeScene: this.currentDemoScene,
+            activeIntake: this.gameplay.activeIntake,
+            submitted: { ...this.gameplay.submitted },
+            skipped: [...this.gameplay.skipped],
+            signals: [...this.gameplay.signals],
+            coverage,
+            profile,
+            hero: { ...this.gameplay.hero },
+            selectedHouse: this.gameplay.selectedHouse,
+            selectedIsland: this.gameplay.selectedIsland,
+            actions: [...this.gameplay.actions],
+          };
+          window.__gameplayState = state;
+          this.writeDebugState("gameplay-state", state);
+          document.body.dataset.gameplayScene = this.currentDemoScene || "boot";
+          document.body.dataset.activeIntake = this.gameplay.activeIntake;
+          document.body.dataset.signalCount = `${this.gameplay.signals.length}`;
+          document.body.dataset.canGenerateProfile = coverage.canGenerateProfile ? "true" : "false";
+          document.body.dataset.selectedHouse = this.gameplay.selectedHouse;
+          document.body.dataset.selectedIsland = this.gameplay.selectedIsland;
+          document.body.dataset.actionCount = `${this.gameplay.actions.length}`;
+          document.body.dataset.heroBorn = this.gameplay.hero.born ? "true" : "false";
+          document.body.dataset.heroMoving = this.heroBusy ? "true" : "false";
+          document.body.dataset.heroScene = this.gameplay.hero.scene;
+          document.body.dataset.heroPosition = `${Math.round(this.gameplay.hero.x)},${Math.round(this.gameplay.hero.y)}`;
+        }
+
+        writeDebugState(id, state) {
+          let node = document.getElementById(id);
+          if (!node) {
+            node = document.createElement("script");
+            node.id = id;
+            node.type = "application/json";
+            document.body.appendChild(node);
+          }
+          node.textContent = JSON.stringify(state);
+        }
+
+        getCoverage() {
+          const submitted = INTAKE_STEPS.filter((step) => this.gameplay.submitted[step.key]).map((step) => step.key);
+          const skipped = [...this.gameplay.skipped];
+          return {
+            order: INTAKE_STEPS.map((step) => step.key),
+            submitted,
+            skipped,
+            submittedCount: submitted.length,
+            skippedCount: skipped.length,
+            remainingSkipCount: Math.max(0, 2 - skipped.length),
+            canGenerateProfile: submitted.length >= 2,
+            stages: INTAKE_STEPS.map((step) => ({
+              key: step.key,
+              label: step.label,
+              status: this.gameplay.submitted[step.key]
+                ? "submitted"
+                : skipped.includes(step.key)
+                  ? "skipped"
+                  : step.key === this.gameplay.activeIntake
+                    ? "active"
+                    : "waiting",
+            })),
+          };
+        }
+
+        getProfileOutput() {
+          const has = (key) => Boolean(this.gameplay.submitted[key]);
+          const skipped = (key) => this.gameplay.skipped.includes(key);
+          const dimensionValues = [
+            {
+              key: "body",
+              dimension: "tcm_body",
+              name: "中医身体",
+              value: has("body") ? "sleep_heat_rhythm" : "body_pending",
+              label: has("body") ? "睡眠与冷热节律" : skipped("body") ? "身体维度已跳过" : "身体线索待采集",
+              description: has("body") ? "身体庭院记录到作息与冷热感，适合作为调理方向参考。" : "当前还缺身体信号，房间里的脉光保持半亮。",
+              confidence: has("body") ? "medium" : "low",
+              polarity: has("body") ? "neutral" : "negative",
+              color: 0x8edab2,
+            },
+            {
+              key: "mind",
+              dimension: "psychology",
+              name: "阿德勒心理",
+              value: has("psychology") ? "protective_pattern" : "psychology_pending",
+              label: has("psychology") ? "保护性卡点" : "心理问答待采集",
+              description: has("psychology") ? "回声小径记录到反复模式和自我保护目标，可生成一个小行动实验。" : "问答还没有完成，心灯只给出低置信提示。",
+              confidence: has("psychology") ? "medium" : "low",
+              polarity: has("psychology") ? "negative" : "neutral",
+              color: 0xf2b263,
+            },
+            {
+              key: "spirit",
+              dimension: "xuanxue_spirit",
+              name: "玄学心灵",
+              value: has("bazi") ? "timing_reflection" : "bazi_optional",
+              label: has("bazi") ? "阶段主题参考" : skipped("bazi") ? "出生时间暂不使用" : "时间线索可选",
+              description: has("bazi") ? "观星台记录到出生时间线索，只作为阶段叙事和反思入口。" : "八字维度可以稍后补充；跳过不会阻止先看画像。",
+              confidence: has("bazi") ? "low" : "low",
+              polarity: "neutral",
+              color: 0xf593bb,
+            },
+            {
+              key: "mbti",
+              dimension: "mbti",
+              name: "MBTI",
+              value: has("mbti") ? "intuitive_feeling_clue" : "mbti_pending",
+              label: has("mbti") ? "直觉感受型偏好线索" : "互动偏好待采集",
+              description: has("mbti") ? "光团记录到表达与决策偏好，可用于关系开场和社交岛推荐。" : "光团还没落地，镜光保持等待。",
+              confidence: has("mbti") ? "medium" : "low",
+              polarity: has("mbti") ? "positive" : "neutral",
+              color: 0x9ebdff,
+            },
+          ];
+          const score = dimensionValues.reduce((sum, item) => sum + (item.polarity === "positive" ? 1 : item.polarity === "negative" ? -1 : 0), 0);
+          const currentState = score >= 1
+            ? { value: "positive", label: "正", description: "当前有可启动的能量，适合从轻量练习进入。" }
+            : score <= -1
+              ? { value: "negative", label: "负", description: "当前更像消耗态，先降低评价压力和身体负荷。" }
+              : { value: "neutral", label: "平", description: "当前处在观察与整理之间，适合补齐一两个关键信号。" };
+          return { dimensionValues, currentState };
+        }
+
+        commitSignal(stepKey, signalType, value, confidence = "medium") {
+          const step = INTAKE_STEPS.find((item) => item.key === stepKey);
+          if (!step) return;
+          this.gameplay.submitted[stepKey] = true;
+          this.gameplay.skipped = this.gameplay.skipped.filter((key) => key !== stepKey);
+          const signal = {
+            id: `sig_${stepKey}_${this.gameplay.signals.length + 1}`,
+            modality: "text",
+            type: signalType,
+            value,
+            confidence,
+            dimension_hint: [step.dimension],
+          };
+          this.gameplay.signals = this.gameplay.signals.filter((item) => !item.id.startsWith(`sig_${stepKey}_`));
+          this.gameplay.signals.push(signal);
+          this.gameplay.activeIntake = this.nextIntakeKey(stepKey);
+          this.syncGameplayState();
+        }
+
+        skipIntake(stepKey) {
+          if (!this.gameplay.submitted[stepKey] && !this.gameplay.skipped.includes(stepKey) && this.gameplay.skipped.length < 2) {
+            this.gameplay.skipped.push(stepKey);
+          }
+          this.gameplay.activeIntake = this.nextIntakeKey(stepKey);
+          this.syncGameplayState();
+        }
+
+        nextIntakeKey(currentKey) {
+          const currentIndex = INTAKE_STEPS.findIndex((step) => step.key === currentKey);
+          const next = INTAKE_STEPS.slice(currentIndex + 1).find((step) => !this.gameplay.submitted[step.key] && !this.gameplay.skipped.includes(step.key));
+          return next ? next.key : currentKey;
         }
 
         worldPoint(x, y) {
@@ -299,6 +503,7 @@
           this.clearDemoScene();
           this.currentDemoScene = key;
           this.paintSceneTabs();
+          this.syncGameplayState();
           const scene = DEMO_SCENES.find((item) => item.key === key);
           document.body.dataset.demoScene = key;
           window.__demoScene = key;
@@ -307,10 +512,13 @@
           if (key === "profile") this.renderProfileScene(scene);
           if (key === "wellness") this.renderWellnessScene(scene);
           if (key === "social") this.renderSocialScene(scene);
+          this.addWalkableZone();
+          this.renderHero();
         }
 
         clearDemoScene() {
           this.tweens.killAll();
+          this.heroIdleTween = null;
           this.signals.forEach((signal) => {
             signal.container?.destroy();
             signal.hit?.destroy();
@@ -330,6 +538,12 @@
             if (obj && obj.active !== false) obj.destroy(true);
           });
           this.sceneObjects = [];
+        }
+
+        refreshDemoScene() {
+          const key = this.currentDemoScene;
+          this.currentDemoScene = null;
+          this.showDemoScene(key);
         }
 
         renderSceneTitle(scene) {
@@ -352,27 +566,28 @@
         }
 
         renderDemoCard(title, lines, color = 0x9ebdff) {
-          const group = this.add.container(20, 596).setDepth(720);
+          const group = this.add.container(20, 618).setDepth(720);
           const g = this.add.graphics();
           g.fillStyle(0x050712, 0.34);
-          g.fillRoundedRect(-4, 8, 350, 154, 18);
+          g.fillRoundedRect(-4, 8, 350, 132, 16);
           g.fillStyle(P.card, 0.94);
-          g.fillRoundedRect(0, 0, 348, 154, 18);
+          g.fillRoundedRect(0, 0, 348, 132, 16);
           g.lineStyle(1, 0xf6ecdf, 0.14);
-          g.strokeRoundedRect(0, 0, 348, 154, 18);
+          g.strokeRoundedRect(0, 0, 348, 132, 16);
           g.fillStyle(color, 1);
-          g.fillRoundedRect(20, 26, 38, 38, 10);
-          const heading = this.add.text(76, 24, title, {
+          g.fillRoundedRect(20, 22, 28, 28, 8);
+          const heading = this.add.text(64, 21, title, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "21px",
+            fontSize: "18px",
             fontStyle: "800",
             color: "#fff7ed",
+            wordWrap: { width: 258 },
           });
-          const body = this.add.text(22, 86, lines.join("\n"), {
+          const body = this.add.text(22, 68, lines.join("\n"), {
             fontFamily: "Inter, sans-serif",
-            fontSize: "13px",
+            fontSize: "12px",
             color: "#f2eaf2",
-            lineSpacing: 7,
+            lineSpacing: 6,
             wordWrap: { width: 302 },
           });
           group.add([g, heading, body]);
@@ -380,58 +595,698 @@
           return group;
         }
 
-        renderIntakeScene(scene) {
-          this.addConstellation(195, 328);
-          this.addLightDescent(195, 310);
-          this.addTinyGate(195, 422);
-          this.renderDemoCard("MBTI 光团降世", [
-            "人格信号先以光团落下，不像问卷，而像一个角色进入世界。",
-            "身体、八字、问答还保留 TBD，占位为后续场景。",
-          ], 0x9ebdff);
+        addChoiceButton(x, y, label, color, onClick, width = 106, height = 38) {
+          const group = this.add.container(x, y).setDepth(820);
+          const bg = this.add.graphics();
+          bg.fillStyle(0x242337, 0.9);
+          bg.fillRoundedRect(0, 0, width, height, 12);
+          bg.lineStyle(1.2, color, 0.58);
+          bg.strokeRoundedRect(0, 0, width, height, 12);
+          const text = this.add.text(width / 2, height / 2, label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            fontStyle: "800",
+            color: "#fff7ed",
+          }).setOrigin(0.5);
+          const hit = this.add.zone(width / 2, height / 2, width, height).setInteractive({ useHandCursor: true });
+          hit.on("pointerover", () => {
+            bg.clear();
+            bg.fillStyle(color, 0.24);
+            bg.fillRoundedRect(0, 0, width, height, 12);
+            bg.lineStyle(1.4, 0xf6ecdf, 0.72);
+            bg.strokeRoundedRect(0, 0, width, height, 12);
+          });
+          hit.on("pointerout", () => {
+            bg.clear();
+            bg.fillStyle(0x242337, 0.9);
+            bg.fillRoundedRect(0, 0, width, height, 12);
+            bg.lineStyle(1.2, color, 0.58);
+            bg.strokeRoundedRect(0, 0, width, height, 12);
+          });
+          hit.on("pointerdown", onClick);
+          group.add([bg, text, hit]);
+          this.trackSceneObject(group);
+          return group;
+        }
+
+        renderIntakeStepper() {
+          INTAKE_STEPS.forEach((step, index) => {
+            const status = this.getCoverage().stages.find((item) => item.key === step.key)?.status;
+            const x = 24 + index * 86;
+            const y = 196;
+            const group = this.add.container(x, y).setDepth(810);
+            const g = this.add.graphics();
+            const fill = status === "submitted" ? step.color : status === "skipped" ? 0x4b4656 : status === "active" ? 0x766177 : 0x242337;
+            const alpha = status === "submitted" ? 0.94 : status === "active" ? 0.9 : 0.72;
+            g.fillStyle(fill, alpha);
+            g.fillRoundedRect(0, 0, 72, 32, 10);
+            g.lineStyle(1, status === "active" ? 0xf6ecdf : step.color, status === "waiting" ? 0.18 : 0.5);
+            g.strokeRoundedRect(0, 0, 72, 32, 10);
+            const text = this.add.text(36, 16, step.label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "12px",
+              fontStyle: "800",
+              color: status === "waiting" ? "#c0b7ca" : "#fff7ed",
+            }).setOrigin(0.5);
+            const hit = this.add.zone(36, 16, 72, 32).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => {
+              this.gameplay.activeIntake = step.key;
+              this.syncGameplayState();
+              this.refreshDemoScene();
+            });
+            group.add([g, text, hit]);
+            this.trackSceneObject(group);
+          });
+        }
+
+        addSparkBurst(x, y, color, count = 8) {
+          for (let i = 0; i < count; i += 1) {
+            const dot = this.add.circle(x, y, Phaser.Math.Between(2, 4), color, 0.92).setDepth(900);
+            this.trackSceneObject(dot);
+            this.tweens.add({
+              targets: dot,
+              x: x + Phaser.Math.Between(-38, 38),
+              y: y + Phaser.Math.Between(-34, 24),
+              alpha: 0,
+              scale: 0.18,
+              duration: 420 + i * 24,
+              ease: "Sine.easeOut",
+              onComplete: () => dot.destroy(),
+            });
+          }
+        }
+
+        getHeroSceneEntryPoint(sceneKey = this.currentDemoScene) {
+          if (sceneKey === "profile") return this.worldPoint(178, 352);
+          if (sceneKey === "wellness") return this.worldPoint(164, 432);
+          if (sceneKey === "social") return { x: 195, y: 434 };
+          if (this.gameplay.activeIntake === "mbti" && !this.gameplay.hero.born) return { x: 195, y: 292 };
+          return { x: 195, y: 430 };
+        }
+
+        ensureHeroScene() {
+          const hero = this.gameplay.hero;
+          if (!this.currentDemoScene) return;
+          if (hero.scene !== this.currentDemoScene) {
+            const point = this.getHeroSceneEntryPoint(this.currentDemoScene);
+            hero.scene = this.currentDemoScene;
+            hero.x = point.x;
+            hero.y = point.y;
+          }
+        }
+
+        renderHero() {
+          this.ensureHeroScene();
+          if (this.heroActor) {
+            this.heroActor.destroy(true);
+            this.heroActor = null;
+          }
+          const hero = this.gameplay.hero;
+          const actor = this.add.container(hero.x, hero.y).setDepth(880);
+          const g = this.add.graphics();
+          if (!hero.born) {
+            this.drawHeroOrb(g);
+          } else {
+            this.drawHeroPerson(g, hero.facing, hero.mood);
+          }
+          actor.add(g);
+          this.heroActor = actor;
+          this.startHeroIdle();
+          this.syncGameplayState();
+        }
+
+        drawHeroOrb(g) {
+          g.fillStyle(0x050712, 0.28);
+          g.fillEllipse(0, 28, 40, 12);
+          for (let i = 4; i >= 1; i -= 1) {
+            g.fillStyle(i % 2 ? 0x9ebdff : 0xf593bb, 0.13 / i);
+            g.fillCircle(0, -4, i * 14);
+          }
+          g.lineStyle(1.8, 0xf6ecdf, 0.72);
+          g.strokeCircle(0, -4, 18);
+          g.lineStyle(1.1, 0xf593bb, 0.64);
+          g.strokeCircle(0, -4, 27);
+          g.fillStyle(0xf6ecdf, 1);
+          g.fillCircle(0, -4, 8);
+          g.fillStyle(0x9ebdff, 0.92);
+          g.fillCircle(-8, -14, 3);
+          g.fillStyle(0xf593bb, 0.92);
+          g.fillCircle(10, 8, 3);
+        }
+
+        drawHeroPerson(g, facing, mood) {
+          const dir = facing === "left" ? -1 : 1;
+          const accent = mood === "focus" ? 0x8edab2 : mood === "social" ? 0xf593bb : 0x9ebdff;
+          g.fillStyle(0x050712, 0.34);
+          g.fillEllipse(0, 26, 42, 12);
+          g.fillStyle(0x2b2435, 1);
+          g.fillRoundedRect(-12, -18, 24, 34, 10);
+          g.fillStyle(0x765168, 1);
+          g.fillRoundedRect(-11, -5, 22, 26, 8);
+          g.fillStyle(accent, 0.95);
+          g.fillRoundedRect(-5, 2, 10, 8, 3);
+          g.fillStyle(0xf1c4aa, 1);
+          g.fillCircle(0, -25, 13);
+          g.fillStyle(0x2b2435, 1);
+          g.fillEllipse(-2 * dir, -31, 28, 15);
+          g.fillCircle(-4 + dir * 3, -26, 1.8);
+          g.fillCircle(4 + dir * 3, -26, 1.8);
+          g.fillStyle(0xbf6c7b, 0.9);
+          g.fillCircle(dir * 3, -19, 1.8);
+          g.lineStyle(2, 0x2c2434, 1);
+          g.lineBetween(-7, 17, -17, 28);
+          g.lineBetween(7, 17, 17, 28);
+          g.lineBetween(-10, 2, -21, 9);
+          g.lineBetween(10, 2, 20, -2);
+          g.lineStyle(1.4, accent, 0.72);
+          g.strokeCircle(0, -2, 18);
+        }
+
+        startHeroIdle() {
+          if (!this.heroActor || this.heroBusy) return;
+          if (this.heroIdleTween) this.heroIdleTween.stop();
+          const baseY = this.heroActor.y;
+          this.heroIdleTween = this.tweens.add({
+            targets: this.heroActor,
+            y: baseY - (this.gameplay.hero.born ? 2.4 : 4),
+            duration: this.gameplay.hero.born ? 980 : 760,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+        }
+
+        addHeroPathCue(startX, startY, endX, endY, color) {
+          const steps = 5;
+          for (let i = 1; i <= steps; i += 1) {
+            const t = i / (steps + 1);
+            const dot = this.add.circle(
+              Phaser.Math.Linear(startX, endX, t),
+              Phaser.Math.Linear(startY, endY, t) + Math.sin(t * Math.PI) * 7,
+              2.2,
+              color,
+              0.62
+            ).setDepth(870);
+            this.trackSceneObject(dot);
+            this.tweens.add({
+              targets: dot,
+              alpha: 0,
+              scale: 0.28,
+              duration: 360 + i * 38,
+              ease: "Sine.easeOut",
+              onComplete: () => dot.destroy(),
+            });
+          }
+          const ring = this.add.graphics().setDepth(868);
+          ring.lineStyle(1.6, color, 0.78);
+          ring.strokeEllipse(endX, endY + 22, 36, 13);
+          this.trackSceneObject(ring);
+          this.tweens.add({
+            targets: ring,
+            alpha: 0,
+            duration: 480,
+            ease: "Sine.easeOut",
+            onComplete: () => ring.destroy(),
+          });
+        }
+
+        moveHeroTo(x, y, onArrive, options = {}) {
+          if (this.heroBusy) return;
+          if (!this.heroActor) this.renderHero();
+          const hero = this.gameplay.hero;
+          const actor = this.heroActor;
+          if (!actor) return;
+          const color = options.color || 0x9ebdff;
+          if (this.heroIdleTween) this.heroIdleTween.stop();
+          this.tweens.killTweensOf(actor);
+          hero.facing = x < actor.x ? "left" : "right";
+          hero.mood = options.mood || hero.mood || "curious";
+          this.heroBusy = true;
+          this.drawHeroPersonOrOrbForMove();
+          this.addHeroPathCue(actor.x, actor.y, x, y, color);
+          this.syncGameplayState();
+          const distance = Phaser.Math.Distance.Between(actor.x, actor.y, x, y);
+          this.tweens.add({
+            targets: actor,
+            x,
+            y,
+            duration: Phaser.Math.Clamp(distance * 3.8, 260, 760),
+            ease: "Sine.easeInOut",
+            onComplete: () => {
+              hero.x = x;
+              hero.y = y;
+              hero.scene = this.currentDemoScene;
+              this.heroBusy = false;
+              this.startHeroIdle();
+              this.syncGameplayState();
+              if (onArrive) onArrive();
+            },
+          });
+        }
+
+        drawHeroPersonOrOrbForMove() {
+          if (!this.heroActor) return;
+          this.heroActor.removeAll(true);
+          const g = this.add.graphics();
+          if (this.gameplay.hero.born) {
+            this.drawHeroPerson(g, this.gameplay.hero.facing, this.gameplay.hero.mood);
+          } else {
+            this.drawHeroOrb(g);
+          }
+          this.heroActor.add(g);
+        }
+
+        completeHeroBirth(x, y) {
+          this.gameplay.hero.born = true;
+          this.gameplay.hero.scene = this.currentDemoScene;
+          this.gameplay.hero.x = x;
+          this.gameplay.hero.y = y;
+          this.gameplay.hero.mood = "curious";
+          this.gameplay.hero.facing = "right";
+          this.addSparkBurst(x, y - 18, 0x9ebdff, 14);
+          this.renderHero();
+        }
+
+        performHeroAction(x, y, color, onArrive, options = {}) {
+          this.moveHeroTo(x, y, () => {
+            this.addSparkBurst(x, y, color);
+            if (onArrive) this.time.delayedCall(options.arriveDelay ?? 140, onArrive);
+          }, { color, mood: options.mood || "focus" });
+        }
+
+        addWalkableZone() {
+          const zone = this.add.zone(195, 378, 348, 332).setDepth(58).setInteractive({ useHandCursor: true });
+          zone.on("pointerdown", (pointer) => {
+            if (this.heroBusy) return;
+            if (!this.gameplay.hero.born && this.currentDemoScene === "intake" && this.gameplay.activeIntake === "mbti") return;
+            const x = Phaser.Math.Clamp(pointer.worldX || pointer.x, 44, 346);
+            const y = Phaser.Math.Clamp(pointer.worldY || pointer.y, 238, 512);
+            this.moveHeroTo(x, y, null, { color: 0xf6ecdf, mood: "curious" });
+          });
+          this.trackSceneObject(zone);
+        }
+
+        renderIntakeScene() {
+          this.renderIntakeStepper();
+          const step = INTAKE_STEPS.find((item) => item.key === this.gameplay.activeIntake) || INTAKE_STEPS[0];
+          if (step.key === "mbti") this.renderMbtiIntake(step);
+          if (step.key === "body") this.renderBodyIntake(step);
+          if (step.key === "bazi") this.renderBaziIntake(step);
+          if (step.key === "psychology") this.renderPsychologyIntake(step);
+        }
+
+        renderMbtiIntake(step) {
+          this.addConstellation(195, 335);
+          this.addLightDescent(195, 322);
+          this.addTinyGate(195, 432);
+          const choices = [
+            { label: "我知道类型", type: "mbti_known", value: "用户自报 MBTI 类型", x: 86, y: 292, color: 0x9ebdff },
+            { label: "先看事实", type: "preference_clue", value: "决策先看事实与结构", x: 250, y: 312, color: 0x8edab2 },
+            { label: "先看感受", type: "preference_clue", value: "决策先看人的感受与关系", x: 116, y: 434, color: 0xf593bb },
+            { label: "开放节奏", type: "preference_clue", value: "更适应开放探索节奏", x: 278, y: 440, color: 0xf2b263 },
+          ];
+          choices.forEach((choice, index) => this.addCatchLight(choice, index, step.key));
+          this.renderDemoCard("MBTI · 光团降世", [
+            "点一个光团，小光会飞过去收集偏好线索。",
+            "回到门口后变成主角，后续由小人走完整个流程。",
+          ], step.color);
+        }
+
+        addCatchLight(choice, index, stepKey) {
+          const c = this.add.container(choice.x, choice.y).setDepth(360);
+          const g = this.add.graphics();
+          g.fillStyle(choice.color, 0.18);
+          g.fillCircle(0, 0, 34);
+          g.fillStyle(choice.color, 0.94);
+          g.fillCircle(0, 0, 11);
+          g.lineStyle(1.2, P.cream, 0.68);
+          g.strokeCircle(0, 0, 20);
+          const text = this.add.text(0, 34, choice.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 0, 72, 72).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            if (this.heroBusy) return;
+            this.moveHeroTo(choice.x, choice.y, () => {
+              this.addSparkBurst(choice.x, choice.y, choice.color);
+              this.tweens.add({
+                targets: c,
+                x: 195,
+                y: 428,
+                scale: 0.34,
+                alpha: 0,
+                duration: 320,
+                ease: "Sine.easeInOut",
+              });
+              this.moveHeroTo(195, 428, () => {
+                this.completeHeroBirth(195, 428);
+                this.time.delayedCall(260, () => {
+                  this.commitSignal(stepKey, choice.type, choice.value, choice.type === "mbti_known" ? "user_reported" : "medium");
+                  this.refreshDemoScene();
+                });
+              }, { color: choice.color, mood: "curious" });
+            }, { color: choice.color, mood: "orb" });
+          });
+          c.add([g, text, hit]);
+          this.trackSceneObject(c);
+          this.tweens.add({ targets: c, y: choice.y - 8, duration: 900 + index * 140, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+        }
+
+        renderBodyIntake(step) {
+          this.addBodyCourtyard(195, 378);
+          const objects = [
+            { label: "睡眠", type: "sleep", value: "最近睡眠多梦或恢复感不足", x: 126, y: 342, color: 0x9ebdff },
+            { label: "冷热", type: "temperature_sense", value: "冷热感或体感波动明显", x: 238, y: 340, color: 0xf2b263 },
+            { label: "消化", type: "digestion", value: "食欲和消化节律需要观察", x: 112, y: 438, color: 0x8edab2 },
+            { label: "疲劳", type: "body_state", value: "身体沉重或精力恢复偏慢", x: 260, y: 432, color: 0xf593bb },
+          ];
+          objects.forEach((item) => this.addBodyObject(item, step.key));
+          this.renderDemoCard("身体 · 庭院气象", [
+            "点一个身体物件，先采一条体感线索。",
+            "这不是诊断，只进入「体质/节律倾向」参考。",
+          ], step.color);
+        }
+
+        addBodyCourtyard(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(90));
+          this.shadow(cx, cy + 92, 280, 48, 0.2, 70);
+          this.poly(g, [[cx, cy - 104], [cx + 148, cy - 32], [cx + 96, cy + 74], [cx - 36, cy + 110], [cx - 146, cy + 36], [cx - 98, cy - 62]], 0x4a5b52, 1, P.outline, 2);
+          this.poly(g, [[cx, cy - 72], [cx + 104, cy - 24], [cx + 66, cy + 42], [cx - 28, cy + 72], [cx - 100, cy + 22], [cx - 70, cy - 42]], 0x8edab2, 0.24, P.cream, 0.6);
+        }
+
+        addBodyObject(item, stepKey) {
+          const c = this.add.container(item.x, item.y).setDepth(item.y + 120);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.22);
+          g.fillEllipse(0, 23, 58, 14);
+          g.fillStyle(item.color, 0.22);
+          g.fillRoundedRect(-24, -20, 48, 40, 10);
+          g.lineStyle(1.5, item.color, 0.82);
+          g.strokeRoundedRect(-24, -20, 48, 40, 10);
+          g.fillStyle(P.cream, 0.9);
+          g.fillCircle(0, -2, 6);
+          const text = this.add.text(0, 38, item.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 4, 78, 72).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            this.performHeroAction(item.x, item.y + 12, item.color, () => {
+              this.commitSignal(stepKey, item.type, item.value, "medium");
+              this.refreshDemoScene();
+            });
+          });
+          c.add([g, text, hit]);
+          this.trackSceneObject(c);
+        }
+
+        renderBaziIntake(step) {
+          this.addTimeObservatory(195, 376);
+          this.addChoiceButton(42, 544, "提供时间", step.color, () => {
+            this.performHeroAction(196, 354, step.color, () => {
+              this.commitSignal("bazi", "birth_info", "用户提供出生日期/时间，作为非决定论阶段参考", "user_reported");
+              this.refreshDemoScene();
+            });
+          }, 96);
+          this.addChoiceButton(148, 544, "时间不确定", 0xf2b263, () => {
+            this.performHeroAction(196, 354, 0xf2b263, () => {
+              this.commitSignal("bazi", "birth_info", "出生时间不确定，降低玄学维度置信度", "low");
+              this.refreshDemoScene();
+            });
+          }, 104);
+          this.addChoiceButton(262, 544, this.gameplay.skipped.length >= 2 ? "跳过已满" : "先跳过", 0xc0b7ca, () => {
+            this.moveHeroTo(306, 562, () => {
+              this.skipIntake("bazi");
+              this.refreshDemoScene();
+            }, { color: 0xc0b7ca, mood: "focus" });
+          }, 88);
+          this.renderDemoCard("八字 · 时间观星台", [
+            "出生信息只作为文化叙事和阶段反思入口。",
+            "不确定可以低置信记录，也可以显式跳过。",
+          ], step.color);
+        }
+
+        addTimeObservatory(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(100));
+          this.shadow(cx, cy + 74, 260, 42, 0.22, 76);
+          this.poly(g, [[cx, cy - 112], [cx + 126, cy - 44], [cx + 68, cy + 58], [cx - 78, cy + 72], [cx - 130, cy - 24]], 0x4f3c5b, 1, P.outline, 2);
+          g.lineStyle(2, 0xf593bb, 0.68);
+          g.strokeCircle(cx, cy - 24, 54);
+          g.strokeCircle(cx, cy - 24, 28);
+          g.lineStyle(1, P.cream, 0.38);
+          for (let i = 0; i < 8; i += 1) {
+            const a = (Math.PI * 2 * i) / 8;
+            g.lineBetween(cx, cy - 24, cx + Math.cos(a) * 54, cy - 24 + Math.sin(a) * 54);
+          }
+          this.drawKeeper(g, cx + 82, cy + 16, 0xf593bb);
+        }
+
+        renderPsychologyIntake(step) {
+          this.addEchoPath(195, 378);
+          const stones = [
+            { label: "反复模式", type: "repeated_pattern", value: "重要事情前容易卡住或拖延", x: 104, y: 332 },
+            { label: "保护什么", type: "self_evaluation", value: "卡住像是在保护自尊或胜任感", x: 196, y: 382 },
+            { label: "小实验", type: "emotion_state", value: "愿意先尝试一个不会被评价的小动作", x: 286, y: 432 },
+          ];
+          stones.forEach((stone, index) => this.addEchoStone(stone, index, step.key));
+          this.renderDemoCard("问答 · 回声小径", [
+            "点一块踏石，先采一条阿德勒式心理线索。",
+            "生产版可扩成 3-5 个短问答，这里先验证交互。",
+          ], step.color);
+        }
+
+        addEchoPath(cx, cy) {
+          const g = this.worldGraphics(this.add.graphics().setDepth(90));
+          this.shadow(cx, cy + 82, 286, 44, 0.18, 74);
+          this.poly(g, [[cx - 118, cy - 48], [cx + 26, cy - 104], [cx + 130, cy + 34], [cx - 18, cy + 94]], 0x56405f, 0.92, P.outline, 2);
+          g.lineStyle(1.4, 0xf2b263, 0.38);
+          g.lineBetween(cx - 88, cy - 24, cx + 92, cy + 56);
+        }
+
+        addEchoStone(stone, index, stepKey) {
+          const c = this.add.container(stone.x, stone.y).setDepth(stone.y + 130);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.2);
+          g.fillEllipse(0, 18, 62, 16);
+          g.fillStyle(0xf2b263, 0.26 + index * 0.08);
+          g.fillEllipse(0, 0, 56, 34);
+          g.lineStyle(1.4, P.cream, 0.46);
+          g.strokeEllipse(0, 0, 56, 34);
+          const text = this.add.text(0, 39, stone.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 4, 78, 64).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            this.performHeroAction(stone.x, stone.y + 10, 0xf2b263, () => {
+              this.commitSignal(stepKey, stone.type, stone.value, "medium");
+              this.refreshDemoScene();
+            });
+          });
+          c.add([g, text, hit]);
+          this.trackSceneObject(c);
         }
 
         renderProfileScene() {
           this.addStage();
+          this.addStateWeather();
+          this.renderCoverageSockets();
+          if (!this.getCoverage().canGenerateProfile) {
+            this.renderDemoCard("画像还在成形", [
+              "至少提交两类采集信号后，四维房间会生成第一版画像。",
+              `当前已提交 ${this.getCoverage().submittedCount} 类，可继续回到「采集」。`,
+            ], 0xf2b263);
+            return;
+          }
           AXES.forEach((axis, index) => this.addSignal(axis, index));
           this.renderAxisRail();
-          this.selectSignal(AXES[1], false);
+          const preferred = AXES.find((axis) => this.getAxisProfile(axis).confidence !== "low") || AXES[1];
+          this.selectSignal(preferred, false);
+        }
+
+        addStateWeather() {
+          const state = this.getProfileOutput().currentState;
+          const color = state.value === "positive" ? 0xffd58a : state.value === "negative" ? 0x7f8db8 : 0x9ebdff;
+          this.glow(196, 315, state.value === "negative" ? 196 : 154, color, 0.18, 122, true);
+          const group = this.add.container(304, 224).setDepth(760);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.38);
+          g.fillRoundedRect(-36, -26, 72, 52, 16);
+          g.lineStyle(1.2, color, 0.64);
+          g.strokeRoundedRect(-36, -26, 72, 52, 16);
+          const text = this.add.text(0, -2, state.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "24px",
+            fontStyle: "800",
+            color: "#fff7ed",
+          }).setOrigin(0.5);
+          group.add([g, text]);
+          this.trackSceneObject(group);
+        }
+
+        renderCoverageSockets() {
+          const coverage = this.getCoverage();
+          const group = this.add.container(22, 505).setDepth(750);
+          coverage.stages.forEach((stage, index) => {
+            const step = INTAKE_STEPS.find((item) => item.key === stage.key);
+            const x = index * 87;
+            const g = this.add.graphics();
+            const fill = stage.status === "submitted" ? step.color : stage.status === "skipped" ? 0x4b4656 : 0x242337;
+            g.fillStyle(fill, stage.status === "submitted" ? 0.94 : 0.78);
+            g.fillRoundedRect(x, 0, 72, 46, 13);
+            g.lineStyle(1, stage.status === "submitted" ? P.cream : step.color, stage.status === "waiting" ? 0.16 : 0.44);
+            g.strokeRoundedRect(x, 0, 72, 46, 13);
+            const mark = stage.status === "submitted" ? "已采" : stage.status === "skipped" ? "跳过" : stage.status === "active" ? "当前" : "待补";
+            const top = this.add.text(x + 36, 13, step.label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "12px",
+              fontStyle: "800",
+              color: "#fff7ed",
+            }).setOrigin(0.5);
+            const bottom = this.add.text(x + 36, 31, mark, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "10px",
+              color: "#d9d0df",
+            }).setOrigin(0.5);
+            group.add([g, top, bottom]);
+          });
+          this.trackSceneObject(group);
+        }
+
+        getAxisProfile(axis) {
+          return this.getProfileOutput().dimensionValues.find((item) => item.key === axis.key) || {
+            name: axis.fullLabel,
+            label: axis.title,
+            description: axis.summary,
+            confidence: "low",
+            polarity: "neutral",
+          };
         }
 
         renderWellnessScene() {
           this.addSeaBand();
           this.addWellnessIsland(195, 375);
-          this.renderDemoCard("四屋调理岛", [
-            "中医、哲学、冥想、艺术四间小屋围成一座岛。",
-            "每间屋子有店长，给练习、解释、照护或创作任务。",
-          ], 0x8edab2);
+          WELLNESS_HOUSES.forEach((house) => this.addHouseHotspot(house));
+          this.renderWellnessPractice();
+        }
+
+        addHouseHotspot(house) {
+          const p = this.worldPoint(house.x, house.y);
+          const zone = this.add.zone(p.x, p.y, 68, 58).setDepth(690).setInteractive({ useHandCursor: true });
+          zone.on("pointerdown", () => {
+            this.performHeroAction(p.x, p.y + 18, house.color, () => {
+              this.gameplay.selectedHouse = house.key;
+              this.gameplay.actions.push({ type: "house_focus", house: house.key });
+              this.syncGameplayState();
+              this.refreshDemoScene();
+            }, { mood: "focus" });
+          });
+          this.trackSceneObject(zone);
+          const label = this.add.text(p.x, p.y + 34, house.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5).setDepth(692);
+          this.trackSceneObject(label);
+        }
+
+        renderWellnessPractice() {
+          const house = WELLNESS_HOUSES.find((item) => item.key === this.gameplay.selectedHouse) || WELLNESS_HOUSES[2];
+          const card = this.renderDemoCard(`${house.label}店长 · 练习卡`, [
+            house.practice,
+            "选择练习后，小人会先走回对应房子，再记录 PracticeAction。",
+          ], house.color);
+          this.addChoiceButton(42, 742, "试一下", house.color, () => {
+            this.runPracticeAction(house, "try", house.color);
+          }, 88, 36);
+          this.addChoiceButton(150, 742, "收藏", 0x9ebdff, () => {
+            this.runPracticeAction(house, "save", 0x9ebdff);
+          }, 82, 36);
+          this.addChoiceButton(252, 742, "稍后", 0xc0b7ca, () => {
+            this.runPracticeAction(house, "dismiss", 0xc0b7ca);
+          }, 82, 36);
+          return card;
+        }
+
+        runPracticeAction(house, result, color) {
+          const p = this.worldPoint(house.x, house.y);
+          this.performHeroAction(p.x, p.y + 18, color, () => {
+            this.gameplay.actions.push({ type: "practice_selected", house: house.key, result });
+            this.gameplay.hero.mood = result === "dismiss" ? "curious" : "focus";
+            this.syncGameplayState();
+          }, { mood: result === "dismiss" ? "curious" : "focus" });
         }
 
         renderSocialScene() {
           this.addSeaBand();
           const group = this.add.container(0, 0).setDepth(150);
           this.trackSceneObject(group);
-          [
-            { x: 88, y: 358, label: "INFP", color: 0x9ebdff },
-            { x: 210, y: 342, label: "ENFJ", color: 0xf593bb },
-            { x: 328, y: 374, label: "ISTJ", color: 0xf2b263 },
-            { x: 450, y: 340, label: "ENTP", color: 0x8edab2 },
-          ].forEach((island) => group.add(this.makePersonalityIsland(island)));
+          SOCIAL_ISLANDS.forEach((island) => group.add(this.makePersonalityIsland(island)));
+          const selected = SOCIAL_ISLANDS.find((item) => item.label === this.gameplay.selectedIsland) || SOCIAL_ISLANDS[0];
+          group.x = Phaser.Math.Clamp(195 - selected.x, -150, 84);
           const dragZone = this.add.zone(195, 365, 390, 280).setDepth(500).setInteractive({ useHandCursor: true });
           let startX = 0;
           let baseX = 0;
+          let moved = false;
           dragZone.on("pointerdown", (pointer) => {
             startX = pointer.x;
             baseX = group.x;
+            moved = false;
           });
           dragZone.on("pointermove", (pointer) => {
             if (!pointer.isDown) return;
+            moved = Math.abs(pointer.x - startX) > 8;
             group.x = Phaser.Math.Clamp(baseX + pointer.x - startX, -120, 28);
           });
+          dragZone.on("pointerup", () => {
+            const closest = SOCIAL_ISLANDS.reduce((best, island) => {
+              const distance = Math.abs(island.x + group.x - 195);
+              return distance < best.distance ? { island, distance } : best;
+            }, { island: SOCIAL_ISLANDS[0], distance: Infinity }).island;
+            this.gameplay.selectedIsland = closest.label;
+            this.gameplay.actions.push({ type: moved ? "island_swipe" : "island_tap", island: closest.label });
+            this.syncGameplayState();
+            const snappedX = Phaser.Math.Clamp(195 - closest.x, -120, 28);
+            this.tweens.add({
+              targets: group,
+              x: snappedX,
+              duration: 220,
+              ease: "Sine.easeOut",
+              onComplete: () => {
+                this.moveHeroTo(closest.x + snappedX, closest.y + 66, () => {
+                  this.addSparkBurst(closest.x + snappedX, closest.y + 20, closest.color);
+                }, { color: closest.color, mood: "social" });
+              },
+            });
+            this.renderSocialDetail();
+          });
           this.trackSceneObject(dragZone);
-          this.renderDemoCard("人格岛群", [
-            "人格不是列表，而是海面上的岛屿。",
-            "左右拖动海面，可以浏览不同人格岛和关系入口。",
-          ], 0xf593bb);
+          this.renderSocialDetail();
+        }
+
+        renderSocialDetail() {
+          if (this.profileCard) this.profileCard.destroy(true);
+          const island = SOCIAL_ISLANDS.find((item) => item.label === this.gameplay.selectedIsland) || SOCIAL_ISLANDS[0];
+          this.profileCard = this.renderDemoCard(`人格岛 · ${island.label}`, [
+            island.prompt,
+            "左右滑动海面切换岛屿，停下后小人会靠岸并更新社交提示。",
+          ], island.color);
         }
 
         addConstellation(cx, cy) {
@@ -559,6 +1414,12 @@
         makePersonalityIsland({ x, y, label, color }) {
           const c = this.add.container(x, y).setScale(0.72);
           const g = this.add.graphics();
+          if (label === this.gameplay.selectedIsland) {
+            g.lineStyle(3, 0xf6ecdf, 0.78);
+            g.strokeEllipse(0, 24, 132, 74);
+            g.lineStyle(1.4, color, 0.62);
+            g.strokeEllipse(0, 24, 154, 88);
+          }
           g.fillStyle(0x050712, 0.24);
           g.fillEllipse(0, 50, 96, 22);
           this.poly(g, [[0, -46], [62, -12], [44, 38], [-20, 58], [-68, 16], [-44, -30]], 0x516d5c, 1, P.outline, 2);
@@ -588,7 +1449,6 @@
           this.addFloorDetails(195, 303);
           this.addFurniture();
           this.addLamp(318, 198);
-          this.addAvatar(178, 352);
         }
 
         addStageShadow() {
@@ -688,37 +1548,6 @@
           this.poly(g, [[x - 42, y - 22], [x + 4, y - 44], [x + 42, y - 23], [x - 4, y - 2]], 0xe6a4a3, 0.92, P.outline, 1.5);
         }
 
-        addAvatar(x, y) {
-          const c = this.add.container(x, y).setDepth(y + 76);
-          const g = this.add.graphics();
-          g.fillStyle(0x050712, 0.34);
-          g.fillEllipse(2, 34, 62, 16);
-          g.fillStyle(0x2b2435, 1);
-          g.fillRoundedRect(-19, -42, 38, 45, 16);
-          g.fillStyle(0x1f1a28, 1);
-          g.fillEllipse(0, -34, 38, 24);
-          g.fillStyle(0xf1c4aa, 1);
-          g.fillCircle(0, -24, 17);
-          g.fillStyle(0x2b2435, 1);
-          g.fillCircle(-7, -27, 2.4);
-          g.fillCircle(7, -27, 2.4);
-          g.fillStyle(0xbf6c7b, 0.9);
-          g.fillCircle(0, -17, 2);
-          g.fillStyle(0x765168, 1);
-          g.fillRoundedRect(-15, -8, 30, 36, 9);
-          g.fillStyle(P.cream, 1);
-          g.fillRoundedRect(-8, -2, 16, 13, 3);
-          g.lineStyle(2.6, 0x2c2434, 1);
-          g.lineBetween(-10, 24, -26, 36);
-          g.lineBetween(10, 24, 26, 36);
-          g.lineBetween(-13, 6, -28, 13);
-          g.lineBetween(13, 6, 28, 0);
-          c.add(g);
-          this.worldContainer(c);
-          const restingY = c.y;
-          this.tweens.add({ targets: c, y: restingY - 4 * WORLD_SCALE, duration: 1500, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
-        }
-
         addPlant(x, y) {
           const g = this.worldGraphics(this.add.graphics().setDepth(y + 46));
           this.shadow(x + 1, y + 24, 48, 18, 0.18, y + 34);
@@ -789,7 +1618,12 @@
             this.paintSignal(glow, gem, axis, this.selected?.key === axis.key);
             this.tweens.add({ targets: c, scale: SIGNAL_SCALE, duration: 140, ease: "Sine.easeOut" });
           });
-          hit.on("pointerdown", () => this.selectSignal(axis, true));
+          hit.on("pointerdown", () => {
+            this.moveHeroTo(p.x, p.y + 24, () => this.selectSignal(axis, true), {
+              color: axis.color,
+              mood: "focus",
+            });
+          });
 
           this.tweens.add({
             targets: [c, hit],
@@ -898,6 +1732,9 @@
 
         renderProfile(axis) {
           if (this.profileCard) this.profileCard.destroy(true);
+          const axisProfile = this.getAxisProfile(axis);
+          const confidenceText = axisProfile.confidence === "low" ? "低置信 · 可补采" : axisProfile.confidence === "high" ? "高置信" : "中置信";
+          const evidenceCount = this.gameplay.signals.filter((signal) => signal.dimension_hint.includes(axisProfile.dimension)).length;
 
           const group = this.add.container(20, 552).setDepth(700);
           const g = this.add.graphics();
@@ -924,26 +1761,27 @@
           face.lineStyle(1.5, 0x925c72, 1);
           face.lineBetween(44, 63, 54, 63);
 
-          const label = this.add.text(96, 25, axis.fullLabel, {
+          const label = this.add.text(96, 25, `${axisProfile.name} · ${confidenceText}`, {
             fontFamily: "Inter, sans-serif",
             fontSize: "13px",
             fontStyle: "800",
             color: "#f6ecdf",
           });
-          const title = this.add.text(96, 48, axis.title, {
+          const title = this.add.text(96, 48, axisProfile.label, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "23px",
+            fontSize: "21px",
             fontStyle: "800",
             color: "#ffffff",
+            wordWrap: { width: 218 },
           });
-          const summary = this.add.text(28, 100, axis.summary, {
+          const summary = this.add.text(28, 100, axisProfile.description, {
             fontFamily: "Inter, sans-serif",
             fontSize: "14px",
             color: "#f2eaf2",
             lineSpacing: 6,
             wordWrap: { width: 292 },
           });
-          const question = this.add.text(28, 142, axis.question, {
+          const question = this.add.text(28, 142, evidenceCount > 0 ? `证据火花 ${evidenceCount} 条 · 点其他维度可切换解读` : axis.question, {
             fontFamily: "Inter, sans-serif",
             fontSize: "14px",
             fontStyle: "800",
@@ -961,9 +1799,12 @@
             selectedAxis: axis.key,
             selectedLabel: axis.fullLabel,
             sourceLabel: axis.nodeLabel,
+            dimensionLabel: axisProfile.label,
+            evidenceCount,
             layout: "mobile-portrait",
             worldScale: WORLD_SCALE,
           };
+          this.syncGameplayState();
           document.body.dataset.isoAxis = axis.key;
           document.body.dataset.isoLabel = axis.fullLabel;
         }

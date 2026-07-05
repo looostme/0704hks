@@ -74,6 +74,31 @@ voice recording -> ASR transcript -> text signal extraction
 voice delivery -> low-weight auxiliary signal
 ```
 
+Current implementation:
+
+- Use backend ASR, not direct audio chat. The frontend records or uploads audio, then sends the file to a server function.
+- Default ASR route: OpenAI-compatible `POST /v1/audio/transcriptions` through `https://api.openai-next.com`.
+- Default model order: `gpt-4o-transcribe`, then fallback to `whisper-1`.
+- `gpt-4o-transcribe` is the preferred default because the smoke test returned cleaner simplified Chinese punctuation. `whisper-1` is the stable compatibility fallback.
+- `gpt-4o-mini-transcribe` is not a default because the smoke test returned an upstream/model error.
+
+Command:
+
+```bash
+export OPENAI_NEXT_API_KEY="your-api-key"
+python3 scripts/transcribe_audio.py /path/to/voice.m4a --category body --pretty
+```
+
+The script emits a raw `input` object and a profile-ready voice `signal`. Append them to `intake.inputs` and `intake.signals`, then run `scripts/profile_engine.py`.
+
+For persisted sessions, pass a stable storage URI instead of a local path:
+
+```bash
+python3 scripts/transcribe_audio.py /path/to/voice.m4a --source-uri r2://0704hks-uploads/session/input_voice_001.m4a --pretty
+```
+
+The script rejects unsupported audio formats and files larger than `OPENAI_NEXT_ASR_MAX_AUDIO_MB` before calling ASR. It does not include absolute local paths unless `--include-local-path` is explicitly set.
+
 The transcript should be treated like text. Delivery features such as fast speech, long pauses, low volume, or hesitation can support a stress hypothesis, but they should not drive conclusions alone.
 
 Voice delivery signal rules:

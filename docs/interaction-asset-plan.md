@@ -9,22 +9,25 @@ The next phase has two parallel tracks:
 
 The key principle is that interaction and art assets should be planned together. The Phaser scene should know which objects are interactive, animated, layered, and reusable before assets are generated.
 
+The detailed gameplay interaction plan is tracked in `docs/gameplay-interaction-plan.md`. Treat that document as the product-level interaction contract before generating assets or changing the Phaser spike.
+
 ## Track 1: Game-Like Interaction Improvement
 
-The current demo proves the scene map, but most interactions are still simple tab/click state changes. The next step is to make each scene feel like a small playable moment.
+The current demo now proves the first game-like interaction grammar: a protagonist light descends, becomes a small character after the MBTI action, and moves to clicked targets before state changes occur. The next step is to replace code-drawn placeholders with modular assets while preserving that character-throughline.
 
 ### Interaction Goals
 
 | Scene | Current demo | Next interaction target |
 |---|---|---|
-| Collection / MBTI | Light cluster descends visually | User guides or catches light clusters; each choice changes light color, orbit, or landing path |
-| Result room | Click dimension nodes | Drag or tap dimension lights, reveal current state, and see room weather/state shift |
-| Wellness island | Static four-house island | Tap houses, meet shopkeepers, choose a practice card, see island objects react |
-| Social islands | Drag sea surface | Swipe island carousel, select an island, reveal relationship/social prompt |
+| Collection / MBTI | Light protagonist catches a choice and becomes a small character | Improve birth animation and replace the orb/character with final sprites |
+| Result room | Character walks to dimension nodes before reveal | Add richer evidence sparks, compare action, and room weather/state shift |
+| Wellness island | Character walks to houses and practice targets | Add shopkeeper reveal and house-specific object reaction |
+| Social islands | Swipe carousel, then character docks at selected island | Add dock/ramp animation and relationship/social prompt variants |
 
 ### Interaction Patterns To Prototype
 
 - Tap: select a node, house, island, or light.
+- Tap open ground: move the protagonist without changing product state.
 - Drag/swipe: browse social islands or guide collection lights.
 - Hold: charge, meditate, or inspect a profile node.
 - Reveal: light beam, card unfold, shopkeeper dialogue, state aura.
@@ -44,6 +47,7 @@ idle -> focus -> reveal -> resolve
 
 ```text
 LightOrb
+Protagonist
 ProfileNode
 TinyHouse
 Shopkeeper
@@ -120,6 +124,9 @@ Suggested assets:
 
 - `mbti_sky_plate`: soft night-sky / inner-space background plate.
 - `light_orb_cluster`: transparent light cluster sprite.
+- `protagonist_orb`: transparent controllable orb sprite used before birth.
+- `protagonist_child_idle`: small character sprite after birth.
+- `protagonist_child_walk`: optional 4-8 frame walk sprite sheet.
 - `landing_gate`: small isometric landing platform.
 - `spark_particles`: small reusable transparent particles.
 
@@ -127,6 +134,7 @@ Interaction need:
 
 - User can tap or guide light clusters.
 - Light cluster must remain readable at small size.
+- The protagonist must be readable at very small scale and should not contain text or facial detail that disappears on mobile.
 
 ### 2. Profile Room
 
@@ -138,6 +146,7 @@ Suggested assets:
 - `profile_room_foreground_props`: optional foreground prop layer.
 - `dimension_orb_body`, `dimension_orb_mind`, `dimension_orb_spirit`, `dimension_orb_mbti`.
 - `state_aura_positive`, `state_aura_negative`, `state_aura_neutral`.
+- `protagonist_shadow` or reusable contact shadow if the character sprite does not include one.
 
 Interaction need:
 
@@ -159,6 +168,7 @@ Interaction need:
 
 - Each house is clickable.
 - Each shopkeeper can appear or bounce independently.
+- The protagonist needs a clear landing point in front of each house.
 - Keep houses distinct by silhouette, not only color.
 
 ### 4. Personality Islands
@@ -171,11 +181,13 @@ Suggested assets:
 - `personality_island_base_a/b/c`: reusable island bases.
 - `personality_house_variants`: small house variants.
 - `island_selection_ring`: transparent selection effect.
+- `island_dock_marker`: small landing/docking marker for the protagonist.
 
 Interaction need:
 
 - Islands move horizontally in a carousel.
 - Selected island expands into a docked detail card.
+- The protagonist should stand below or in front of the selected island, not overlap the house silhouette.
 
 ## Prompt Structure
 
@@ -196,10 +208,11 @@ Do not generate a full final UI screenshot unless the asset is explicitly a non-
 ## Suggested Build Order
 
 1. Improve current code-drawn interactions for all four scenes.
-2. Write exact asset specs for `ProfileRoomScene` and `WellnessIslandScene`.
-3. Generate or illustrate the first modular asset batch.
-4. Replace code-drawn props with imported assets.
-5. Add sprite/particle polish and sound later.
+2. Write exact asset specs for protagonist orb/character and landing markers.
+3. Write exact asset specs for `ProfileRoomScene` and `WellnessIslandScene`.
+4. Generate or illustrate the first modular asset batch.
+5. Replace code-drawn props with imported assets.
+6. Add sprite/particle polish and sound later.
 
 ## Open Questions
 
@@ -207,4 +220,5 @@ Do not generate a full final UI screenshot unless the asset is explicitly a non-
 - Ba Zi collection scene metaphor.
 - Q&A collection scene metaphor.
 - Exact shopkeeper character direction.
+- Exact protagonist character direction and walk sprite requirements.
 - Whether assets should be generated as flat transparent PNGs, layered PSD-like exports, or sprite sheets.

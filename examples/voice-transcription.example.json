@@ -1,0 +1,58 @@
+{
+  "audio_file": "asr-test.m4a",
+  "input_id": "input_voice_001",
+  "transcript": "最近睡不好，多梦，也很容易烦",
+  "language": "zh",
+  "transcript_confidence": "medium",
+  "quality": {
+    "status": "medium",
+    "issues": [],
+    "should_retry": false,
+    "notes": "ASR 已识别出可用文本；未提供词级置信度，按中等置信度进入后续抽取。"
+  },
+  "asr": {
+    "provider": "openai-compatible",
+    "base_url": "https://api.openai-next.com",
+    "endpoint": "https://api.openai-next.com/v1/audio/transcriptions",
+    "model": "gpt-4o-transcribe",
+    "attempted_models": ["gpt-4o-transcribe", "whisper-1"],
+    "fallback_errors": []
+  },
+  "input": {
+    "id": "input_voice_001",
+    "modality": "voice",
+    "created_at": "2026-07-05T00:00:00+00:00",
+    "source": {
+      "kind": "voice_recording",
+      "uri": "voice://input_voice_001/asr-test.m4a",
+      "mime_type": "audio/mp4"
+    },
+    "quality": {
+      "status": "medium",
+      "issues": [],
+      "should_retry": false,
+      "notes": "ASR 已识别出可用文本；未提供词级置信度，按中等置信度进入后续抽取。"
+    }
+  },
+  "signal": {
+    "id": "sig_voice_001",
+    "modality": "voice",
+    "type": "sleep",
+    "value": "最近睡不好，多梦，也很容易烦",
+    "transcript": "最近睡不好，多梦，也很容易烦",
+    "transcript_confidence": "medium",
+    "confidence": "medium",
+    "dimension_hint": ["tcm_body", "psychology"],
+    "evidence": [
+      {
+        "kind": "raw_input",
+        "id": "input_voice_001"
+      }
+    ],
+    "safety": {
+      "usage": "语音转文字后作为用户自述线索，进入后续文本信号抽取和四维画像。",
+      "must_not": ["医学诊断", "心理诊断", "人格定论", "真实性判断"]
+    }
+  },
+  "next_step": "Append input to intake.inputs and signal to intake.signals, then run scripts/profile_engine.py."
+}

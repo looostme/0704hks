@@ -73,7 +73,7 @@ The next interaction and fine-asset plan is tracked in `docs/interaction-asset-p
 - a Love Lights-inspired small isometric-world scale
 - a four-scene product-map demo: intake light descent, profile room, wellness island, and social personality islands
 - mobile portrait sizing with high-resolution canvas backing
-- click-to-select light interaction
+- protagonist-led click interaction: light descent, character birth, click-to-move, arrival-triggered state changes
 - four-profile-axis visual mapping
 - a compact dialogue-style profile card triggered from the scene
 

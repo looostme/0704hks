@@ -14,7 +14,13 @@ grill-me 采集到四维画像产出的流程见 [docs/diagnosis-flow.md](docs/d
 
 多模态输入契约见 [docs/multimodal-input.md](docs/multimodal-input.md)，JSON Schema 见 [schemas/profile-signal.schema.json](schemas/profile-signal.schema.json)，示例见 [examples/multimodal-intake.example.json](examples/multimodal-intake.example.json)。
 
+语音 ASR 转写脚本见 [scripts/transcribe_audio.py](scripts/transcribe_audio.py)，示例输出见 [examples/voice-transcription.example.json](examples/voice-transcription.example.json)。
+
 四维值与当前状态的 LLM-first 画像引擎见 [docs/profile-engine-flow.md](docs/profile-engine-flow.md) 和 [scripts/profile_engine.py](scripts/profile_engine.py)。
+
+Cloudflare 部署方案见 [docs/deployment-cloudflare.md](docs/deployment-cloudflare.md)。
+
+部署验证记录见 [docs/deployment-validation.md](docs/deployment-validation.md)。
 
 当前首轮采集规则：
 
