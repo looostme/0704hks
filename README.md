@@ -22,6 +22,8 @@ Cloudflare 部署方案见 [docs/deployment-cloudflare.md](docs/deployment-cloud
 
 部署验证记录见 [docs/deployment-validation.md](docs/deployment-validation.md)。
 
+v2 之后的 AI 生图素材制作单见 [docs/asset-generation-specs-v1.md](docs/asset-generation-specs-v1.md)。
+
 当前首轮采集规则：
 
 - 顺序固定为 MBTI -> 身体 -> 八字 -> 心理。

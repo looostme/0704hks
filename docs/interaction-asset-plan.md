@@ -11,6 +11,8 @@ The key principle is that interaction and art assets should be planned together.
 
 The detailed gameplay interaction plan is tracked in `docs/gameplay-interaction-plan.md`. Treat that document as the product-level interaction contract before generating assets or changing the Phaser spike.
 
+The first executable AI image-generation specs are tracked in `docs/asset-generation-specs-v1.md`. Use that document as the production request sheet for the art team; this file remains the higher-level interaction and asset strategy.
+
 ## Track 1: Game-Like Interaction Improvement
 
 The current demo now proves the first game-like interaction grammar: a protagonist light descends, becomes a small character after the MBTI action, and moves to clicked targets before state changes occur. The next step is to replace code-drawn placeholders with modular assets while preserving that character-throughline.
@@ -208,8 +210,8 @@ Do not generate a full final UI screenshot unless the asset is explicitly a non-
 ## Suggested Build Order
 
 1. Improve current code-drawn interactions for all four scenes.
-2. Write exact asset specs for protagonist orb/character and landing markers.
-3. Write exact asset specs for `ProfileRoomScene` and `WellnessIslandScene`.
+2. Write exact asset specs for protagonist orb/character and landing markers. DONE in `docs/asset-generation-specs-v1.md`.
+3. Write exact asset specs for `ProfileRoomScene` and `WellnessIslandScene`. DONE for first batch in `docs/asset-generation-specs-v1.md`.
 4. Generate or illustrate the first modular asset batch.
 5. Replace code-drawn props with imported assets.
 6. Add sprite/particle polish and sound later.
