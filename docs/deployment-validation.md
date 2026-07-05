@@ -135,6 +135,33 @@ Still blocked:
 
 - Full target deployment with R2 is blocked until R2 is enabled in the Cloudflare Dashboard. `wrangler r2 bucket create 0704hks-media` still returns Cloudflare API `code: 10042`.
 
+## 2026-07-05 V2 Protagonist Deploy Result
+
+Published the v2 protagonist demo through the smoke Worker:
+
+```text
+https://0704hks-smoke.070405hks.workers.dev
+Cloudflare Worker version: 3298fe01-48ba-44f7-8b5d-a8f7140a59ae
+Git commit: 409617f Add protagonist v2 demo and deployment path
+```
+
+Passed checks:
+
+- `wrangler deploy -c wrangler.remote-smoke.toml` completed successfully.
+- `GET /api/health` returned `200 OK` with `status=ready` and protected API routes still marked required.
+- Static asset root `/` returned `200 OK` and served the Phaser v2 HTML.
+- Browser execution created a `1560x3376` Phaser canvas.
+- Browser execution created the DOM smoke hook `<script id="gameplay-state" type="application/json">`.
+- Initial deployed state reported `activeScene=intake`, `heroBorn=false`, `activeIntake=mbti`, and `signalCount=0`.
+- Deployed click smoke passed:
+  - MBTI light click produced `heroBorn=true`, `activeIntake=body`, and `signalCount=1`.
+  - Body object click produced `activeIntake=bazi`, `signalCount=2`, and `canGenerateProfile=true`.
+- Browser console error/warning log was empty during deployed render and click smoke.
+
+Deployment note:
+
+- This is the current deployable smoke target while R2 remains unavailable on the Cloudflare account. The full `wrangler.toml` target still keeps the intended R2 binding for later.
+
 ## 2026-07-05 Local Validation Result
 
 Validated locally with Wrangler 4.107.0 and the temporary openai-next test key passed through `--var`, not written to disk.
