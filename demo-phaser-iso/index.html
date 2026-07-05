@@ -30,6 +30,7 @@
       }
 
       #game {
+        position: relative;
         width: 100vw;
         height: 100vh;
       }
@@ -38,10 +39,379 @@
         display: block;
         image-rendering: auto;
       }
+
+      #intake-overlay {
+        position: fixed;
+        z-index: 1000;
+        display: none;
+        pointer-events: none;
+        color: #fff7ed;
+      }
+
+      #intake-overlay[data-visible="true"] {
+        display: block;
+        pointer-events: auto;
+      }
+
+      .intake-panel {
+        width: 100%;
+        height: 100%;
+        padding: 12px;
+        overflow: hidden;
+        border: 1px solid rgba(246, 236, 223, 0.14);
+        border-radius: 16px;
+        background:
+          linear-gradient(180deg, rgba(36, 35, 55, 0.94), rgba(88, 71, 95, 0.9));
+        box-shadow: 0 18px 50px rgba(5, 7, 18, 0.36);
+        backdrop-filter: blur(12px);
+      }
+
+      .intake-row {
+        display: flex;
+        gap: 8px;
+      }
+
+      .intake-row > * {
+        flex: 1;
+      }
+
+      .intake-stack {
+        display: grid;
+        gap: 10px;
+      }
+
+      .intake-kicker {
+        margin: 0 0 6px;
+        font-size: 10px;
+        font-weight: 800;
+        color: #c0b7ca;
+      }
+
+      .intake-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 850;
+        line-height: 1.18;
+        text-wrap: pretty;
+      }
+
+      .intake-copy {
+        margin: 4px 0 0;
+        font-size: 10.5px;
+        line-height: 1.36;
+        color: #e9dfea;
+        text-wrap: pretty;
+      }
+
+      .seg-group {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .seg-pair {
+        display: grid;
+        gap: 6px;
+      }
+
+      .seg-label {
+        text-align: center;
+        font-size: 10px;
+        font-weight: 850;
+        color: #c0b7ca;
+      }
+
+      .seg-button,
+      .choice-button,
+      .primary-button,
+      .ghost-button {
+        min-height: 36px;
+        border: 1px solid rgba(246, 236, 223, 0.16);
+        border-radius: 12px;
+        background: rgba(19, 20, 39, 0.48);
+        color: #fff7ed;
+        font: inherit;
+        font-size: 12px;
+        font-weight: 850;
+      }
+
+      .seg-button {
+        min-height: 32px;
+      }
+
+      .seg-button[aria-pressed="true"],
+      .choice-button[aria-pressed="true"] {
+        border-color: rgba(246, 236, 223, 0.72);
+        background: rgba(158, 189, 255, 0.3);
+      }
+
+      .mbti-result {
+        display: grid;
+        place-items: center;
+        min-width: 70px;
+        border-radius: 16px;
+        background: rgba(158, 189, 255, 0.18);
+        border: 1px solid rgba(158, 189, 255, 0.44);
+        font-size: 20px;
+        font-weight: 900;
+      }
+
+      .field-label {
+        display: grid;
+        gap: 6px;
+        font-size: 11px;
+        font-weight: 800;
+        color: #c0b7ca;
+      }
+
+      .text-input,
+      .textarea-input,
+      .file-input {
+        width: 100%;
+        border: 1px solid rgba(246, 236, 223, 0.14);
+        border-radius: 12px;
+        background: rgba(5, 7, 18, 0.28);
+        color: #fff7ed;
+        font: inherit;
+        font-size: 13px;
+      }
+
+      .text-input {
+        min-height: 40px;
+        padding: 0 11px;
+      }
+
+      .textarea-input {
+        min-height: 70px;
+        padding: 10px 11px;
+        resize: none;
+      }
+
+      .file-input {
+        padding: 9px;
+      }
+
+      .primary-button {
+        width: 100%;
+        min-height: 38px;
+        border-color: rgba(246, 236, 223, 0.54);
+        background: rgba(142, 218, 178, 0.26);
+      }
+
+      .primary-button:disabled {
+        opacity: 0.42;
+      }
+
+      .ghost-button {
+        min-height: 38px;
+        color: #d9d0df;
+      }
+
+      .choice-grid {
+        display: grid;
+        gap: 7px;
+        margin-top: 10px;
+      }
+
+      .choice-button {
+        min-height: 40px;
+        padding: 8px 10px;
+        text-align: left;
+        line-height: 1.28;
+      }
+
+      .bazi-grid {
+        display: grid;
+        grid-template-columns: 1.25fr repeat(4, minmax(0, 0.8fr));
+        gap: 6px;
+        align-items: end;
+      }
+
+      .mini-status {
+        min-height: 18px;
+        font-size: 10px;
+        color: #c0b7ca;
+      }
+
+      .progress-dots {
+        display: flex;
+        gap: 6px;
+        margin: 10px 0 0;
+      }
+
+      .progress-dot {
+        width: 22px;
+        height: 5px;
+        border-radius: 999px;
+        background: rgba(246, 236, 223, 0.18);
+      }
+
+      .progress-dot.is-active {
+        background: #f2b263;
+      }
+
+      .progress-dot.is-done {
+        background: #8edab2;
+      }
+
+      .wellness-live-panel {
+        width: 100%;
+        height: 100%;
+        padding: 12px;
+        overflow: auto;
+        border: 1px solid rgba(246, 236, 223, 0.16);
+        border-radius: 18px;
+        background:
+          linear-gradient(180deg, rgba(36, 35, 55, 0.97), rgba(88, 71, 95, 0.94));
+        box-shadow: 0 18px 52px rgba(5, 7, 18, 0.42);
+        backdrop-filter: blur(14px);
+      }
+
+      .wellness-live-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .wellness-live-kicker {
+        margin: 0 0 3px;
+        font-size: 10px;
+        font-weight: 850;
+        color: var(--wellness-accent, #9ebdff);
+      }
+
+      .wellness-live-title {
+        margin: 0;
+        font-size: 15px;
+        font-weight: 900;
+        line-height: 1.18;
+      }
+
+      .wellness-close {
+        width: 30px;
+        height: 30px;
+        border: 1px solid rgba(246, 236, 223, 0.2);
+        border-radius: 50%;
+        background: rgba(5, 7, 18, 0.32);
+        color: #fff7ed;
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .wellness-live-copy,
+      .wellness-live-result {
+        margin: 0 0 10px;
+        font-size: 11px;
+        line-height: 1.42;
+        color: #e9dfea;
+      }
+
+      .wellness-live-result {
+        min-height: 18px;
+        color: #fff0c8;
+      }
+
+      .live-choice-grid,
+      .sand-toolbar,
+      .audio-list {
+        display: grid;
+        gap: 8px;
+      }
+
+      .live-choice-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .live-choice,
+      .sand-tool,
+      .breath-start {
+        min-height: 34px;
+        border: 1px solid rgba(246, 236, 223, 0.16);
+        border-radius: 12px;
+        background: rgba(19, 20, 39, 0.48);
+        color: #fff7ed;
+        font: inherit;
+        font-size: 11px;
+        font-weight: 850;
+      }
+
+      .live-choice.is-selected,
+      .sand-tool.is-selected {
+        border-color: rgba(246, 236, 223, 0.72);
+        background: color-mix(in srgb, var(--wellness-accent, #9ebdff) 26%, rgba(19, 20, 39, 0.7));
+      }
+
+      .audio-card {
+        display: grid;
+        gap: 7px;
+        padding: 9px;
+        border: 1px solid rgba(246, 236, 223, 0.13);
+        border-radius: 12px;
+        background: rgba(5, 7, 18, 0.24);
+      }
+
+      .audio-card strong {
+        display: block;
+        font-size: 12px;
+      }
+
+      .audio-card p {
+        margin: 2px 0 0;
+        font-size: 10.5px;
+        line-height: 1.35;
+        color: #c0b7ca;
+      }
+
+      .audio-card audio {
+        width: 100%;
+        height: 32px;
+      }
+
+      .breath-live {
+        display: grid;
+        place-items: center;
+        gap: 8px;
+      }
+
+      .breath-live-circle {
+        display: grid;
+        place-items: center;
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        border: 1px solid color-mix(in srgb, var(--wellness-accent, #9ebdff) 72%, transparent);
+        background: color-mix(in srgb, var(--wellness-accent, #9ebdff) 20%, rgba(5, 7, 18, 0.5));
+        box-shadow: 0 0 30px color-mix(in srgb, var(--wellness-accent, #9ebdff) 28%, transparent);
+        font-size: 18px;
+        font-weight: 900;
+        transition: transform 0.8s ease;
+      }
+
+      .breath-live-circle.is-inhale {
+        transform: scale(1.18);
+      }
+
+      .sand-toolbar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 8px;
+      }
+
+      .sand-canvas {
+        width: 100%;
+        height: 132px;
+        border: 1px solid rgba(246, 236, 223, 0.2);
+        border-radius: 14px;
+        background: #faf6eb;
+        touch-action: none;
+      }
     </style>
   </head>
   <body>
     <main id="game" aria-label="0704hks mobile inner-room profile scene"></main>
+    <section id="intake-overlay" aria-live="polite"></section>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.88.2/dist/phaser.min.js"></script>
     <script>
       const DESIGN_W = 390;
@@ -50,6 +420,7 @@
       const GAME_W = DESIGN_W * RENDER_SCALE;
       const GAME_H = DESIGN_H * RENDER_SCALE;
       const WORLD_SCALE = 0.58;
+      const WELLNESS_SCALE = 0.8;
       const SIGNAL_SCALE = 0.66;
       const WORLD_ORIGIN = { x: 195, y: 330 };
 
@@ -132,34 +503,175 @@
         {
           key: "intake",
           label: "采集",
-          title: "采集 · 光团降世",
-          subtitle: "MBTI 光团先落入世界，后续身体、八字、问答各自成场。",
+          title: "30 秒采集",
+          subtitle: "点亮两条线索即可生成第一版画像，剩下的可以稍后补。",
         },
         {
           key: "profile",
-          label: "结果",
-          title: "结果 · 四维房间",
-          subtitle: "至少两维画像和当前状态在同一个内心房间里被点亮。",
+          label: "画像",
+          title: "四维画像",
+          subtitle: "房间先显示可靠线索，再提示缺口和当前状态。",
         },
         {
           key: "wellness",
           label: "调理",
-          title: "调理 · 四屋岛",
-          subtitle: "岛上四间房子：中医、哲学、冥想、艺术，每间都有店长。",
+          title: "心愈广场",
+          subtitle: "调理岛承接今日推荐，四间房提供中医、哲学、冥想、艺术练习。",
         },
         {
           key: "social",
           label: "社交",
-          title: "社交 · 人格岛",
-          subtitle: "海面上漂着多个人格岛，可以左右滑动探索。",
+          title: "人格岛",
+          subtitle: "在海面上切换人格岛，生成关系开场提示。",
         },
       ];
 
+      const INTAKE_MIN_REQUIRED = 2;
+      const INTAKE_SAFE_USAGE = "用于四维画像、当前状态和调理建议参考，不作为医学诊断、心理诊断或治疗依据。";
+      const BAZI_DEFAULT_TIME = { hour: 12, minute: 0 };
+
       const INTAKE_STEPS = [
-        { key: "mbti", label: "MBTI", dimension: "mbti", title: "光团降世", color: 0x9ebdff },
-        { key: "body", label: "身体", dimension: "tcm_body", title: "身体庭院", color: 0x8edab2 },
-        { key: "bazi", label: "八字", dimension: "xuanxue_spirit", title: "时间观星台", color: 0xf593bb },
-        { key: "psychology", label: "问答", dimension: "psychology", title: "回声小径", color: 0xf2b263 },
+        {
+          key: "mbti",
+          label: "MBTI",
+          dimension: "mbti",
+          title: "光团降世",
+          color: 0x9ebdff,
+          prompt: "用四组字母确认你的 MBTI。",
+          primarySignal: "mbti_known",
+          enginePurpose: "补足 MBTI 维度，并影响社交岛和关系开场。",
+        },
+        {
+          key: "body",
+          label: "身体",
+          dimension: "tcm_body",
+          title: "身体庭院",
+          color: 0x8edab2,
+          prompt: "录音、上传图片、输入文字，任填一种后提交。",
+          primarySignal: "body_state",
+          enginePurpose: "补足中医身体维度，并影响调理优先级。",
+        },
+        {
+          key: "bazi",
+          label: "八字",
+          dimension: "xuanxue_spirit",
+          title: "时间观星台",
+          color: 0xf593bb,
+          prompt: "填写出生日期和时间。",
+          primarySignal: "birth_info",
+          enginePurpose: "只作为阶段叙事参考；时分不清楚时默认 12:00。",
+        },
+        {
+          key: "psychology",
+          label: "问答",
+          dimension: "psychology",
+          title: "回声小径",
+          color: 0xf2b263,
+          prompt: "逐题选择最贴近你的答案。",
+          primarySignal: "repeated_pattern",
+          enginePurpose: "结合前面信息和知识库，补足阿德勒心理维度。",
+        },
+      ];
+
+      const MBTI_TYPES = [
+        "INTJ", "INTP", "ENTJ", "ENTP",
+        "INFJ", "INFP", "ENFJ", "ENFP",
+        "ISTJ", "ISFJ", "ESTJ", "ESFJ",
+        "ISTP", "ISFP", "ESTP", "ESFP",
+      ];
+
+      const BODY_INPUT_OPTIONS = [
+        {
+          key: "voice",
+          label: "语音描述",
+          shortLabel: "语音",
+          modality: "voice",
+          sourceKind: "voice_recording",
+          type: "body_state",
+          value: "语音描述：最近入睡慢、醒后恢复感一般，白天容易疲劳。",
+          transcript: "最近入睡比较慢，醒来之后恢复感一般，下午容易疲劳。",
+          confidence: "medium",
+          x: 86,
+          y: 350,
+          color: 0x9ebdff,
+        },
+        {
+          key: "image",
+          label: "上传图片",
+          shortLabel: "图片",
+          modality: "image",
+          sourceKind: "uploaded_image",
+          type: "tongue_observation",
+          value: "图片占位：舌象/面色/手部照片已上传，等待视觉观察提取。",
+          confidence: "medium",
+          x: 196,
+          y: 404,
+          color: 0x8edab2,
+        },
+        {
+          key: "text",
+          label: "文字描述",
+          shortLabel: "文字",
+          modality: "text",
+          sourceKind: "typed_text",
+          type: "body_state",
+          value: "文字描述：最近睡眠浅、肩颈紧、饭后容易困。",
+          confidence: "user_reported",
+          x: 304,
+          y: 350,
+          color: 0xf2b263,
+        },
+      ];
+
+      const PSYCHOLOGY_QUESTION_BANK = [
+        {
+          key: "body_pressure_loop",
+          tags: ["body", "sleep", "fatigue"],
+          question: "身体最累的时候，你通常还在坚持扮演什么角色？",
+          answer: "我会继续把事情扛住，不太愿意先说自己需要休息。",
+          choices: ["继续扛住，不太说需要休息", "先停下来，把任务拆小", "找一个人确认我不是一个人"],
+          type: "self_evaluation",
+        },
+        {
+          key: "mbti_decision_cost",
+          tags: ["mbti"],
+          question: "做决定前，你更怕判断错，还是更怕让关系失衡？",
+          answer: "我更怕让关系失衡，所以会反复确认别人的感受。",
+          choices: ["怕判断错，想多要证据", "怕关系失衡，会反复确认感受", "怕时间被拖住，想快点定下来"],
+          type: "relationship_pattern",
+        },
+        {
+          key: "repeated_delay",
+          tags: ["default"],
+          question: "最近反复拖住你的那件事，拖住它像是在保护什么？",
+          answer: "像是在保护自尊，避免一开始就被评价不够好。",
+          choices: ["保护自尊，避免被评价", "保护能量，不想再透支", "保护关系，先不制造冲突"],
+          type: "repeated_pattern",
+        },
+        {
+          key: "small_safe_action",
+          tags: ["default"],
+          question: "如果只能做一个不会被评价的小动作，你愿意先做什么？",
+          answer: "先做一个十分钟版本，只留下自己看得见的记录。",
+          choices: ["做十分钟版本", "只写给自己看的记录", "先问一个低风险问题"],
+          type: "emotion_state",
+        },
+        {
+          key: "bazi_timing_story",
+          tags: ["bazi"],
+          question: "你最近更像在开始、收尾、等待，还是重新整理？",
+          answer: "更像重新整理，想把过去一段时间的消耗慢慢放下。",
+          choices: ["开始一段新的尝试", "收尾旧事，减少拖挂", "等待时机，先观察", "重新整理自己的节奏"],
+          type: "emotion_state",
+        },
+        {
+          key: "support_request",
+          tags: ["body", "mbti"],
+          question: "当你需要支持时，最先希望别人给事实、陪伴，还是空间？",
+          answer: "我希望先有一点陪伴，再一起把事情拆小。",
+          choices: ["给我事实和结构", "先陪我一下", "给我空间自己消化"],
+          type: "relationship_pattern",
+        },
       ];
 
       const INITIAL_GAMEPLAY_STATE = {
@@ -177,17 +689,27 @@
         },
         selectedHouse: "meditation",
         selectedTool: "sleepMeditation",
+        activeLiveTool: null,
         wellnessStateKey: null,
         savedTools: [],
         selectedIsland: "INFP",
+        intakeDraft: {
+          mbtiLetters: { energy: "I", info: "N", decision: "F", structure: "P" },
+          body: { mode: "text", activeSubmitMode: null, text: "", fileName: "", fileType: "", voiceTranscript: "", voiceDurationMs: 0 },
+          bazi: { year: 1998, month: 7, day: 5, hour: 12, minute: 0, timeDefaulted: true },
+          psychologyQuestionKeys: [],
+          psychologyAnswers: {},
+          psychologyActiveIndex: 0,
+          psychologyActiveQuestionKey: null,
+        },
         actions: [],
       };
 
       const WELLNESS_HOUSES = [
-        { key: "tcm", label: "中医", dimension: "tcm_body", color: 0x8edab2, x: 124, y: 386 },
-        { key: "philosophy", label: "哲学", dimension: "psychology", color: 0xf2b263, x: 228, y: 350 },
-        { key: "meditation", label: "冥想", dimension: "current_state", color: 0x9ebdff, x: 192, y: 336 },
-        { key: "art", label: "艺术", dimension: "mbti", color: 0xf593bb, x: 246, y: 394 },
+        { key: "tcm", label: "中医", mark: "药", shop: "草本药铺", dimension: "tcm_body", color: 0x8edab2, x: 58, y: 388, interior: "食养台" },
+        { key: "meditation", label: "冥想", mark: "息", shop: "月息馆", dimension: "current_state", color: 0x9ebdff, x: 164, y: 236, interior: "呼吸室" },
+        { key: "philosophy", label: "哲学", mark: "书", shop: "观照书斋", dimension: "psychology", color: 0xf2b263, x: 334, y: 358, interior: "观照室" },
+        { key: "art", label: "艺术", mark: "画", shop: "画沙工坊", dimension: "mbti", color: 0xf593bb, x: 258, y: 480, interior: "画沙坊" },
       ];
 
       const XINYU_STATES = {
@@ -250,6 +772,26 @@
             negative: "消耗态下，短时间自然接触比强训练更稳。",
           },
           dimensionRules: [{ key: "mind", polarity: "negative", points: 8, reason: "心理维度偏耗时，用自然降低脑内刺激。" }],
+        },
+        {
+          key: "sound",
+          house: "art",
+          title: "疗愈音乐",
+          category: "艺术",
+          icon: "音",
+          summary: "自然声与轻音乐，让大脑从输入里慢慢安静下来。",
+          action: "睡前播放 12 分钟低刺激声景，不搭配播客、课程或歌词内容。",
+          steps: ["选择雨声、林间声或古琴声景", "音量调低", "结束后不再刷内容"],
+          stateBonus: { positive: 16, neutral: 20, negative: 36 },
+          stateReason: {
+            positive: "状态偏正时，音乐可以作为轻量补能。",
+            neutral: "状态平时，声景是容易开始的观察入口。",
+            negative: "睡眠浅或脑内停不下来时，低刺激声景更容易执行。",
+          },
+          dimensionRules: [
+            { key: "body", polarity: "negative", points: 8, reason: "身体恢复偏弱时，用声景降低夜间刺激。" },
+            { key: "mind", polarity: "negative", points: 12, reason: "心理维度偏耗时，音乐能先降低输入强度。" },
+          ],
         },
         {
           key: "food",
@@ -385,8 +927,101 @@
         },
       ];
 
+      const WELLNESS_AUDIO_TRACKS = {
+        sleepMeditation: [
+          {
+            title: "5 分钟 · 呼吸专注",
+            copy: "自然呼吸，不追求放空；走神时轻轻回来。",
+            url: "http://radio.stereoscenic.com/asp-h",
+          },
+          {
+            title: "8 分钟 · 慈心入睡",
+            copy: "给自己一句温和祝福，让身体知道今天结束了。",
+            url: "http://178.32.111.41:8027/stream-128kmp3-YogaChill",
+          },
+          {
+            title: "10 分钟 · 开放觉察",
+            copy: "允许念头、声音和身体感受经过，不追着它们走。",
+            url: "https://stream.zeno.fm/3ac97ysh6f0uv.aac",
+          },
+        ],
+        sound: [
+          {
+            title: "睡前静心",
+            copy: "适合睡前播放，音量调低，把注意力慢慢收回来。",
+            url: "http://radio.stereoscenic.com/asp-h",
+          },
+          {
+            title: "瑜伽放松",
+            copy: "适合做 8 分钟慈心练习时作为背景声。",
+            url: "http://178.32.111.41:8027/stream-128kmp3-YogaChill",
+          },
+          {
+            title: "自然白噪",
+            copy: "适合练习结束后继续安静陪伴。",
+            url: "https://stream.zeno.fm/3ac97ysh6f0uv.aac",
+          },
+        ],
+      };
+
+      const WELLNESS_LIVE_SOURCES = {
+        joy: "开心补能小游戏",
+        nature: "自然疗愈动作",
+        sound: "在线音频库",
+        food: "药食同源",
+        sleepMeditation: "正念冥想音频",
+        breath: "呼吸节律器",
+        tcm: "穴位按揉",
+        philosophy: "道家练习",
+        western: "哲思问题卡",
+        painting: "情绪沙画",
+        seasonal: "节气养生",
+      };
+
+      const WELLNESS_LIVE_CHOICES = {
+        joy: [
+          ["轻松小事", "今天给自己 15 分钟，只做一件无功利的小事。"],
+          ["开心记录", "记录一个身体变亮的瞬间，不分析原因。"],
+          ["微奖励", "给今天的自己一个很小但真实的奖励。"],
+        ],
+        nature: [
+          ["看树 3 分钟", "选择一个真实自然物，只看它的颜色和边缘。"],
+          ["慢走 10 分钟", "不听课程，不处理消息，脚步放慢。"],
+          ["接触自然光", "站到窗边或楼下，让身体知道现在是白天。"],
+        ],
+        food: [
+          ["温热晚餐", "今晚选温热、清淡、易消化的一餐。"],
+          ["少油少辣", "先减少刺激，不追求复杂食疗。"],
+          ["睡前不加餐", "晚间给胃一个安静收尾。"],
+        ],
+        tcm: [
+          ["太冲", "脚背大脚趾与二脚趾之间，轻按 1 分钟。"],
+          ["内关", "手腕横纹上约三指，轻按 1 分钟。"],
+          ["膻中", "胸口正中，力度舒服即可。"],
+        ],
+        philosophy: [
+          ["觉察抓紧", "今晚练习：先停一下，看到自己正在用力。"],
+          ["分辨执念", "今晚练习：分清现实需要和控制欲。"],
+          ["呼气放下", "今晚练习：呼气时把未完成先放下。"],
+        ],
+        western: [
+          ["事实", "这件事里，哪些是已经发生的事实？"],
+          ["解释", "哪些只是我当前的解释或预测？"],
+          ["一步", "我能做的下一步，能不能小到 5 分钟？"],
+        ],
+        seasonal: [
+          ["早点收尾", "今天只把夜间输入提前结束。"],
+          ["少刷屏", "睡前 40 分钟不再刷新内容。"],
+          ["轻拉伸", "做一组温和拉伸，不追求训练感。"],
+        ],
+      };
+
       function getHouseMeta(houseKey) {
         return WELLNESS_HOUSES.find((house) => house.key === houseKey) || WELLNESS_HOUSES[0];
+      }
+
+      function getHouseToolCount(houseKey) {
+        return WELLNESS_TOOLS.filter((tool) => tool.house === houseKey).length;
       }
 
       function getDimensionProfile(profileOutput, key) {
@@ -454,6 +1089,7 @@
           this.selected = null;
           this.profileCard = null;
           this.beam = null;
+          this.transitionOverlay = null;
           this.currentDemoScene = null;
           this.gameplay = JSON.parse(JSON.stringify(INITIAL_GAMEPLAY_STATE));
           this.intakeStepButtons = [];
@@ -461,6 +1097,11 @@
           this.heroActor = null;
           this.heroIdleTween = null;
           this.heroBusy = false;
+          this.intakeOverlay = null;
+          this.mediaRecorder = null;
+          this.mediaChunks = [];
+          this.mediaStartedAt = 0;
+          this.wellnessBreathTimer = null;
         }
 
         create() {
@@ -481,6 +1122,7 @@
           this.addBackground();
           this.addHeader();
           this.renderSceneTabs();
+          window.addEventListener("resize", () => this.positionIntakeOverlay());
           this.syncGameplayState();
           this.showDemoScene("intake");
         }
@@ -497,6 +1139,7 @@
             skipped: [...this.gameplay.skipped],
             signals: [...this.gameplay.signals],
             coverage,
+            intakeSession: this.getIntakeSessionPayload(coverage),
             profile,
             xinyuDiagnosis,
             wellnessRecommendations: wellnessRecommendations.slice(0, 6).map((item) => ({
@@ -507,12 +1150,29 @@
               score: item.score,
               reason: item.reason,
               action: item.tool.action,
+              liveSource: WELLNESS_LIVE_SOURCES[item.tool.key] || "心愈内置内容",
             })),
             hero: { ...this.gameplay.hero },
             selectedHouse: this.gameplay.selectedHouse,
             selectedTool: this.gameplay.selectedTool,
+            activeLiveTool: this.gameplay.activeLiveTool || null,
+            wellnessSquare: {
+              label: "心愈广场",
+              scale: WELLNESS_SCALE,
+              selectedHouse: this.gameplay.selectedHouse,
+              houses: WELLNESS_HOUSES.map((house) => ({
+                key: house.key,
+                label: house.label,
+                mark: house.mark,
+                shop: house.shop,
+                interior: house.interior,
+                toolCount: getHouseToolCount(house.key),
+              })),
+            },
             savedTools: [...this.gameplay.savedTools],
             selectedIsland: this.gameplay.selectedIsland,
+            intakeDraft: this.gameplay.intakeDraft,
+            psychologyQuestions: this.getPsychologyQuestions(),
             actions: [...this.gameplay.actions],
           };
           window.__gameplayState = state;
@@ -523,6 +1183,7 @@
           document.body.dataset.canGenerateProfile = coverage.canGenerateProfile ? "true" : "false";
           document.body.dataset.selectedHouse = this.gameplay.selectedHouse;
           document.body.dataset.selectedTool = this.gameplay.selectedTool;
+          document.body.dataset.activeLiveTool = this.gameplay.activeLiveTool || "";
           document.body.dataset.xinyuState = xinyuDiagnosis.key;
           document.body.dataset.xinyuLabel = xinyuDiagnosis.label;
           document.body.dataset.selectedIsland = this.gameplay.selectedIsland;
@@ -531,6 +1192,607 @@
           document.body.dataset.heroMoving = this.heroBusy ? "true" : "false";
           document.body.dataset.heroScene = this.gameplay.hero.scene;
           document.body.dataset.heroPosition = `${Math.round(this.gameplay.hero.x)},${Math.round(this.gameplay.hero.y)}`;
+        }
+
+        ensureIntakeDraft() {
+          if (!this.gameplay.intakeDraft) this.gameplay.intakeDraft = {};
+          if (!this.gameplay.intakeDraft.mbtiLetters) {
+            this.gameplay.intakeDraft.mbtiLetters = { energy: "I", info: "N", decision: "F", structure: "P" };
+          }
+          if (!this.gameplay.intakeDraft.body) {
+            this.gameplay.intakeDraft.body = { mode: "text", activeSubmitMode: null, text: "", fileName: "", fileType: "", voiceTranscript: "", voiceDurationMs: 0 };
+          }
+          if (!this.gameplay.intakeDraft.bazi) {
+            this.gameplay.intakeDraft.bazi = { year: 1998, month: 7, day: 5, hour: 12, minute: 0, timeDefaulted: true };
+          }
+          if (!this.gameplay.intakeDraft.psychologyQuestionKeys) this.gameplay.intakeDraft.psychologyQuestionKeys = [];
+          if (!this.gameplay.intakeDraft.psychologyAnswers) this.gameplay.intakeDraft.psychologyAnswers = {};
+          if (typeof this.gameplay.intakeDraft.psychologyActiveIndex !== "number") this.gameplay.intakeDraft.psychologyActiveIndex = 0;
+          if (!("psychologyActiveQuestionKey" in this.gameplay.intakeDraft)) this.gameplay.intakeDraft.psychologyActiveQuestionKey = null;
+          return this.gameplay.intakeDraft;
+        }
+
+        hashString(value) {
+          return String(value || "0704hks").split("").reduce((hash, char) => ((hash << 5) - hash + char.charCodeAt(0)) | 0, 0);
+        }
+
+        getSignalByCategory(category) {
+          return this.gameplay.signals.find((signal) => signal.category === category);
+        }
+
+        getPsychologyQuestions() {
+          const draft = this.ensureIntakeDraft();
+          if (draft.psychologyQuestionKeys.length !== 3) {
+            const tags = new Set(["default"]);
+            this.gameplay.signals.forEach((signal) => {
+              if (signal.category) tags.add(signal.category);
+              if (signal.type) tags.add(signal.type);
+              if (String(signal.value || "").includes("睡")) tags.add("sleep");
+              if (String(signal.value || "").includes("疲")) tags.add("fatigue");
+            });
+            const seedText = this.gameplay.signals.map((signal) => `${signal.category}:${signal.value}`).join("|") || "psychology";
+            const seed = Math.abs(this.hashString(seedText));
+            draft.psychologyQuestionKeys = PSYCHOLOGY_QUESTION_BANK
+              .map((question, index) => {
+                const tagScore = question.tags.reduce((score, tag) => score + (tags.has(tag) ? 3 : 0), 0);
+                const randomScore = ((seed + index * 17) % 11) / 10;
+                return { question, score: tagScore + randomScore };
+              })
+              .sort((a, b) => b.score - a.score)
+              .slice(0, 3)
+              .map((item) => item.question.key);
+          }
+          return draft.psychologyQuestionKeys
+            .map((key) => PSYCHOLOGY_QUESTION_BANK.find((question) => question.key === key))
+            .filter(Boolean)
+            .slice(0, 3);
+        }
+
+        escapeHtml(value) {
+          return String(value ?? "")
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll('"', "&quot;");
+        }
+
+        getMbtiTypeFromDraft() {
+          const letters = this.ensureIntakeDraft().mbtiLetters;
+          return `${letters.energy}${letters.info}${letters.decision}${letters.structure}`;
+        }
+
+        getIntakeOverlay() {
+          if (!this.intakeOverlay) this.intakeOverlay = document.getElementById("intake-overlay");
+          return this.intakeOverlay;
+        }
+
+        stopWellnessLiveTimers() {
+          if (this.wellnessBreathTimer) {
+            clearInterval(this.wellnessBreathTimer);
+            this.wellnessBreathTimer = null;
+          }
+        }
+
+        hideIntakeOverlay() {
+          const overlay = this.getIntakeOverlay();
+          if (!overlay) return;
+          this.stopWellnessLiveTimers();
+          overlay.dataset.visible = "false";
+          overlay.dataset.mode = "";
+          overlay.innerHTML = "";
+        }
+
+        positionIntakeOverlay(stepKey = this.gameplay.activeIntake) {
+          const overlay = this.getIntakeOverlay();
+          const canvas = this.game?.canvas;
+          if (!overlay || !canvas || overlay.dataset.visible !== "true") return;
+          const rect = canvas.getBoundingClientRect();
+          const scaleX = rect.width / DESIGN_W;
+          const scaleY = rect.height / DESIGN_H;
+          const boxes = {
+            mbti: { x: 24, y: 512, w: 342, h: 162 },
+            body: { x: 24, y: 520, w: 342, h: 252 },
+            bazi: { x: 20, y: 512, w: 350, h: 132 },
+            psychology: { x: 24, y: 520, w: 342, h: 252 },
+            wellness: { x: 20, y: 548, w: 350, h: 274 },
+          };
+          const box = overlay.dataset.mode === "wellness" ? boxes.wellness : boxes[stepKey] || boxes.mbti;
+          overlay.style.left = `${rect.left + box.x * scaleX}px`;
+          overlay.style.top = `${rect.top + box.y * scaleY}px`;
+          overlay.style.width = `${box.w * scaleX}px`;
+          overlay.style.height = `${box.h * scaleY}px`;
+          overlay.style.maxHeight = `${box.h * scaleY}px`;
+          overlay.style.minHeight = `${box.h * scaleY}px`;
+        }
+
+        renderNativeIntakeOverlay(step) {
+          const overlay = this.getIntakeOverlay();
+          if (!overlay || this.currentDemoScene !== "intake") return;
+          const html = this.getNativeIntakeHtml(step.key);
+          if (!html) {
+            this.hideIntakeOverlay();
+            return;
+          }
+          overlay.dataset.visible = "true";
+          overlay.dataset.step = step.key;
+          overlay.innerHTML = html;
+          this.positionIntakeOverlay(step.key);
+          this.bindNativeIntakeOverlay(step.key);
+        }
+
+        getNativeIntakeHtml(stepKey) {
+          if (stepKey === "mbti") return this.getMbtiOverlayHtml();
+          if (stepKey === "body") return this.getBodyOverlayHtml();
+          if (stepKey === "bazi") return this.getBaziOverlayHtml();
+          if (stepKey === "psychology") return this.getPsychologyOverlayHtml();
+          return "";
+        }
+
+        getMbtiOverlayHtml() {
+          const draft = this.ensureIntakeDraft();
+          const type = this.getMbtiTypeFromDraft();
+          const groups = [
+            { key: "energy", label: "能量", values: ["I", "E"] },
+            { key: "info", label: "信息", values: ["N", "S"] },
+            { key: "decision", label: "决策", values: ["F", "T"] },
+            { key: "structure", label: "节奏", values: ["P", "J"] },
+          ];
+          return `
+            <div class="intake-panel" data-panel="mbti">
+              <p class="intake-kicker">光团字母盘</p>
+              <div class="intake-row">
+                <div style="flex:1">
+                  <h2 class="intake-title">拨到你最熟悉的四个字母</h2>
+                  <p class="intake-copy">不确定也可以先选最接近的版本，后面能再修正。</p>
+                </div>
+                <div class="mbti-result" data-mbti-result>${type}</div>
+              </div>
+              <div class="seg-group">
+                ${groups.map((group) => `
+                  <div class="seg-pair">
+                    <div class="seg-label">${group.label}</div>
+                    ${group.values.map((value) => `
+                      <button class="seg-button" type="button" data-mbti-field="${group.key}" data-mbti-value="${value}" aria-pressed="${draft.mbtiLetters[group.key] === value}">
+                        ${value}
+                      </button>
+                    `).join("")}
+                  </div>
+                `).join("")}
+              </div>
+              <div class="intake-row" style="margin-top:10px">
+                <button class="primary-button" type="button" data-action="submit-mbti">确认 ${type}</button>
+              </div>
+            </div>
+          `;
+        }
+
+        getBodyOverlayHtml() {
+          const body = this.ensureIntakeDraft().body;
+          const mode = body.activeSubmitMode;
+          if (!mode) return "";
+          body.mode = mode;
+          const modeTitle = mode === "text" ? "文字描述" : mode === "image" ? "上传图片" : "语音描述";
+          const modeHint = mode === "text"
+            ? "写下你现在最明显的身体感受。"
+            : mode === "image"
+              ? "选择一张舌象、面色或身体相关图片。"
+              : "录一段声音，也可以先写一句摘要。";
+          const modeField = mode === "text"
+            ? `
+              <label class="field-label">身体描述
+                <textarea class="textarea-input" data-body-text placeholder="例如：最近睡眠浅、肩颈紧、饭后容易困。">${this.escapeHtml(body.text || "")}</textarea>
+              </label>
+            `
+            : mode === "image"
+              ? `
+                <label class="field-label">上传舌象、面色或身体相关图片
+                  <input class="file-input" data-body-file type="file" accept="image/*" />
+                </label>
+                <div class="mini-status" data-file-status>${body.fileName ? `已选择：${this.escapeHtml(body.fileName)}` : "尚未选择图片"}</div>
+              `
+              : `
+                <div class="intake-row">
+                  <button class="ghost-button" type="button" data-action="start-record">开始录音</button>
+                  <button class="ghost-button" type="button" data-action="stop-record">停止</button>
+                </div>
+                <label class="field-label">语音备注
+                  <input class="text-input" data-body-voice-note value="${this.escapeHtml(body.voiceTranscript || "")}" placeholder="可补一句摘要，方便未转写时预览" />
+                </label>
+                <div class="mini-status" data-voice-status>${body.voiceDurationMs ? `已录制约 ${Math.max(1, Math.round(body.voiceDurationMs / 1000))} 秒` : "尚未录音"}</div>
+              `;
+          return `
+            <div class="intake-panel" data-panel="body">
+              <p class="intake-kicker">身体入口 · ${modeTitle}</p>
+              <h2 class="intake-title">${modeHint}</h2>
+              <div class="intake-stack" style="margin-top:10px">${modeField}</div>
+              <div class="mini-status" data-status></div>
+              <div class="intake-row">
+                <button class="ghost-button" type="button" data-action="close-body">返回场景</button>
+                <button class="primary-button" type="button" data-action="submit-body">提交</button>
+              </div>
+            </div>
+          `;
+        }
+
+        getBaziOverlayHtml() {
+          const draft = this.ensureIntakeDraft().bazi;
+          return `
+            <div class="intake-panel" data-panel="bazi">
+              <p class="intake-kicker">罗盘校时 · 不清楚时分可直接按 12:00</p>
+              <div class="bazi-grid">
+                ${[
+                  ["year", "年", draft.year, 1900, 2026],
+                  ["month", "月", draft.month, 1, 12],
+                  ["day", "日", draft.day, 1, 31],
+                  ["hour", "时", draft.hour, 0, 23],
+                  ["minute", "分", draft.minute, 0, 59],
+                ].map(([key, label, value, min, max]) => `
+                  <label class="field-label" style="gap:4px;font-size:10px">${label}
+                    <input class="text-input" data-bazi-unit="${key}" type="number" min="${min}" max="${max}" value="${String(value).padStart(key === "year" ? 4 : 2, "0")}" style="padding:0 6px;text-align:center" ${draft.timeDefaulted && (key === "hour" || key === "minute") ? "disabled" : ""} />
+                  </label>
+                `).join("")}
+              </div>
+              <div class="intake-row" style="margin-top:8px;align-items:center">
+                <label class="field-label" style="display:flex;grid-template-columns:none;align-items:center;gap:7px;margin:0;color:#e9dfea">
+                  <input data-bazi-unknown type="checkbox" ${draft.timeDefaulted ? "checked" : ""} />
+                  时分不清，按 12:00
+                </label>
+              </div>
+              <div class="intake-row" style="margin-top:8px">
+                <button class="primary-button" type="button" data-action="submit-bazi">提交</button>
+                <button class="ghost-button" type="button" data-action="skip-bazi">跳过</button>
+              </div>
+            </div>
+          `;
+        }
+
+        getPsychologyOverlayHtml() {
+          const draft = this.ensureIntakeDraft();
+          const questions = this.getPsychologyQuestions();
+          if (!draft.psychologyActiveQuestionKey) return "";
+          const activeIndex = Phaser.Math.Clamp(
+            questions.findIndex((item) => item.key === draft.psychologyActiveQuestionKey),
+            0,
+            questions.length - 1
+          );
+          draft.psychologyActiveIndex = activeIndex;
+          const question = questions[activeIndex];
+          const answeredCount = questions.filter((item) => draft.psychologyAnswers[item.key]).length;
+          const choices = (question.choices || [question.answer]).map((choice) => `
+            <button class="choice-button" type="button" data-psych-choice="${this.escapeHtml(choice)}" aria-pressed="${draft.psychologyAnswers[question.key] === choice}">
+              ${this.escapeHtml(choice)}
+            </button>
+          `).join("");
+          const meta = this.getPsychologyInteractionMeta(question);
+          return `
+            <div class="intake-panel" data-panel="psychology">
+              <p class="intake-kicker">${meta.name} · 第 ${activeIndex + 1}/3 题 · 已答 ${answeredCount}/3</p>
+              <h2 class="intake-title">${this.escapeHtml(question.question)}</h2>
+              <div class="choice-grid">${choices}</div>
+              <div class="intake-row">
+                <button class="ghost-button" type="button" data-action="close-psych">返回踏石</button>
+              </div>
+            </div>
+          `;
+        }
+
+        bindNativeIntakeOverlay(stepKey) {
+          const overlay = this.getIntakeOverlay();
+          if (!overlay) return;
+          if (stepKey === "mbti") this.bindMbtiOverlay(overlay);
+          if (stepKey === "body") this.bindBodyOverlay(overlay);
+          if (stepKey === "bazi") this.bindBaziOverlay(overlay);
+          if (stepKey === "psychology") this.bindPsychologyOverlay(overlay);
+        }
+
+        bindMbtiOverlay(overlay) {
+          overlay.querySelectorAll("[data-mbti-field]").forEach((button) => {
+            button.addEventListener("click", () => {
+              const draft = this.ensureIntakeDraft();
+              draft.mbtiLetters[button.dataset.mbtiField] = button.dataset.mbtiValue;
+              this.syncGameplayState();
+              this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "mbti"));
+            });
+          });
+          overlay.querySelector("[data-action='submit-mbti']")?.addEventListener("click", () => this.submitMbtiNative());
+        }
+
+        bindBodyOverlay(overlay) {
+          overlay.querySelectorAll("[data-body-mode]").forEach((button) => {
+            button.addEventListener("click", () => {
+              const body = this.ensureIntakeDraft().body;
+              body.mode = button.dataset.bodyMode;
+              body.activeSubmitMode = button.dataset.bodyMode;
+              this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "body"));
+            });
+          });
+          overlay.querySelector("[data-body-text]")?.addEventListener("input", (event) => {
+            this.ensureIntakeDraft().body.text = event.target.value;
+          });
+          overlay.querySelector("[data-body-voice-note]")?.addEventListener("input", (event) => {
+            this.ensureIntakeDraft().body.voiceTranscript = event.target.value;
+          });
+          overlay.querySelector("[data-body-file]")?.addEventListener("change", (event) => {
+            const file = event.target.files?.[0];
+            const body = this.ensureIntakeDraft().body;
+            body.fileName = file?.name || "";
+            body.fileType = file?.type || "";
+            body.fileSize = file?.size || 0;
+            this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "body"));
+          });
+          overlay.querySelector("[data-action='start-record']")?.addEventListener("click", () => this.startBodyRecording());
+          overlay.querySelector("[data-action='stop-record']")?.addEventListener("click", () => this.stopBodyRecording());
+          overlay.querySelector("[data-action='close-body']")?.addEventListener("click", () => {
+            this.ensureIntakeDraft().body.activeSubmitMode = null;
+            this.hideIntakeOverlay();
+          });
+          overlay.querySelector("[data-action='submit-body']")?.addEventListener("click", () => this.submitBodyNative());
+        }
+
+        bindBaziOverlay(overlay) {
+          const unknownInput = overlay.querySelector("[data-bazi-unknown]");
+          overlay.querySelectorAll("[data-bazi-unit]").forEach((input) => {
+            input.addEventListener("input", () => this.updateBaziFromNativeInputs(overlay, unknownInput));
+          });
+          unknownInput?.addEventListener("change", () => {
+            this.updateBaziFromNativeInputs(overlay, unknownInput);
+            this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "bazi"));
+          });
+          overlay.querySelector("[data-action='submit-bazi']")?.addEventListener("click", () => {
+            this.performHeroAction(196, 354, 0xf593bb, () => this.commitBaziDraft(this.ensureIntakeDraft().bazi.timeDefaulted, 0xf593bb));
+          });
+          overlay.querySelector("[data-action='skip-bazi']")?.addEventListener("click", () => {
+            this.moveHeroTo(306, 562, () => {
+              this.skipIntake("bazi");
+              this.advanceAfterIntakeCommit("bazi", 0xc0b7ca);
+            }, { color: 0xc0b7ca, mood: "focus" });
+          });
+        }
+
+        bindPsychologyOverlay(overlay) {
+          overlay.querySelectorAll("[data-psych-choice]").forEach((button) => {
+            button.addEventListener("click", () => this.choosePsychologyAnswer(button.dataset.psychChoice));
+          });
+          overlay.querySelector("[data-action='close-psych']")?.addEventListener("click", () => {
+            this.ensureIntakeDraft().psychologyActiveQuestionKey = null;
+            this.refreshDemoScene();
+          });
+        }
+
+        setOverlayStatus(message, selector = "[data-status]") {
+          const node = this.getIntakeOverlay()?.querySelector(selector);
+          if (node) node.textContent = message;
+        }
+
+        submitMbtiNative() {
+          if (this.heroBusy) return;
+          const type = this.getMbtiTypeFromDraft();
+          const payload = {
+            key: type.toLowerCase(),
+            label: type,
+            type: "mbti_known",
+            value: `用户自报 MBTI 类型：${type}`,
+            confidence: "user_reported",
+            normalized_value: {
+              mbti_type: type,
+              category: "mbti",
+              source: "self_report",
+              selected_letters: { ...this.ensureIntakeDraft().mbtiLetters },
+              caveat: "非官方测评，仅作为用户自报类型参与画像",
+            },
+          };
+          const finish = () => {
+            this.commitSignal("mbti", payload);
+            this.advanceAfterIntakeCommit("mbti", 0x9ebdff);
+          };
+          if (!this.gameplay.hero.born) {
+            this.moveHeroTo(195, 428, () => {
+              this.completeHeroBirth(195, 428);
+              this.time.delayedCall(180, finish);
+            }, { color: 0x9ebdff, mood: "orb" });
+          } else {
+            this.performHeroAction(195, 428, 0x9ebdff, finish);
+          }
+        }
+
+        async startBodyRecording() {
+          const body = this.ensureIntakeDraft().body;
+          if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+            this.setOverlayStatus("当前浏览器不支持录音，先用文字或图片提交。", "[data-voice-status]");
+            return;
+          }
+          try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.mediaChunks = [];
+            this.mediaStartedAt = Date.now();
+            this.mediaRecorder = new MediaRecorder(stream);
+            this.mediaRecorder.ondataavailable = (event) => {
+              if (event.data?.size) this.mediaChunks.push(event.data);
+            };
+            this.mediaRecorder.onstop = () => {
+              stream.getTracks().forEach((track) => track.stop());
+              body.mode = "voice";
+              body.voiceDurationMs = Math.max(1000, Date.now() - this.mediaStartedAt);
+              body.voiceTranscript ||= "用户提交了一段语音身体描述，等待转写。";
+              this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "body"));
+            };
+            this.mediaRecorder.start();
+            this.setOverlayStatus("正在录音，完成后点「停止」。", "[data-voice-status]");
+          } catch (error) {
+            this.setOverlayStatus("没有拿到麦克风权限，可改用文字或图片提交。", "[data-voice-status]");
+          }
+        }
+
+        stopBodyRecording() {
+          if (this.mediaRecorder && this.mediaRecorder.state !== "inactive") {
+            this.mediaRecorder.stop();
+            this.setOverlayStatus("录音已停止，正在整理。", "[data-voice-status]");
+          } else {
+            this.setOverlayStatus("当前没有正在录制的语音。", "[data-voice-status]");
+          }
+        }
+
+        submitBodyNative() {
+          if (this.heroBusy) return;
+          const body = this.ensureIntakeDraft().body;
+          let payload = null;
+          if (body.mode === "text") {
+            const text = (this.getIntakeOverlay()?.querySelector("[data-body-text]")?.value || body.text || "").trim();
+            body.text = text;
+            if (!text) {
+              this.setOverlayStatus("先写一句身体描述，再提交。");
+              return;
+            }
+            payload = {
+              key: "body_text",
+              label: "文字描述",
+              modality: "text",
+              sourceKind: "typed_text",
+              type: "body_state",
+              value: `文字描述：${text}`,
+              raw_text: text,
+              confidence: "user_reported",
+              normalized_value: {
+                category: "body",
+                selected_modality: "text",
+                accepted_modalities: ["voice", "image", "text"],
+                body_text: text,
+              },
+            };
+          } else if (body.mode === "image") {
+            if (!body.fileName) {
+              this.setOverlayStatus("先选择一张图片，再提交。");
+              return;
+            }
+            payload = {
+              key: "body_image",
+              label: "图片上传",
+              modality: "image",
+              sourceKind: "uploaded_image",
+              type: "tongue_observation",
+              value: `用户上传身体相关图片：${body.fileName}`,
+              confidence: "medium",
+              image_type: "other",
+              raw_input_source: {
+                kind: "uploaded_image",
+                uri: `local://${body.fileName}`,
+                mime_type: body.fileType || "image/*",
+              },
+              raw_input_quality: { status: "medium", issues: [], should_retry: false, notes: "本地原型记录文件元信息，生产版上传后提取图像质量。" },
+              observations: [
+                { type: "image_quality_note", value: `已选择图片文件 ${body.fileName}` , confidence: "medium" },
+              ],
+              normalized_value: {
+                category: "body",
+                selected_modality: "image",
+                file_name: body.fileName,
+                file_type: body.fileType || "image/*",
+                file_size: body.fileSize || 0,
+              },
+            };
+          } else {
+            const note = (this.getIntakeOverlay()?.querySelector("[data-body-voice-note]")?.value || body.voiceTranscript || "").trim();
+            body.voiceTranscript = note;
+            if (!body.voiceDurationMs && !note) {
+              this.setOverlayStatus("请先录音，或补一句语音摘要再提交。");
+              return;
+            }
+            const transcript = note || "用户提交了一段语音身体描述，等待转写。";
+            payload = {
+              key: "body_voice",
+              label: "语音描述",
+              modality: "voice",
+              sourceKind: "voice_recording",
+              type: "body_state",
+              value: `语音描述：${transcript}`,
+              transcript,
+              transcript_confidence: note ? "user_reported" : "low",
+              duration_ms: body.voiceDurationMs || 1000,
+              confidence: note ? "medium" : "low",
+              normalized_value: {
+                category: "body",
+                selected_modality: "voice",
+                duration_ms: body.voiceDurationMs || 1000,
+                transcript_status: note ? "user_summary" : "pending_transcription",
+              },
+            };
+          }
+          const target = body.mode === "image" ? { x: 196, y: 404, color: 0x8edab2 } : body.mode === "voice" ? { x: 92, y: 356, color: 0x9ebdff } : { x: 304, y: 356, color: 0xf2b263 };
+          this.performHeroAction(target.x, target.y, target.color, () => {
+            this.commitSignal("body", payload);
+            this.advanceAfterIntakeCommit("body", target.color);
+          });
+        }
+
+        updateBaziFromNativeInputs(overlay, unknownInput) {
+          const draft = this.ensureIntakeDraft().bazi;
+          const readUnit = (key, fallback) => {
+            const value = Number(overlay?.querySelector(`[data-bazi-unit="${key}"]`)?.value);
+            return Number.isFinite(value) ? value : fallback;
+          };
+          draft.year = Phaser.Math.Clamp(readUnit("year", draft.year), 1900, 2026);
+          draft.month = Phaser.Math.Clamp(readUnit("month", draft.month), 1, 12);
+          draft.day = Phaser.Math.Clamp(readUnit("day", draft.day), 1, new Date(draft.year, draft.month, 0).getDate());
+          draft.timeDefaulted = Boolean(unknownInput?.checked);
+          if (draft.timeDefaulted) {
+            draft.hour = BAZI_DEFAULT_TIME.hour;
+            draft.minute = BAZI_DEFAULT_TIME.minute;
+          } else {
+            draft.hour = Phaser.Math.Clamp(readUnit("hour", draft.hour), 0, 23);
+            draft.minute = Phaser.Math.Clamp(readUnit("minute", draft.minute), 0, 59);
+          }
+          this.syncGameplayState();
+        }
+
+        choosePsychologyAnswer(choice) {
+          const draft = this.ensureIntakeDraft();
+          const questions = this.getPsychologyQuestions();
+          const active = questions.find((item) => item.key === draft.psychologyActiveQuestionKey) || questions[draft.psychologyActiveIndex || 0];
+          if (!active) return;
+          draft.psychologyAnswers[active.key] = choice;
+          draft.psychologyActiveQuestionKey = null;
+          this.syncGameplayState();
+          if (questions.every((item) => draft.psychologyAnswers[item.key])) {
+            this.submitPsychologyNative();
+            return;
+          }
+          this.refreshDemoScene();
+        }
+
+        submitPsychologyNative() {
+          if (this.heroBusy) return;
+          const draft = this.ensureIntakeDraft();
+          const questions = this.getPsychologyQuestions();
+          const complete = questions.every((item) => draft.psychologyAnswers[item.key]);
+          if (!complete) {
+            this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === "psychology"));
+            return;
+          }
+          const qa = questions.map((item) => ({
+            id: item.key,
+            question: item.question,
+            answer: draft.psychologyAnswers[item.key],
+            type: item.type,
+          }));
+          this.performHeroAction(196, 396, 0xf2b263, () => {
+            this.commitSignal("psychology", {
+              key: "grillme_three_questions",
+              label: "心理三问",
+              type: "repeated_pattern",
+              value: qa.map((item, index) => `Q${index + 1} ${item.question} A ${item.answer}`).join("；"),
+              confidence: "medium",
+              normalized_value: {
+                category: "psychology",
+                mode: "grill_me_with_kb_mock",
+                interaction: "choice_flow",
+                question_count: qa.length,
+                based_on_categories: this.getCoverage().submitted,
+                answers: qa,
+                usage: "followup_generation_and_adler_pattern_only",
+              },
+            });
+            this.advanceAfterIntakeCommit("psychology", 0xf2b263);
+          });
         }
 
         writeDebugState(id, state) {
@@ -547,6 +1809,8 @@
         getCoverage() {
           const submitted = INTAKE_STEPS.filter((step) => this.gameplay.submitted[step.key]).map((step) => step.key);
           const skipped = [...this.gameplay.skipped];
+          const activeStep = INTAKE_STEPS.find((step) => step.key === this.gameplay.activeIntake) || INTAKE_STEPS[0];
+          const neededCategoriesToGenerate = Math.max(0, INTAKE_MIN_REQUIRED - submitted.length);
           return {
             order: INTAKE_STEPS.map((step) => step.key),
             submitted,
@@ -554,7 +1818,15 @@
             submittedCount: submitted.length,
             skippedCount: skipped.length,
             remainingSkipCount: Math.max(0, 2 - skipped.length),
-            canGenerateProfile: submitted.length >= 2,
+            neededCategoriesToGenerate,
+            canGenerateProfile: neededCategoriesToGenerate === 0,
+            nextQuestion: {
+              id: `next_${activeStep.key}`,
+              dimension: activeStep.dimension,
+              question: activeStep.prompt,
+              reason: activeStep.enginePurpose,
+              priority: activeStep.key === "psychology" ? "high" : "medium",
+            },
             stages: INTAKE_STEPS.map((step) => ({
               key: step.key,
               label: step.label,
@@ -569,18 +1841,93 @@
           };
         }
 
+        getPsychologyInteractionMeta(question) {
+          const key = question?.key || "";
+          if (key.includes("support")) {
+            return {
+              name: "支持信号灯",
+              helper: "选择你现在最想收到的支持方式",
+              color: 0x9ebdff,
+              mode: "support",
+            };
+          }
+          if (key.includes("body") || key.includes("decision") || key.includes("delay")) {
+            return {
+              name: "重担天平",
+              helper: "把最费力的那一侧放到秤盘上",
+              color: 0x8edab2,
+              mode: "scale",
+            };
+          }
+          if (key.includes("timing")) {
+            return {
+              name: "阶段罗盘",
+              helper: "把指针拨向你所在的阶段",
+              color: 0xf593bb,
+              mode: "compass",
+            };
+          }
+          return {
+            name: "小动作台",
+            helper: "挑一个不会被评价的小动作",
+            color: 0xf2b263,
+            mode: "action",
+          };
+        }
+
+        getIntakeSessionPayload(coverage = this.getCoverage()) {
+          const createdAt = "2026-07-05T00:00:00.000Z";
+          const inputs = this.gameplay.signals.map((signal) => {
+            const inputId = signal.raw_input_id || signal.evidence?.[0]?.id || `input_${signal.id}`;
+            const source = signal.raw_input_source || {
+              kind: signal.modality === "voice" ? "voice_recording" : signal.modality === "image" ? "uploaded_image" : "typed_text",
+            };
+            return {
+              id: inputId,
+              modality: signal.modality || "text",
+              created_at: signal.created_at || createdAt,
+              source,
+              quality: signal.raw_input_quality || signal.quality || { status: "high", issues: [], should_retry: false },
+            };
+          });
+          return {
+            session_id: "demo-phaser-intake",
+            created_at: createdAt,
+            goal: "生成四维画像与低负担调理方向",
+            inputs,
+            skipped_categories: [...this.gameplay.skipped],
+            signals: [...this.gameplay.signals],
+            unresolved_questions: coverage.canGenerateProfile ? [] : [coverage.nextQuestion],
+            safety_events: [],
+          };
+        }
+
         getProfileOutput() {
           const has = (key) => Boolean(this.gameplay.submitted[key]);
           const skipped = (key) => this.gameplay.skipped.includes(key);
+          const bodySignal = this.getSignalByCategory("body");
+          const mindSignal = this.getSignalByCategory("psychology");
+          const baziSignal = this.getSignalByCategory("bazi");
+          const mbtiSignal = this.getSignalByCategory("mbti");
+          const bodyModeLabel = bodySignal?.normalized_value?.selected_modality === "voice"
+            ? "语音身体描述"
+            : bodySignal?.normalized_value?.selected_modality === "image"
+              ? "图片身体观察"
+              : bodySignal?.normalized_value?.selected_modality === "text"
+                ? "文字身体描述"
+                : "身体线索";
+          const mbtiType = mbtiSignal?.normalized_value?.mbti_type || "MBTI";
+          const baziDefaulted = Boolean(baziSignal?.normalized_value?.time_defaulted);
+          const psychologyCount = mindSignal?.normalized_value?.question_count || 0;
           const dimensionValues = [
             {
               key: "body",
               dimension: "tcm_body",
               name: "中医身体",
-              value: has("body") ? "sleep_heat_rhythm" : "body_pending",
-              label: has("body") ? "睡眠与冷热节律" : skipped("body") ? "身体维度已跳过" : "身体线索待采集",
-              description: has("body") ? "身体庭院记录到作息与冷热感，适合作为调理方向参考。" : "当前还缺身体信号，房间里的脉光保持半亮。",
-              confidence: has("body") ? "medium" : "low",
+              value: has("body") ? bodySignal?.type || "body_state" : "body_pending",
+              label: has("body") ? bodyModeLabel : skipped("body") ? "身体维度已跳过" : "身体线索待采集",
+              description: has("body") ? `${bodyModeLabel}已记录，适合作为调理优先级和身体节律追问参考。` : "当前还缺身体信号，房间里的脉光保持半亮。",
+              confidence: has("body") ? bodySignal?.confidence || "medium" : "low",
               polarity: has("body") ? "neutral" : "negative",
               color: 0x8edab2,
             },
@@ -589,9 +1936,9 @@
               dimension: "psychology",
               name: "阿德勒心理",
               value: has("psychology") ? "protective_pattern" : "psychology_pending",
-              label: has("psychology") ? "保护性卡点" : "心理问答待采集",
-              description: has("psychology") ? "回声小径记录到反复模式和自我保护目标，可生成一个小行动实验。" : "问答还没有完成，心灯只给出低置信提示。",
-              confidence: has("psychology") ? "medium" : "low",
+              label: has("psychology") ? `grill-me 三问 x${psychologyCount || 3}` : "心理问答待采集",
+              description: has("psychology") ? "回声小径记录到三条短问答，可用于识别反复模式和生成一个小行动实验。" : "问答还没有完成，心灯只给出低置信提示。",
+              confidence: has("psychology") ? mindSignal?.confidence || "medium" : "low",
               polarity: has("psychology") ? "negative" : "neutral",
               color: 0xf2b263,
             },
@@ -600,7 +1947,7 @@
               dimension: "xuanxue_spirit",
               name: "玄学心灵",
               value: has("bazi") ? "timing_reflection" : "bazi_optional",
-              label: has("bazi") ? "阶段主题参考" : skipped("bazi") ? "出生时间暂不使用" : "时间线索可选",
+              label: has("bazi") ? (baziDefaulted ? "时间线索 12:00 默认" : "出生时间已记录") : skipped("bazi") ? "出生时间暂不使用" : "时间线索可选",
               description: has("bazi") ? "观星台记录到出生时间线索，只作为阶段叙事和反思入口。" : "八字维度可以稍后补充；跳过不会阻止先看画像。",
               confidence: has("bazi") ? "low" : "low",
               polarity: "neutral",
@@ -610,10 +1957,10 @@
               key: "mbti",
               dimension: "mbti",
               name: "MBTI",
-              value: has("mbti") ? "intuitive_feeling_clue" : "mbti_pending",
-              label: has("mbti") ? "直觉感受型偏好线索" : "互动偏好待采集",
-              description: has("mbti") ? "光团记录到表达与决策偏好，可用于关系开场和社交岛推荐。" : "光团还没落地，镜光保持等待。",
-              confidence: has("mbti") ? "medium" : "low",
+              value: has("mbti") ? mbtiType : "mbti_pending",
+              label: has("mbti") ? `用户自报 ${mbtiType}` : "MBTI 待采集",
+              description: has("mbti") ? `${mbtiType} 已作为用户自报类型记录，可用于关系开场和人格岛推荐。` : "光团还没落地，镜光保持等待。",
+              confidence: has("mbti") ? mbtiSignal?.confidence || "user_reported" : "low",
               polarity: has("mbti") ? "positive" : "neutral",
               color: 0x9ebdff,
             },
@@ -628,21 +1975,83 @@
           return { ...profile, xinyuDiagnosis: getXinyuStateDiagnosis(profile) };
         }
 
-        commitSignal(stepKey, signalType, value, confidence = "medium") {
+        commitSignal(stepKey, signalInput, value = "", confidence = "medium") {
           const step = INTAKE_STEPS.find((item) => item.key === stepKey);
           if (!step) return;
+          const input = typeof signalInput === "object" && signalInput
+            ? signalInput
+            : { type: signalInput, value, confidence };
+          const signalType = input.type || step.primarySignal;
+          const signalValue = input.value || value || input.label || step.prompt;
+          const signalId = `sig_${stepKey}_${signalType}`;
+          const rawInputId = `input_${stepKey}_${signalType}`;
+          const signalConfidence = input.confidence || confidence || "medium";
+          const modality = input.modality || "text";
+          const sourceKind = input.sourceKind || (modality === "voice" ? "voice_recording" : modality === "image" ? "uploaded_image" : "typed_text");
+          const rawInputSource = input.raw_input_source || {
+            kind: sourceKind,
+            ...(modality === "voice" ? { duration_ms: input.duration_ms || 12000, mime_type: "audio/webm" } : {}),
+            ...(modality === "image" ? { width: input.width || 1280, height: input.height || 960, mime_type: "image/jpeg" } : {}),
+          };
+          const rawInputQuality = input.raw_input_quality || input.quality || { status: "high", issues: [], should_retry: false };
           this.gameplay.submitted[stepKey] = true;
           this.gameplay.skipped = this.gameplay.skipped.filter((key) => key !== stepKey);
           const signal = {
-            id: `sig_${stepKey}_${this.gameplay.signals.length + 1}`,
-            modality: "text",
+            id: signalId,
+            category: stepKey,
+            modality,
             type: signalType,
-            value,
-            confidence,
+            value: signalValue,
+            normalized_value: input.normalized_value || {
+              category: stepKey,
+              choice: input.key || signalType,
+              label: input.label || step.label,
+            },
+            confidence: signalConfidence,
             dimension_hint: [step.dimension],
+            evidence: input.evidence || [{
+              kind: modality === "image" ? "image_observation" : modality === "voice" ? "transcript_span" : "user_report",
+              id: rawInputId,
+              quote: signalValue,
+            }],
+            safety: {
+              usage: INTAKE_SAFE_USAGE,
+              must_not: ["医学诊断", "心理诊断", "治疗承诺", "宿命定论"],
+              requires_escalation: false,
+            },
+            raw_input_id: rawInputId,
+            raw_input_source: rawInputSource,
+            raw_input_quality: rawInputQuality,
+            created_at: "2026-07-05T00:00:00.000Z",
           };
-          this.gameplay.signals = this.gameplay.signals.filter((item) => !item.id.startsWith(`sig_${stepKey}_`));
+          if (modality === "text") {
+            signal.raw_text = input.raw_text || signalValue;
+            signal.language = "zh-CN";
+          }
+          if (modality === "voice") {
+            signal.transcript = input.transcript || signalValue;
+            signal.transcript_confidence = input.transcript_confidence || signalConfidence;
+            signal.delivery_features = input.delivery_features || [
+              { type: "pause_density", value: "停顿略多，作为压力线索的低置信参考", confidence: "low", usage_constraint: "只用于互动追问，不用于心理诊断" },
+            ];
+          }
+          if (modality === "image") {
+            signal.image_type = input.image_type || "tongue";
+            signal.quality = rawInputQuality;
+            signal.observations = input.observations || [
+              { type: "image_quality_note", value: "原型占位图片，等待视觉模型提取舌象、面色或手部观察", confidence: "low" },
+            ];
+            signal.forbidden_inferences = ["identity", "age", "gender", "ethnicity", "disease_diagnosis", "mental_health_diagnosis", "fate_certainty", "high_stakes_decision"];
+          }
+          this.gameplay.signals = this.gameplay.signals.filter((item) => item.category !== stepKey);
           this.gameplay.signals.push(signal);
+          if (stepKey === "body") this.ensureIntakeDraft().body.activeSubmitMode = null;
+          if (stepKey === "psychology") this.ensureIntakeDraft().psychologyActiveQuestionKey = null;
+          if (stepKey !== "psychology") {
+            const draft = this.ensureIntakeDraft();
+            draft.psychologyQuestionKeys = [];
+            draft.psychologyAnswers = {};
+          }
           this.gameplay.activeIntake = this.nextIntakeKey(stepKey);
           this.syncGameplayState();
         }
@@ -651,8 +2060,31 @@
           if (!this.gameplay.submitted[stepKey] && !this.gameplay.skipped.includes(stepKey) && this.gameplay.skipped.length < 2) {
             this.gameplay.skipped.push(stepKey);
           }
+          if (stepKey !== "psychology") {
+            const draft = this.ensureIntakeDraft();
+            draft.psychologyQuestionKeys = [];
+            draft.psychologyAnswers = {};
+          }
           this.gameplay.activeIntake = this.nextIntakeKey(stepKey);
           this.syncGameplayState();
+        }
+
+        advanceAfterIntakeCommit(stepKey, color = 0x9ebdff) {
+          const coverage = this.getCoverage();
+          const finalStep = stepKey === INTAKE_STEPS[INTAKE_STEPS.length - 1].key || this.gameplay.activeIntake === stepKey;
+          const gate = this.getIntakeGatePoint();
+          if (coverage.canGenerateProfile) {
+            this.moveHeroTo(gate.x, gate.y, () => {
+              this.addSparkBurst(gate.x, gate.y, color, finalStep ? 12 : 7);
+              if (finalStep) {
+                this.time.delayedCall(120, () => this.transitionToScene("profile", { color }));
+              } else {
+                this.time.delayedCall(120, () => this.refreshDemoScene());
+              }
+            }, { color, mood: "focus" });
+            return;
+          }
+          this.time.delayedCall(160, () => this.refreshDemoScene());
         }
 
         nextIntakeKey(currentKey) {
@@ -668,9 +2100,27 @@
           };
         }
 
+        wellnessPoint(x, y) {
+          return {
+            x: WORLD_ORIGIN.x + (x - WORLD_ORIGIN.x) * WELLNESS_SCALE,
+            y: WORLD_ORIGIN.y + (y - WORLD_ORIGIN.y) * WELLNESS_SCALE,
+          };
+        }
+
+        getIntakeGatePoint() {
+          return { x: 306, y: 506 };
+        }
+
         worldGraphics(g) {
           g.setPosition(WORLD_ORIGIN.x * (1 - WORLD_SCALE), WORLD_ORIGIN.y * (1 - WORLD_SCALE));
           g.setScale(WORLD_SCALE);
+          this.trackSceneObject(g);
+          return g;
+        }
+
+        wellnessGraphics(g) {
+          g.setPosition(WORLD_ORIGIN.x * (1 - WELLNESS_SCALE), WORLD_ORIGIN.y * (1 - WELLNESS_SCALE));
+          g.setScale(WELLNESS_SCALE);
           this.trackSceneObject(g);
           return g;
         }
@@ -720,33 +2170,33 @@
         }
 
         addHeader() {
-          this.add.text(22, 28, "心象地图", {
+          this.add.text(22, 26, "心象地图", {
             fontFamily: "Inter, sans-serif",
-            fontSize: "26px",
+            fontSize: "17px",
             fontStyle: "800",
             color: "#f6ecdf",
           }).setDepth(900);
 
-          this.add.text(24, 64, "采集 · 结果 · 调理 · 社交", {
+          this.add.text(23, 48, "采集 · 画像 · 岛屿", {
             fontFamily: "Inter, sans-serif",
-            fontSize: "13px",
+            fontSize: "9.4px",
             color: "#c0b7ca",
           }).setDepth(900);
         }
 
         renderSceneTabs() {
-          const group = this.add.container(20, 92).setDepth(940);
+          const group = this.add.container(210, 28).setDepth(940);
           DEMO_SCENES.forEach((scene, index) => {
-            const x = index * 88;
+            const x = index * 40;
             const bg = this.add.graphics();
-            const text = this.add.text(x + 36, 16, scene.label, {
+            const text = this.add.text(x + 18, 12, scene.label, {
               fontFamily: "Inter, sans-serif",
-              fontSize: "13px",
+              fontSize: "9.5px",
               fontStyle: "800",
               color: "#f6ecdf",
             }).setOrigin(0.5);
-            const hit = this.add.zone(x + 36, 16, 74, 34).setInteractive({ useHandCursor: true });
-            hit.on("pointerdown", () => this.showDemoScene(scene.key));
+            const hit = this.add.zone(x + 18, 12, 36, 26).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => this.transitionToScene(scene.key));
             group.add([bg, text, hit]);
             this.sceneButtons.push({ scene, bg, text, x });
           });
@@ -757,11 +2207,52 @@
           this.sceneButtons.forEach(({ scene, bg, text, x }) => {
             const active = scene.key === this.currentDemoScene;
             bg.clear();
-            bg.fillStyle(active ? 0x766177 : 0x242337, active ? 0.95 : 0.74);
-            bg.fillRoundedRect(x, 0, 72, 32, 10);
-            bg.lineStyle(1, active ? 0xf6ecdf : 0xf6ecdf, active ? 0.28 : 0.1);
-            bg.strokeRoundedRect(x, 0, 72, 32, 10);
+            bg.fillStyle(active ? 0xf6ecdf : 0x242337, active ? 0.14 : 0.5);
+            bg.fillRoundedRect(x, 0, 36, 24, 12);
+            bg.lineStyle(1, active ? 0xf6ecdf : 0xf6ecdf, active ? 0.4 : 0.08);
+            bg.strokeRoundedRect(x, 0, 36, 24, 12);
             text.setColor(active ? "#fff7ed" : "#c0b7ca");
+          });
+        }
+
+        transitionToScene(key, options = {}) {
+          if (key === this.currentDemoScene) return;
+          if (this.transitionOverlay) this.transitionOverlay.destroy(true);
+          const overlay = this.add.container(0, 0).setDepth(1200);
+          const g = this.add.graphics();
+          g.fillStyle(P.bgDeep, 1);
+          g.fillRect(0, 0, DESIGN_W, DESIGN_H);
+          const scene = DEMO_SCENES.find((item) => item.key === key);
+          const label = this.add.text(DESIGN_W / 2, DESIGN_H / 2 - 10, scene?.title || "", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "15px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+          }).setOrigin(0.5);
+          const line = this.add.graphics();
+          line.lineStyle(2, options.color || 0x9ebdff, 0.72);
+          line.lineBetween(144, DESIGN_H / 2 + 20, 246, DESIGN_H / 2 + 20);
+          overlay.add([g, label, line]);
+          overlay.setAlpha(0);
+          this.transitionOverlay = overlay;
+          this.tweens.add({
+            targets: overlay,
+            alpha: 0.9,
+            duration: 120,
+            ease: "Sine.easeOut",
+            onComplete: () => {
+              this.showDemoScene(key);
+              this.tweens.add({
+                targets: overlay,
+                alpha: 0,
+                duration: 260,
+                ease: "Sine.easeOut",
+                onComplete: () => {
+                  overlay.destroy(true);
+                  if (this.transitionOverlay === overlay) this.transitionOverlay = null;
+                },
+              });
+            },
           });
         }
 
@@ -785,6 +2276,8 @@
 
         clearDemoScene() {
           this.tweens.killAll();
+          this.gameplay.activeLiveTool = null;
+          this.hideIntakeOverlay();
           this.heroIdleTween = null;
           this.signals.forEach((signal) => {
             signal.container?.destroy();
@@ -813,51 +2306,171 @@
           this.showDemoScene(key);
         }
 
+        getIntakeTaskLine(step) {
+          const lines = {
+            mbti: "拨动四组字母，让光团降世",
+            body: "点选一种输入方式，再提交身体线索",
+            bazi: "在罗盘下校准年月日时分",
+            psychology: "点踏石进入问题互动",
+          };
+          return lines[step.key] || step.prompt;
+        }
+
         renderSceneTitle(scene) {
-          const group = this.add.container(22, 140).setDepth(910);
-          const title = this.add.text(0, 0, scene.title, {
+          const coverage = this.getCoverage();
+          const activeStep = INTAKE_STEPS.find((item) => item.key === this.gameplay.activeIntake) || INTAKE_STEPS[0];
+          const isIntake = scene.key === "intake";
+          if (isIntake) {
+            const group = this.add.container(22, 72).setDepth(910);
+            const g = this.add.graphics();
+            g.fillStyle(0x050712, 0.18);
+            g.fillRoundedRect(-2, 0, 346, 38, 14);
+            g.fillStyle(0x242337, 0.78);
+            g.fillRoundedRect(0, 0, 342, 36, 14);
+            g.lineStyle(1, activeStep.color, 0.28);
+            g.strokeRoundedRect(0, 0, 342, 36, 14);
+            g.fillStyle(activeStep.color, 0.86);
+            g.fillRoundedRect(12, 9, 46, 18, 9);
+            const chip = this.add.text(35, 18, activeStep.label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "9px",
+              fontStyle: "900",
+              color: "#151524",
+            }).setOrigin(0.5);
+            const action = this.add.text(70, 7, `${activeStep.title} · ${this.getIntakeTaskLine(activeStep)}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "10.3px",
+              fontStyle: "850",
+              color: "#fff7ed",
+              wordWrap: { width: 198 },
+            });
+            const done = coverage.canGenerateProfile;
+            const progress = this.add.text(290, 7, `${coverage.submittedCount}/${INTAKE_MIN_REQUIRED}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "15px",
+              fontStyle: "900",
+              color: done ? "#fff0c8" : "#c0b7ca",
+            });
+            const label = this.add.text(318, 13, done ? "可画像" : `差${coverage.neededCategoriesToGenerate}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "8.8px",
+              color: "#c0b7ca",
+            });
+            group.add([g, chip, action, progress, label]);
+            this.sceneTitle = group;
+            return;
+          }
+          const group = this.add.container(22, 102).setDepth(910);
+          const title = this.add.text(0, 0, isIntake ? activeStep.title : scene.title, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "18px",
+            fontSize: "16px",
             fontStyle: "800",
             color: "#f6ecdf",
           });
-          const subtitle = this.add.text(0, 28, scene.subtitle, {
+          const subtitle = this.add.text(0, 24, isIntake ? activeStep.prompt : scene.subtitle, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "12px",
+            fontSize: "10.6px",
             color: "#c0b7ca",
-            wordWrap: { width: 330 },
-            lineSpacing: 4,
+            wordWrap: { width: 260 },
+            lineSpacing: 3,
           });
           group.add([title, subtitle]);
+          if (!isIntake) {
+            const state = getXinyuStateDiagnosis(this.getProfileOutput());
+            const badge = this.add.container(280, 0);
+            const g = this.add.graphics();
+            g.fillStyle(state.color, 0.16);
+            g.fillRoundedRect(0, 0, 74, 34, 13);
+            g.lineStyle(1, state.color, 0.44);
+            g.strokeRoundedRect(0, 0, 74, 34, 13);
+            const text = this.add.text(37, 17, `心愈${state.label}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "12px",
+              fontStyle: "800",
+              color: "#fff7ed",
+            }).setOrigin(0.5);
+            badge.add([g, text]);
+            group.add(badge);
+          } else {
+            const done = coverage.canGenerateProfile;
+            const text = this.add.text(280, 7, `${coverage.submittedCount}/${INTAKE_MIN_REQUIRED}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "18px",
+              fontStyle: "800",
+              color: done ? "#fff0c8" : "#c0b7ca",
+            });
+            const label = this.add.text(318, 13, done ? "可画像" : `还差${coverage.neededCategoriesToGenerate}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "10px",
+              color: "#c0b7ca",
+            });
+            group.add([text, label]);
+          }
           this.sceneTitle = group;
         }
 
         renderDemoCard(title, lines, color = 0x9ebdff) {
-          const group = this.add.container(20, 618).setDepth(720);
+          const group = this.add.container(24, 630).setDepth(720);
           const g = this.add.graphics();
           g.fillStyle(0x050712, 0.34);
-          g.fillRoundedRect(-4, 8, 350, 132, 16);
+          g.fillRoundedRect(-4, 8, 342, 100, 16);
           g.fillStyle(P.card, 0.94);
-          g.fillRoundedRect(0, 0, 348, 132, 16);
+          g.fillRoundedRect(0, 0, 340, 100, 16);
           g.lineStyle(1, 0xf6ecdf, 0.14);
-          g.strokeRoundedRect(0, 0, 348, 132, 16);
+          g.strokeRoundedRect(0, 0, 340, 100, 16);
           g.fillStyle(color, 1);
-          g.fillRoundedRect(20, 22, 28, 28, 8);
-          const heading = this.add.text(64, 21, title, {
+          g.fillRoundedRect(18, 20, 22, 22, 7);
+          const heading = this.add.text(54, 18, title, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "18px",
+            fontSize: "15px",
             fontStyle: "800",
             color: "#fff7ed",
             wordWrap: { width: 258 },
           });
-          const body = this.add.text(22, 68, lines.join("\n"), {
+          const body = this.add.text(22, 52, lines.join("\n"), {
             fontFamily: "Inter, sans-serif",
-            fontSize: "12px",
+            fontSize: "10.8px",
             color: "#f2eaf2",
-            lineSpacing: 6,
+            lineSpacing: 4,
             wordWrap: { width: 302 },
           });
           group.add([g, heading, body]);
+          this.trackSceneObject(group);
+          return group;
+        }
+
+        renderIntakeHint(step, lines) {
+          const group = this.add.container(24, 634).setDepth(720);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.26);
+          g.fillRoundedRect(-4, 7, 342, 58, 15);
+          g.fillStyle(P.card, 0.88);
+          g.fillRoundedRect(0, 0, 340, 56, 15);
+          g.lineStyle(1, 0xf6ecdf, 0.11);
+          g.strokeRoundedRect(0, 0, 340, 56, 15);
+          g.fillStyle(step.color, 0.9);
+          g.fillRoundedRect(18, 14, 44, 18, 9);
+          const chip = this.add.text(40, 23, "下一步", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "8.8px",
+            fontStyle: "800",
+            color: "#151524",
+          }).setOrigin(0.5);
+          const title = this.add.text(76, 10, lines[0] || this.getIntakeTaskLine(step), {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "10.5px",
+            fontStyle: "800",
+            color: "#fff7ed",
+            wordWrap: { width: 250 },
+          });
+          const body = this.add.text(76, 30, lines[1] || "完成后小人会带着线索继续前进。", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "9.6px",
+            color: "#f2eaf2",
+            lineSpacing: 3,
+            wordWrap: { width: 250 },
+          });
+          group.add([g, chip, title, body]);
           this.trackSceneObject(group);
           return group;
         }
@@ -906,6 +2519,10 @@
             color: "#fff7ed",
           }).setOrigin(0.5);
           const hit = this.add.zone(width / 2, height / 2, width, height).setInteractive({ useHandCursor: true });
+          const isLiveOverlayOpen = () => {
+            const overlay = this.getIntakeOverlay();
+            return overlay?.dataset.visible === "true" && overlay?.dataset.mode === "wellness";
+          };
           hit.on("pointerover", () => {
             bg.clear();
             bg.fillStyle(color, 0.24);
@@ -920,39 +2537,95 @@
             bg.lineStyle(1.2, color, 0.58);
             bg.strokeRoundedRect(0, 0, width, height, 12);
           });
-          hit.on("pointerdown", onClick);
+          hit.on("pointerdown", () => {
+            if (isLiveOverlayOpen()) return;
+            onClick();
+          });
           group.add([bg, text, hit]);
           this.trackSceneObject(group);
           return group;
         }
 
         renderIntakeStepper() {
+          const y = 136;
+          const line = this.add.graphics().setDepth(808);
+          line.lineStyle(1.4, 0xf6ecdf, 0.16);
+          line.lineBetween(55, y + 14, 335, y + 14);
+          this.trackSceneObject(line);
           INTAKE_STEPS.forEach((step, index) => {
             const status = this.getCoverage().stages.find((item) => item.key === step.key)?.status;
-            const x = 24 + index * 86;
-            const y = 196;
+            const x = 36 + index * 88;
             const group = this.add.container(x, y).setDepth(810);
             const g = this.add.graphics();
-            const fill = status === "submitted" ? step.color : status === "skipped" ? 0x4b4656 : status === "active" ? 0x766177 : 0x242337;
-            const alpha = status === "submitted" ? 0.94 : status === "active" ? 0.9 : 0.72;
+            const fill = status === "submitted" ? step.color : status === "skipped" ? 0x4b4656 : status === "active" ? P.card : 0x242337;
+            const alpha = status === "submitted" ? 0.95 : status === "active" ? 0.92 : 0.72;
             g.fillStyle(fill, alpha);
-            g.fillRoundedRect(0, 0, 72, 32, 10);
-            g.lineStyle(1, status === "active" ? 0xf6ecdf : step.color, status === "waiting" ? 0.18 : 0.5);
-            g.strokeRoundedRect(0, 0, 72, 32, 10);
-            const text = this.add.text(36, 16, step.label, {
+            g.fillCircle(18, 14, status === "active" ? 17 : 14);
+            g.lineStyle(1.2, status === "active" ? 0xf6ecdf : step.color, status === "waiting" ? 0.18 : 0.58);
+            g.strokeCircle(18, 14, status === "active" ? 17 : 14);
+            if (status === "submitted") {
+              g.lineStyle(1.2, 0xf6ecdf, 0.8);
+              g.lineBetween(12, 14, 16, 19);
+              g.lineBetween(16, 19, 25, 9);
+            }
+            const text = this.add.text(18, 42, step.label, {
               fontFamily: "Inter, sans-serif",
-              fontSize: "12px",
+              fontSize: "10.5px",
               fontStyle: "800",
               color: status === "waiting" ? "#c0b7ca" : "#fff7ed",
             }).setOrigin(0.5);
-            const hit = this.add.zone(36, 16, 72, 32).setInteractive({ useHandCursor: true });
+            const hit = this.add.zone(18, 18, 62, 66).setInteractive({ useHandCursor: true });
             hit.on("pointerdown", () => {
+              if (status === "waiting") return;
               this.gameplay.activeIntake = step.key;
               this.syncGameplayState();
               this.refreshDemoScene();
             });
             group.add([g, text, hit]);
             this.trackSceneObject(group);
+          });
+        }
+
+        renderIntakeGate() {
+          const coverage = this.getCoverage();
+          if (!coverage.canGenerateProfile) return;
+          if (!this.gameplay.submitted[this.gameplay.activeIntake]) return;
+          const gate = this.getIntakeGatePoint();
+          const group = this.add.container(gate.x, gate.y).setDepth(760);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.28);
+          g.fillEllipse(0, 28, 84, 18);
+          g.fillStyle(0xffd58a, 0.16);
+          g.fillRoundedRect(-46, -22, 92, 48, 18);
+          g.lineStyle(1.2, 0xffd58a, 0.72);
+          g.strokeRoundedRect(-46, -22, 92, 48, 18);
+          g.lineStyle(1, 0xf6ecdf, 0.42);
+          g.strokeEllipse(0, 2, 34, 28);
+          g.fillStyle(0xffd58a, 0.9);
+          g.fillCircle(0, 2, 5);
+          const text = this.add.text(0, 48, "画像门", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#fff7ed",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 6, 104, 88).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            this.performHeroAction(gate.x, gate.y, 0xffd58a, () => {
+              this.transitionToScene("profile", { color: 0xffd58a });
+            }, { mood: "focus", arriveDelay: 80 });
+          });
+          group.add([g, text, hit]);
+          this.trackSceneObject(group);
+          this.tweens.add({
+            targets: group,
+            y: gate.y - 4,
+            duration: 980,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
           });
         }
 
@@ -975,7 +2648,7 @@
 
         getHeroSceneEntryPoint(sceneKey = this.currentDemoScene) {
           if (sceneKey === "profile") return this.worldPoint(178, 352);
-          if (sceneKey === "wellness") return this.worldPoint(164, 432);
+          if (sceneKey === "wellness") return this.wellnessPoint(154, 430);
           if (sceneKey === "social") return { x: 195, y: 434 };
           if (this.gameplay.activeIntake === "mbti" && !this.gameplay.hero.born) return { x: 195, y: 292 };
           return { x: 195, y: 430 };
@@ -1190,23 +2863,85 @@
           if (step.key === "body") this.renderBodyIntake(step);
           if (step.key === "bazi") this.renderBaziIntake(step);
           if (step.key === "psychology") this.renderPsychologyIntake(step);
+          this.renderNativeIntakeOverlay(step);
+          this.renderIntakeGate();
         }
 
         renderMbtiIntake(step) {
           this.addConstellation(195, 335);
           this.addLightDescent(195, 322);
           this.addTinyGate(195, 432);
-          const choices = [
-            { label: "我知道类型", type: "mbti_known", value: "用户自报 MBTI 类型", x: 86, y: 292, color: 0x9ebdff },
-            { label: "先看事实", type: "preference_clue", value: "决策先看事实与结构", x: 250, y: 312, color: 0x8edab2 },
-            { label: "先看感受", type: "preference_clue", value: "决策先看人的感受与关系", x: 116, y: 434, color: 0xf593bb },
-            { label: "开放节奏", type: "preference_clue", value: "更适应开放探索节奏", x: 278, y: 440, color: 0xf2b263 },
+          this.addMbtiDialAura();
+        }
+
+        addMbtiDialAura() {
+          const g = this.add.graphics().setDepth(96);
+          this.trackSceneObject(g);
+          const center = { x: 195, y: 352 };
+          const marks = [
+            [center.x - 92, center.y - 34, "I/E", 0x9ebdff],
+            [center.x + 92, center.y - 34, "N/S", 0x8edab2],
+            [center.x - 92, center.y + 58, "F/T", 0xf593bb],
+            [center.x + 92, center.y + 58, "P/J", 0xf2b263],
           ];
-          choices.forEach((choice, index) => this.addCatchLight(choice, index, step.key));
-          this.renderDemoCard("MBTI · 光团降世", [
-            "点一个光团，小光会飞过去收集偏好线索。",
-            "回到门口后变成主角，后续由小人走完整个流程。",
-          ], step.color);
+          g.lineStyle(1.2, 0xf6ecdf, 0.18);
+          g.strokeEllipse(center.x, center.y + 10, 236, 132);
+          marks.forEach(([x, y, label, color], index) => {
+            g.fillStyle(color, 0.14);
+            g.fillCircle(x, y, 24);
+            g.lineStyle(1.4, color, 0.58);
+            g.strokeCircle(x, y, 24);
+            const text = this.add.text(x, y, label, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "10px",
+              fontStyle: "900",
+              color: "#fff7ed",
+            }).setOrigin(0.5).setDepth(350 + index);
+            this.trackSceneObject(text);
+          });
+        }
+
+        addMbtiTypeChip(choice, index, stepKey) {
+          const c = this.add.container(choice.x, choice.y).setDepth(360 + index);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.24);
+          g.fillRoundedRect(-27, -15, 54, 30, 10);
+          g.fillStyle(choice.color, 0.18);
+          g.fillRoundedRect(-25, -17, 50, 30, 10);
+          g.lineStyle(1.2, choice.color, 0.68);
+          g.strokeRoundedRect(-25, -17, 50, 30, 10);
+          const text = this.add.text(0, -1, choice.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "12px",
+            fontStyle: "900",
+            color: "#f6ecdf",
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 0, 58, 38).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            if (this.heroBusy) return;
+            this.moveHeroTo(choice.x, choice.y, () => {
+              this.addSparkBurst(choice.x, choice.y, choice.color);
+              this.tweens.add({
+                targets: c,
+                x: 195,
+                y: 428,
+                scale: 0.34,
+                alpha: 0,
+                duration: 300,
+                ease: "Sine.easeInOut",
+              });
+              this.moveHeroTo(195, 428, () => {
+                this.completeHeroBirth(195, 428);
+                this.time.delayedCall(220, () => {
+                  this.commitSignal(stepKey, choice);
+                  this.advanceAfterIntakeCommit(stepKey, choice.color);
+                });
+              }, { color: choice.color, mood: "curious" });
+            }, { color: choice.color, mood: "orb" });
+          });
+          c.add([g, text, hit]);
+          this.trackSceneObject(c);
+          this.tweens.add({ targets: c, y: choice.y - 3, duration: 960 + index * 28, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
         }
 
         addCatchLight(choice, index, stepKey) {
@@ -1243,8 +2978,8 @@
               this.moveHeroTo(195, 428, () => {
                 this.completeHeroBirth(195, 428);
                 this.time.delayedCall(260, () => {
-                  this.commitSignal(stepKey, choice.type, choice.value, choice.type === "mbti_known" ? "user_reported" : "medium");
-                  this.refreshDemoScene();
+                  this.commitSignal(stepKey, choice);
+                  this.advanceAfterIntakeCommit(stepKey, choice.color);
                 });
               }, { color: choice.color, mood: "curious" });
             }, { color: choice.color, mood: "orb" });
@@ -1256,17 +2991,80 @@
 
         renderBodyIntake(step) {
           this.addBodyCourtyard(195, 378);
-          const objects = [
-            { label: "睡眠", type: "sleep", value: "最近睡眠多梦或恢复感不足", x: 126, y: 342, color: 0x9ebdff },
-            { label: "冷热", type: "temperature_sense", value: "冷热感或体感波动明显", x: 238, y: 340, color: 0xf2b263 },
-            { label: "消化", type: "digestion", value: "食欲和消化节律需要观察", x: 112, y: 438, color: 0x8edab2 },
-            { label: "疲劳", type: "body_state", value: "身体沉重或精力恢复偏慢", x: 260, y: 432, color: 0xf593bb },
+          this.addBodyInputShrine();
+          BODY_INPUT_OPTIONS.forEach((item) => this.addBodyInputCard(item, step.key));
+          if (!this.ensureIntakeDraft().body.activeSubmitMode) {
+            this.renderIntakeHint(step, [
+              "点语音、图片或文字入口，小人会走过去打开提交框。",
+              "任意一种就能进入画像，剩下的可以之后补。",
+            ], step.color);
+          }
+        }
+
+        addBodyInputShrine() {
+          const g = this.add.graphics().setDepth(112);
+          this.trackSceneObject(g);
+          const items = [
+            [104, 352, 0x9ebdff],
+            [196, 410, 0x8edab2],
+            [288, 352, 0xf2b263],
           ];
-          objects.forEach((item) => this.addBodyObject(item, step.key));
-          this.renderDemoCard("身体 · 庭院气象", [
-            "点一个身体物件，先采一条体感线索。",
-            "这不是诊断，只进入「体质/节律倾向」参考。",
-          ], step.color);
+          items.forEach(([x, y, color]) => {
+            g.fillStyle(0x050712, 0.18);
+            g.fillEllipse(x, y + 20, 58, 13);
+            g.fillStyle(color, 0.15);
+            g.fillRoundedRect(x - 22, y - 24, 44, 42, 12);
+            g.lineStyle(1.2, color, 0.48);
+            g.strokeRoundedRect(x - 22, y - 24, 44, 42, 12);
+            g.fillStyle(P.cream, 0.72);
+            g.fillCircle(x, y - 3, 5);
+          });
+        }
+
+        addBodyInputCard(item, stepKey) {
+          const c = this.add.container(item.x, item.y).setDepth(item.y + 120);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.22);
+          g.fillEllipse(0, 31, 76, 14);
+          g.fillStyle(item.color, 0.2);
+          g.fillRoundedRect(-38, -26, 76, 54, 12);
+          g.lineStyle(1.5, item.color, 0.82);
+          g.strokeRoundedRect(-38, -26, 76, 54, 12);
+          g.fillStyle(P.cream, 0.9);
+          if (item.modality === "voice") {
+            g.fillRoundedRect(-4, -13, 8, 25, 4);
+            g.lineStyle(1.4, P.cream, 0.8);
+            g.strokeCircle(0, 0, 18);
+          } else if (item.modality === "image") {
+            g.fillRoundedRect(-15, -13, 30, 24, 5);
+            g.fillStyle(item.color, 0.85);
+            g.fillCircle(7, -5, 3);
+            g.fillTriangle(-12, 10, -2, 0, 11, 10);
+          } else {
+            g.fillRoundedRect(-16, -13, 32, 25, 5);
+            g.fillStyle(item.color, 0.9);
+            g.fillRect(-9, -5, 18, 2);
+            g.fillRect(-9, 1, 14, 2);
+          }
+          const text = this.add.text(0, 44, item.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "11px",
+            fontStyle: "800",
+            color: "#f6ecdf",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 4, 86, 78).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            this.performHeroAction(item.x, item.y + 12, item.color, () => {
+              const body = this.ensureIntakeDraft().body;
+              body.mode = item.modality;
+              body.activeSubmitMode = item.modality;
+              this.renderNativeIntakeOverlay(INTAKE_STEPS.find((step) => step.key === stepKey));
+            });
+          });
+          c.add([g, text, hit]);
+          this.trackSceneObject(c);
         }
 
         addBodyCourtyard(cx, cy) {
@@ -1298,8 +3096,8 @@
           const hit = this.add.zone(0, 4, 78, 72).setInteractive({ useHandCursor: true });
           hit.on("pointerdown", () => {
             this.performHeroAction(item.x, item.y + 12, item.color, () => {
-              this.commitSignal(stepKey, item.type, item.value, "medium");
-              this.refreshDemoScene();
+              this.commitSignal(stepKey, item);
+              this.advanceAfterIntakeCommit(stepKey, item.color);
             });
           });
           c.add([g, text, hit]);
@@ -1308,28 +3106,99 @@
 
         renderBaziIntake(step) {
           this.addTimeObservatory(195, 376);
-          this.addChoiceButton(42, 544, "提供时间", step.color, () => {
-            this.performHeroAction(196, 354, step.color, () => {
-              this.commitSignal("bazi", "birth_info", "用户提供出生日期/时间，作为非决定论阶段参考", "user_reported");
-              this.refreshDemoScene();
-            });
-          }, 96);
-          this.addChoiceButton(148, 544, "时间不确定", 0xf2b263, () => {
-            this.performHeroAction(196, 354, 0xf2b263, () => {
-              this.commitSignal("bazi", "birth_info", "出生时间不确定，降低玄学维度置信度", "low");
-              this.refreshDemoScene();
-            });
-          }, 104);
-          this.addChoiceButton(262, 544, this.gameplay.skipped.length >= 2 ? "跳过已满" : "先跳过", 0xc0b7ca, () => {
-            this.moveHeroTo(306, 562, () => {
-              this.skipIntake("bazi");
-              this.refreshDemoScene();
-            }, { color: 0xc0b7ca, mood: "focus" });
-          }, 88);
-          this.renderDemoCard("八字 · 时间观星台", [
-            "出生信息只作为文化叙事和阶段反思入口。",
-            "不确定可以低置信记录，也可以显式跳过。",
-          ], step.color);
+        }
+
+        addBaziStepper(control, color) {
+          const group = this.add.container(control.x, control.y).setDepth(820);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.28);
+          g.fillRoundedRect(-47, -27, 94, 54, 13);
+          g.fillStyle(0x242337, 0.92);
+          g.fillRoundedRect(-44, -30, 88, 54, 13);
+          g.lineStyle(1.2, color, 0.58);
+          g.strokeRoundedRect(-44, -30, 88, 54, 13);
+          const label = this.add.text(0, -16, control.label, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "10px",
+            fontStyle: "800",
+            color: "#c0b7ca",
+          }).setOrigin(0.5);
+          const value = this.add.text(0, 6, control.value, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "16px",
+            fontStyle: "900",
+            color: "#fff7ed",
+          }).setOrigin(0.5);
+          const minus = this.add.text(-32, 5, "-", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "18px",
+            fontStyle: "900",
+            color: "#f6ecdf",
+          }).setOrigin(0.5);
+          const plus = this.add.text(32, 4, "+", {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "17px",
+            fontStyle: "900",
+            color: "#f6ecdf",
+          }).setOrigin(0.5);
+          const minusHit = this.add.zone(-32, 4, 26, 34).setInteractive({ useHandCursor: true });
+          const plusHit = this.add.zone(32, 4, 26, 34).setInteractive({ useHandCursor: true });
+          minusHit.on("pointerdown", () => this.updateBaziDraft(control.field, -control.delta));
+          plusHit.on("pointerdown", () => this.updateBaziDraft(control.field, control.delta));
+          group.add([g, label, value, minus, plus, minusHit, plusHit]);
+          this.trackSceneObject(group);
+        }
+
+        updateBaziDraft(field, delta) {
+          const draft = this.ensureIntakeDraft().bazi;
+          const limits = {
+            year: [1900, 2026],
+            month: [1, 12],
+            hour: [0, 23],
+            minute: [0, 55],
+          };
+          if (field === "day") {
+            const maxDay = new Date(draft.year, draft.month, 0).getDate();
+            draft.day = Phaser.Math.Clamp(draft.day + delta, 1, maxDay);
+          } else if (limits[field]) {
+            draft[field] = Phaser.Math.Clamp(draft[field] + delta, limits[field][0], limits[field][1]);
+          }
+          if (field === "year" || field === "month") {
+            draft.day = Phaser.Math.Clamp(draft.day, 1, new Date(draft.year, draft.month, 0).getDate());
+          }
+          if (field === "hour" || field === "minute") draft.timeDefaulted = false;
+          this.syncGameplayState();
+          this.refreshDemoScene();
+        }
+
+        commitBaziDraft(timeDefaulted, color) {
+          const draft = this.ensureIntakeDraft().bazi;
+          if (timeDefaulted) {
+            draft.hour = BAZI_DEFAULT_TIME.hour;
+            draft.minute = BAZI_DEFAULT_TIME.minute;
+            draft.timeDefaulted = true;
+          }
+          const dateText = `${draft.year}-${String(draft.month).padStart(2, "0")}-${String(draft.day).padStart(2, "0")}`;
+          const timeText = `${String(draft.hour).padStart(2, "0")}:${String(draft.minute).padStart(2, "0")}`;
+          this.commitSignal("bazi", {
+            key: timeDefaulted ? "birth_time_defaulted" : "birth_time_known",
+            label: timeDefaulted ? "时分默认" : "出生时间",
+            type: "birth_info",
+            value: `出生信息：${dateText} ${timeText}${timeDefaulted ? "；时分不清，默认 12:00" : ""}`,
+            confidence: timeDefaulted ? "low" : "user_reported",
+            normalized_value: {
+              category: "bazi",
+              birth_year: draft.year,
+              birth_month: draft.month,
+              birth_day: draft.day,
+              birth_hour: draft.hour,
+              birth_minute: draft.minute,
+              time_defaulted: timeDefaulted,
+              default_time: timeDefaulted ? "12:00" : null,
+              usage: "culture_story_only",
+            },
+          });
+          this.advanceAfterIntakeCommit("bazi", color);
         }
 
         addTimeObservatory(cx, cy) {
@@ -1349,16 +3218,223 @@
 
         renderPsychologyIntake(step) {
           this.addEchoPath(195, 378);
-          const stones = [
-            { label: "反复模式", type: "repeated_pattern", value: "重要事情前容易卡住或拖延", x: 104, y: 332 },
-            { label: "保护什么", type: "self_evaluation", value: "卡住像是在保护自尊或胜任感", x: 196, y: 382 },
-            { label: "小实验", type: "emotion_state", value: "愿意先尝试一个不会被评价的小动作", x: 286, y: 432 },
-          ];
-          stones.forEach((stone, index) => this.addEchoStone(stone, index, step.key));
-          this.renderDemoCard("问答 · 回声小径", [
-            "点一块踏石，先采一条阿德勒式心理线索。",
-            "生产版可扩成 3-5 个短问答，这里先验证交互。",
+          const draft = this.ensureIntakeDraft();
+          const questions = this.getPsychologyQuestions();
+          const activeQuestion = questions.find((item) => item.key === draft.psychologyActiveQuestionKey);
+          this.addEchoQuestionMarkers();
+          if (activeQuestion) {
+            this.addPsychologyInteractionStage(activeQuestion);
+            return;
+          }
+          const answered = questions.filter((item) => draft.psychologyAnswers[item.key]).length;
+          this.renderIntakeHint(step, [
+            `点亮三块踏石进入问题：${answered}/3`,
+            "每一题都会切到一个小互动，再选择最贴近的答案。",
           ], step.color);
+        }
+
+        addEchoQuestionMarkers() {
+          const g = this.add.graphics().setDepth(116);
+          this.trackSceneObject(g);
+          const draft = this.ensureIntakeDraft();
+          const questions = this.getPsychologyQuestions();
+          const points = [[104, 314], [196, 396], [288, 472]];
+          points.forEach(([x, y], index) => {
+            const question = questions[index];
+            const key = question?.key;
+            const done = Boolean(draft.psychologyAnswers[key]);
+            g.fillStyle(done ? 0x8edab2 : 0xf2b263, done ? 0.34 : 0.2);
+            g.fillEllipse(x, y, 60, 34);
+            g.lineStyle(1.4, done ? 0x8edab2 : 0xf2b263, 0.58);
+            g.strokeEllipse(x, y, 60, 34);
+            const text = this.add.text(x, y, `${index + 1}`, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: "13px",
+              fontStyle: "900",
+              color: "#fff7ed",
+            }).setOrigin(0.5).setDepth(360 + index);
+            this.trackSceneObject(text);
+            const hit = this.add.zone(x, y, 78, 56).setDepth(470 + index).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => {
+              if (!question || this.heroBusy) return;
+              this.performHeroAction(x, y + 12, done ? 0x8edab2 : 0xf2b263, () => {
+                const activeDraft = this.ensureIntakeDraft();
+                activeDraft.psychologyActiveIndex = index;
+                activeDraft.psychologyActiveQuestionKey = question.key;
+                this.refreshDemoScene();
+              });
+            });
+            this.trackSceneObject(hit);
+          });
+        }
+
+        addPsychologyInteractionStage(question) {
+          const meta = this.getPsychologyInteractionMeta(question);
+          const group = this.add.container(195, 320).setDepth(430);
+          const g = this.add.graphics();
+          group.add(g);
+          g.fillStyle(0x050712, 0.22);
+          g.fillEllipse(0, 82, 214, 34);
+          g.fillStyle(meta.color, 0.12);
+          g.fillRoundedRect(-112, -56, 224, 118, 22);
+          g.lineStyle(1.2, meta.color, 0.46);
+          g.strokeRoundedRect(-112, -56, 224, 118, 22);
+
+          if (meta.mode === "support") {
+            const lights = [
+              [-56, "事实", 0x9ebdff],
+              [0, "陪伴", 0xf593bb],
+              [56, "空间", 0x8edab2],
+            ];
+            lights.forEach(([x, label, color], index) => {
+              g.fillStyle(color, 0.2);
+              g.fillRoundedRect(x - 16, -18, 32, 46, 12);
+              g.lineStyle(1.1, color, 0.62);
+              g.strokeRoundedRect(x - 16, -18, 32, 46, 12);
+              g.fillStyle(color, 0.9);
+              g.fillCircle(x, -28, 8 + index);
+              const text = this.add.text(x, 42, label, {
+                fontFamily: "Inter, sans-serif",
+                fontSize: "9.5px",
+                fontStyle: "850",
+                color: "#fff7ed",
+              }).setOrigin(0.5);
+              group.add(text);
+            });
+          } else if (meta.mode === "scale") {
+            g.lineStyle(2, meta.color, 0.72);
+            g.lineBetween(0, -24, 0, 28);
+            g.lineBetween(-76, -18, 76, -18);
+            g.lineBetween(-56, -18, -76, 16);
+            g.lineBetween(-56, -18, -36, 16);
+            g.lineBetween(56, -18, 36, 16);
+            g.lineBetween(56, -18, 76, 16);
+            g.fillStyle(0xf6ecdf, 0.18);
+            g.fillEllipse(-56, 18, 66, 18);
+            g.fillEllipse(56, 18, 66, 18);
+            g.fillStyle(meta.color, 0.9);
+            g.fillCircle(0, -26, 7);
+          } else if (meta.mode === "compass") {
+            g.lineStyle(1.4, meta.color, 0.7);
+            g.strokeCircle(0, 2, 46);
+            g.strokeCircle(0, 2, 24);
+            for (let i = 0; i < 8; i += 1) {
+              const a = (Math.PI * 2 * i) / 8;
+              g.lineBetween(Math.cos(a) * 18, 2 + Math.sin(a) * 18, Math.cos(a) * 46, 2 + Math.sin(a) * 46);
+            }
+            g.fillStyle(meta.color, 0.9);
+            g.fillTriangle(0, -36, 9, 2, -9, 2);
+            g.fillStyle(0xf6ecdf, 0.78);
+            g.fillCircle(0, 2, 5);
+          } else {
+            [-56, 0, 56].forEach((x, index) => {
+              g.fillStyle(meta.color, 0.18 + index * 0.04);
+              g.fillRoundedRect(x - 22, -16, 44, 42, 12);
+              g.lineStyle(1.1, meta.color, 0.56);
+              g.strokeRoundedRect(x - 22, -16, 44, 42, 12);
+              g.fillStyle(0xf6ecdf, 0.76);
+              g.fillCircle(x, 4, 6);
+            });
+          }
+
+          const title = this.add.text(0, -40, meta.name, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "13px",
+            fontStyle: "900",
+            color: "#fff7ed",
+          }).setOrigin(0.5);
+          const helper = this.add.text(0, 64, meta.helper, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "9.8px",
+            fontStyle: "750",
+            color: "#e9dfea",
+            wordWrap: { width: 196 },
+            align: "center",
+          }).setOrigin(0.5);
+          group.add([title, helper]);
+          this.trackSceneObject(group);
+          this.tweens.add({
+            targets: group,
+            y: 316,
+            duration: 980,
+            yoyo: true,
+            repeat: -1,
+            ease: "Sine.easeInOut",
+          });
+        }
+
+        addPsychologyQuestionCard(question, index, stepKey) {
+          const answered = Boolean(this.ensureIntakeDraft().psychologyAnswers[question.key]);
+          const color = answered ? 0x8edab2 : 0xf2b263;
+          const c = this.add.container(question.x, question.y).setDepth(question.y + 130);
+          const g = this.add.graphics();
+          g.fillStyle(0x050712, 0.22);
+          g.fillEllipse(0, 41, 96, 16);
+          g.fillStyle(color, answered ? 0.28 : 0.2);
+          g.fillRoundedRect(-50, -34, 100, 70, 14);
+          g.lineStyle(1.4, answered ? P.cream : color, answered ? 0.72 : 0.58);
+          g.strokeRoundedRect(-50, -34, 100, 70, 14);
+          if (answered) {
+            g.lineStyle(1.6, P.cream, 0.82);
+            g.lineBetween(-40, -24, -35, -18);
+            g.lineBetween(-35, -18, -25, -29);
+          }
+          const idx = this.add.text(-40, -25, `0${index + 1}`, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "9px",
+            fontStyle: "900",
+            color: answered ? "#fff7ed" : "#151524",
+          });
+          const text = this.add.text(0, 4, question.question, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "9.5px",
+            fontStyle: "800",
+            color: "#fff7ed",
+            align: "center",
+            wordWrap: { width: 82 },
+            lineSpacing: 2,
+          }).setOrigin(0.5);
+          const hit = this.add.zone(0, 2, 104, 78).setInteractive({ useHandCursor: true });
+          hit.on("pointerdown", () => {
+            if (answered || this.heroBusy) return;
+            this.performHeroAction(question.x, question.y + 12, color, () => this.markPsychologyAnswer(question, stepKey));
+          });
+          c.add([g, idx, text, hit]);
+          this.trackSceneObject(c);
+        }
+
+        markPsychologyAnswer(question, stepKey) {
+          const draft = this.ensureIntakeDraft();
+          draft.psychologyAnswers[question.key] = question.answer;
+          const questions = this.getPsychologyQuestions();
+          const isComplete = questions.every((item) => draft.psychologyAnswers[item.key]);
+          if (!isComplete) {
+            this.syncGameplayState();
+            this.refreshDemoScene();
+            return;
+          }
+          const qa = questions.map((item) => ({
+            id: item.key,
+            question: item.question,
+            answer: draft.psychologyAnswers[item.key],
+            type: item.type,
+          }));
+          this.commitSignal(stepKey, {
+            key: "grillme_three_questions",
+            label: "心理三问",
+            type: "repeated_pattern",
+            value: qa.map((item, index) => `Q${index + 1} ${item.question} A ${item.answer}`).join("；"),
+            confidence: "medium",
+            normalized_value: {
+              category: "psychology",
+              mode: "grill_me_with_kb_mock",
+              question_count: qa.length,
+              based_on_categories: this.getCoverage().submitted,
+              answers: qa,
+              usage: "followup_generation_and_adler_pattern_only",
+            },
+          });
+          this.advanceAfterIntakeCommit(stepKey, 0xf2b263);
         }
 
         addEchoPath(cx, cy) {
@@ -1389,8 +3465,8 @@
           const hit = this.add.zone(0, 4, 78, 64).setInteractive({ useHandCursor: true });
           hit.on("pointerdown", () => {
             this.performHeroAction(stone.x, stone.y + 10, 0xf2b263, () => {
-              this.commitSignal(stepKey, stone.type, stone.value, "medium");
-              this.refreshDemoScene();
+              this.commitSignal(stepKey, stone);
+              this.advanceAfterIntakeCommit(stepKey, 0xf2b263);
             });
           });
           c.add([g, text, hit]);
@@ -1497,17 +3573,17 @@
             this.syncGameplayState();
           }
           this.addSeaBand();
-          this.addWellnessIsland(195, 375);
+          this.addWellnessIsland(195, 352);
           WELLNESS_HOUSES.forEach((house) => this.addHouseHotspot(house));
           this.renderWellnessRecommendationRail(profileOutput);
           this.renderWellnessPractice(profileOutput);
         }
 
         addHouseHotspot(house) {
-          const p = this.worldPoint(house.x, house.y);
-          const zone = this.add.zone(p.x, p.y, 68, 58).setDepth(690).setInteractive({ useHandCursor: true });
+          const p = this.wellnessPoint(house.x, house.y);
+          const zone = this.add.zone(p.x, p.y + 8, 116, 98).setDepth(690).setInteractive({ useHandCursor: true });
           zone.on("pointerdown", () => {
-            this.performHeroAction(p.x, p.y + 18, house.color, () => {
+            this.performHeroAction(p.x, p.y + 34, house.color, () => {
               const top = getWellnessRecommendations(this.getProfileOutput(), house.key)[0];
               this.gameplay.selectedHouse = house.key;
               if (top) this.gameplay.selectedTool = top.tool.key;
@@ -1517,22 +3593,41 @@
             }, { mood: "focus" });
           });
           this.trackSceneObject(zone);
-          const label = this.add.text(p.x, p.y + 34, house.label, {
+          const active = house.key === this.gameplay.selectedHouse;
+          const sign = this.add.text(p.x, p.y - 52, house.mark, {
             fontFamily: "Inter, sans-serif",
-            fontSize: "11px",
+            fontSize: "14px",
+            fontStyle: "900",
+            color: "#fff7ed",
+            stroke: "#151020",
+            strokeThickness: 4,
+          }).setOrigin(0.5).setDepth(694);
+          this.trackSceneObject(sign);
+          const label = this.add.text(p.x, p.y + 48, house.shop, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "10.5px",
             fontStyle: "800",
-            color: "#f6ecdf",
+            color: active ? "#fff0c8" : "#f6ecdf",
             stroke: "#151020",
             strokeThickness: 3,
           }).setOrigin(0.5).setDepth(692);
           this.trackSceneObject(label);
+          const interior = this.add.text(p.x, p.y + 62, `${house.label} · ${house.interior}`, {
+            fontFamily: "Inter, sans-serif",
+            fontSize: "9px",
+            fontStyle: "700",
+            color: active ? "#fff7ed" : "#c0b7ca",
+            stroke: "#151020",
+            strokeThickness: 3,
+          }).setOrigin(0.5).setDepth(692);
+          this.trackSceneObject(interior);
         }
 
         renderWellnessRecommendationRail(profileOutput = this.getProfileOutput()) {
           const recommendations = getWellnessRecommendations(profileOutput).slice(0, 3);
           const diagnosis = getXinyuStateDiagnosis(profileOutput);
-          const group = this.add.container(20, 522).setDepth(735);
-          const heading = this.add.text(0, 0, `今日推荐 · 心愈${diagnosis.label}`, {
+          const group = this.add.container(18, 518).setDepth(735);
+          const heading = this.add.text(0, 0, `心愈广场 · 今日入口 · 心愈${diagnosis.label}`, {
             fontFamily: "Inter, sans-serif",
             fontSize: "12px",
             fontStyle: "800",
@@ -1540,26 +3635,26 @@
           });
           group.add(heading);
           recommendations.forEach((recommendation, index) => {
-            const x = index * 116;
+            const x = index * 118;
             const active = recommendation.tool.key === this.gameplay.selectedTool;
             const g = this.add.graphics();
             g.fillStyle(active ? recommendation.house.color : 0x242337, active ? 0.3 : 0.76);
-            g.fillRoundedRect(x, 22, 108, 58, 13);
+            g.fillRoundedRect(x, 22, 110, 62, 13);
             g.lineStyle(1.2, active ? 0xf6ecdf : recommendation.house.color, active ? 0.72 : 0.38);
-            g.strokeRoundedRect(x, 22, 108, 58, 13);
-            const label = this.add.text(x + 13, 30, recommendation.tool.title, {
+            g.strokeRoundedRect(x, 22, 110, 62, 13);
+            const label = this.add.text(x + 13, 31, recommendation.tool.title, {
               fontFamily: "Inter, sans-serif",
               fontSize: "12px",
               fontStyle: "800",
               color: "#fff7ed",
               wordWrap: { width: 82 },
             });
-            const houseLabel = this.add.text(x + 13, 56, recommendation.house.label, {
+            const houseLabel = this.add.text(x + 13, 57, `${recommendation.house.label} · ${recommendation.score}`, {
               fontFamily: "Inter, sans-serif",
               fontSize: "10px",
               color: "#c0b7ca",
             });
-            const hit = this.add.zone(x + 54, 51, 108, 58).setInteractive({ useHandCursor: true });
+            const hit = this.add.zone(x + 55, 53, 110, 62).setInteractive({ useHandCursor: true });
             hit.on("pointerdown", () => {
               this.gameplay.selectedHouse = recommendation.house.key;
               this.gameplay.selectedTool = recommendation.tool.key;
@@ -1587,8 +3682,9 @@
             `心愈诊断：${diagnosis.label} · ${diagnosis.title}`,
             `为什么：${recommendation.reason}`,
             `今日动作：${tool.action}`,
-            `步骤：${tool.steps.slice(0, 2).join(" / ")}${saved ? " / 已收藏" : ""}`,
+            `现在就用：${WELLNESS_LIVE_SOURCES[tool.key] || "心愈内置练习"}${saved ? " / 已收藏" : ""}`,
           ], house.color);
+          this.renderWellnessHouseToolStrip(recommendation, profileOutput);
           this.addChoiceButton(42, 742, "试一下", house.color, () => {
             this.runPracticeAction(recommendation, "try", house.color);
           }, 88, 36);
@@ -1601,15 +3697,407 @@
           return card;
         }
 
+        renderWellnessHouseToolStrip(recommendation, profileOutput = this.getProfileOutput()) {
+          const { house } = recommendation;
+          const tools = getWellnessRecommendations(profileOutput, house.key).slice(0, 4);
+          const group = this.add.container(26, 708).setDepth(815);
+          tools.forEach((item, index) => {
+            const x = index * 84;
+            const active = item.tool.key === this.gameplay.selectedTool;
+            const bg = this.add.graphics();
+            bg.fillStyle(active ? house.color : 0x242337, active ? 0.32 : 0.82);
+            bg.fillRoundedRect(x, 0, 76, 26, 10);
+            bg.lineStyle(1, active ? 0xf6ecdf : house.color, active ? 0.72 : 0.32);
+            bg.strokeRoundedRect(x, 0, 76, 26, 10);
+            const text = this.add.text(x + 38, 13, item.tool.title, {
+              fontFamily: "Inter, sans-serif",
+              fontSize: item.tool.title.length > 4 ? "9.5px" : "10.5px",
+              fontStyle: "800",
+              color: active ? "#fff7ed" : "#d9d0df",
+            }).setOrigin(0.5);
+            const hit = this.add.zone(x + 38, 13, 76, 26).setInteractive({ useHandCursor: true });
+            hit.on("pointerdown", () => {
+              this.gameplay.selectedHouse = house.key;
+              this.gameplay.selectedTool = item.tool.key;
+              this.gameplay.activeLiveTool = null;
+              this.gameplay.actions.push({
+                type: "house_tool_focus",
+                house: house.key,
+                tool: item.tool.key,
+                source: WELLNESS_LIVE_SOURCES[item.tool.key] || "心愈内置内容",
+              });
+              this.syncGameplayState();
+              this.refreshDemoScene();
+            });
+            group.add([bg, text, hit]);
+          });
+          this.trackSceneObject(group);
+          return group;
+        }
+
+        colorToCss(color) {
+          return `#${Number(color || 0x9ebdff).toString(16).padStart(6, "0")}`;
+        }
+
+        getWellnessLiveCopy(tool) {
+          const copy = {
+            sound: "选择一个声景，音量调低，播放 12 分钟即可。",
+            sleepMeditation: "今晚只选一个练习，不追求放空；发现走神，再回到呼吸即可。",
+            painting: "选择一种材料，在画布上按住拖动，让情绪自然流动。",
+            breath: "跟随 4 秒吸气、6 秒呼气，完成 6 轮。",
+            tcm: "跟着顺序按揉 3 个穴位，每个 1 分钟即可。",
+            food: "今晚只做一个饮食选择：温热、清淡、易消化。",
+            seasonal: "今天只做一个节气动作，练习做轻、短、慢。",
+            philosophy: "当你想控制结果时，先做一个放下练习。",
+            western: "读一个问题，只回答一小句，不需要写很多。",
+            nature: "把注意力交给真实自然环境，短一点也有效。",
+            joy: "像抽一张小任务卡一样，选一个开心补能动作。",
+          };
+          return copy[tool.key] || tool.summary;
+        }
+
+        getChoiceLiveHtml(tool) {
+          const choices = WELLNESS_LIVE_CHOICES[tool.key] || tool.steps.map((step) => [step, step]);
+          return `
+            <div class="live-choice-grid">
+              ${choices.map(([label, result]) => `
+                <button class="live-choice" type="button" data-live-result="${this.escapeHtml(result)}">${this.escapeHtml(label)}</button>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        getAudioLiveHtml(tool) {
+          const tracks = WELLNESS_AUDIO_TRACKS[tool.key] || WELLNESS_AUDIO_TRACKS.sound;
+          return `
+            <div class="audio-list">
+              ${tracks.map((track) => `
+                <div class="audio-card" data-audio-card="${this.escapeHtml(track.title)}">
+                  <div>
+                    <strong>${this.escapeHtml(track.title)}</strong>
+                    <p>${this.escapeHtml(track.copy)}</p>
+                  </div>
+                  <audio controls preload="none" src="${this.escapeHtml(track.url)}"></audio>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+
+        getBreathLiveHtml() {
+          return `
+            <div class="breath-live">
+              <div class="breath-live-circle" data-breath-circle>呼</div>
+              <p class="wellness-live-result" data-breath-counter>准备 6 轮：吸气 4 秒，呼气 6 秒。</p>
+              <button class="breath-start" type="button" data-breath-start>开始呼吸练习</button>
+            </div>
+          `;
+        }
+
+        getPaintingLiveHtml() {
+          return `
+            <div class="sand-playground">
+              <div class="sand-toolbar">
+                <button class="sand-tool is-selected" type="button" data-sand="1">细沙</button>
+                <button class="sand-tool" type="button" data-sand="2">清水</button>
+                <button class="sand-tool" type="button" data-sand="3">绿芽</button>
+                <button class="sand-tool" type="button" data-sand="4">暖光</button>
+                <button class="sand-tool" type="button" data-sand="5">今日色</button>
+                <button class="sand-tool" type="button" data-sand-clear>清空</button>
+              </div>
+              <canvas class="sand-canvas" width="280" height="156" data-sand-canvas></canvas>
+            </div>
+          `;
+        }
+
+        getWellnessLiveHtml(recommendation) {
+          const { tool, house } = recommendation;
+          const source = WELLNESS_LIVE_SOURCES[tool.key] || "心愈内置内容";
+          let liveContent = this.getChoiceLiveHtml(tool);
+          if (tool.key === "sound" || tool.key === "sleepMeditation") liveContent = this.getAudioLiveHtml(tool);
+          if (tool.key === "breath") liveContent = this.getBreathLiveHtml();
+          if (tool.key === "painting") liveContent = this.getPaintingLiveHtml();
+          return `
+            <div class="wellness-live-panel" style="--wellness-accent:${this.colorToCss(house.color)}" data-live-tool="${this.escapeHtml(tool.key)}">
+              <div class="wellness-live-head">
+                <div>
+                  <p class="wellness-live-kicker">${this.escapeHtml(house.label)} · ${this.escapeHtml(source)}</p>
+                  <h2 class="wellness-live-title">${this.escapeHtml(tool.title)}</h2>
+                </div>
+                <button class="wellness-close" type="button" aria-label="关闭" data-action="close-wellness-live">×</button>
+              </div>
+              <p class="wellness-live-copy">${this.escapeHtml(this.getWellnessLiveCopy(tool))}</p>
+              ${liveContent}
+              <p class="wellness-live-result" data-live-output>选择一个动作，结果会记录到 gameplay.actions。</p>
+            </div>
+          `;
+        }
+
+        renderWellnessLiveOverlay(recommendation) {
+          const overlay = this.getIntakeOverlay();
+          if (!overlay || this.currentDemoScene !== "wellness") return;
+          this.stopWellnessLiveTimers();
+          overlay.dataset.visible = "true";
+          overlay.dataset.mode = "wellness";
+          overlay.dataset.step = "wellness";
+          overlay.innerHTML = this.getWellnessLiveHtml(recommendation);
+          if (overlay.dataset.wellnessStopBound !== "true") {
+            ["pointerdown", "pointerup", "click", "touchstart", "touchend"].forEach((eventName) => {
+              overlay.addEventListener(eventName, (event) => event.stopPropagation(), { once: false });
+            });
+            overlay.dataset.wellnessStopBound = "true";
+          }
+          this.positionIntakeOverlay("wellness");
+          this.bindWellnessLiveOverlay(overlay, recommendation);
+        }
+
+        updateWellnessLiveOutput(overlay, text) {
+          const output = overlay.querySelector("[data-live-output]");
+          if (output) output.textContent = text;
+        }
+
+        recordWellnessLiveAction(recommendation, detail) {
+          const { house, tool } = recommendation;
+          this.gameplay.activeLiveTool = tool.key;
+          this.gameplay.actions.push({
+            type: "live_tool_action",
+            house: house.key,
+            tool: tool.key,
+            state: getXinyuStateDiagnosis(this.getProfileOutput()).key,
+            ...detail,
+          });
+          this.syncGameplayState();
+        }
+
+        bindWellnessLiveOverlay(overlay, recommendation) {
+          overlay.querySelector("[data-action='close-wellness-live']")?.addEventListener("click", () => {
+            this.gameplay.activeLiveTool = null;
+            this.gameplay.actions.push({
+              type: "live_tool_close",
+              house: recommendation.house.key,
+              tool: recommendation.tool.key,
+            });
+            this.syncGameplayState();
+            this.hideIntakeOverlay();
+          });
+
+          overlay.querySelectorAll("[data-live-result]").forEach((button) => {
+            button.addEventListener("click", () => {
+              overlay.querySelectorAll("[data-live-result]").forEach((item) => item.classList.remove("is-selected"));
+              button.classList.add("is-selected");
+              const result = button.dataset.liveResult || button.textContent.trim();
+              this.updateWellnessLiveOutput(overlay, `已选择：${button.textContent.trim()}`);
+              this.recordWellnessLiveAction(recommendation, {
+                action: "choice",
+                label: button.textContent.trim(),
+                result,
+              });
+            });
+          });
+
+          overlay.querySelectorAll("audio").forEach((audio) => {
+            audio.addEventListener("play", () => {
+              const title = audio.closest("[data-audio-card]")?.dataset.audioCard || recommendation.tool.title;
+              this.updateWellnessLiveOutput(overlay, `正在播放：${title}`);
+              this.recordWellnessLiveAction(recommendation, {
+                action: "audio_play",
+                label: title,
+                result: "play",
+              });
+            });
+          });
+
+          overlay.querySelector("[data-breath-start]")?.addEventListener("click", () => {
+            this.startBreathLivePractice(overlay, recommendation);
+          });
+
+          this.initWellnessSandCanvas(overlay, recommendation);
+        }
+
+        startBreathLivePractice(overlay, recommendation) {
+          this.stopWellnessLiveTimers();
+          const circle = overlay.querySelector("[data-breath-circle]");
+          const counter = overlay.querySelector("[data-breath-counter]");
+          const button = overlay.querySelector("[data-breath-start]");
+          let elapsed = 0;
+          const total = 60;
+          if (button) button.textContent = "呼吸进行中";
+          this.recordWellnessLiveAction(recommendation, {
+            action: "breath_start",
+            label: "6轮呼吸",
+            result: "started",
+          });
+          this.wellnessBreathTimer = setInterval(() => {
+            elapsed += 1;
+            const round = Math.min(6, Math.floor((elapsed - 1) / 10) + 1);
+            const inCycle = (elapsed - 1) % 10;
+            const inhale = inCycle < 4;
+            if (circle) {
+              circle.textContent = inhale ? "吸" : "呼";
+              circle.classList.toggle("is-inhale", inhale);
+            }
+            if (counter) {
+              counter.textContent = `${round}/6 · ${inhale ? "吸气" : "呼气"} · 还剩 ${Math.max(0, total - elapsed)} 秒`;
+            }
+            if (elapsed >= total) {
+              this.stopWellnessLiveTimers();
+              if (button) button.textContent = "再做一轮";
+              if (counter) counter.textContent = "已完成 6 轮，先停在这里。";
+              this.recordWellnessLiveAction(recommendation, {
+                action: "breath_complete",
+                label: "6轮呼吸",
+                result: "completed",
+              });
+            }
+          }, 1000);
+        }
+
+        initWellnessSandCanvas(overlay, recommendation) {
+          const canvas = overlay.querySelector("[data-sand-canvas]");
+          if (!canvas || canvas.dataset.ready === "true") return;
+          canvas.dataset.ready = "true";
+          const ctx = canvas.getContext("2d", { willReadFrequently: false });
+          const width = canvas.width;
+          const height = canvas.height;
+          const grid = new Uint8Array(width * height);
+          const colors = {
+            1: [211, 169, 92],
+            2: [78, 146, 182],
+            3: [84, 132, 82],
+            4: [216, 103, 66],
+            5: [245, 147, 187],
+          };
+          const materialNames = { 0: "擦除", 1: "细沙", 2: "清水", 3: "绿芽", 4: "暖光", 5: "今日色" };
+          let current = 1;
+          let drawing = false;
+          let frame = 0;
+          let recordedDraw = false;
+          const indexAt = (x, y) => y * width + x;
+          const isEmpty = (x, y) => x >= 0 && x < width && y >= 0 && y < height && grid[indexAt(x, y)] === 0;
+          const swap = (x1, y1, x2, y2) => {
+            const first = indexAt(x1, y1);
+            const second = indexAt(x2, y2);
+            const value = grid[first];
+            grid[first] = grid[second];
+            grid[second] = value;
+          };
+          const paint = (event) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor(((event.clientX - rect.left) / rect.width) * width);
+            const y = Math.floor(((event.clientY - rect.top) / rect.height) * height);
+            const radius = current === 0 ? 9 : 5;
+            for (let dy = -radius; dy <= radius; dy += 1) {
+              for (let dx = -radius; dx <= radius; dx += 1) {
+                if (dx * dx + dy * dy > radius * radius) continue;
+                const px = x + dx;
+                const py = y + dy;
+                if (px < 0 || px >= width || py < 0 || py >= height) continue;
+                grid[indexAt(px, py)] = current;
+              }
+            }
+          };
+          const step = () => {
+            frame += 1;
+            for (let y = height - 2; y >= 0; y -= 1) {
+              const direction = frame % 2 === 0 ? 1 : -1;
+              for (let offset = 0; offset < width; offset += 1) {
+                const x = direction === 1 ? offset : width - 1 - offset;
+                const value = grid[indexAt(x, y)];
+                if (value === 1 || value === 5) {
+                  if (isEmpty(x, y + 1) || grid[indexAt(x, y + 1)] === 2) swap(x, y, x, y + 1);
+                  else if (isEmpty(x - direction, y + 1)) swap(x, y, x - direction, y + 1);
+                  else if (isEmpty(x + direction, y + 1)) swap(x, y, x + direction, y + 1);
+                }
+                if (value === 2) {
+                  if (isEmpty(x, y + 1)) swap(x, y, x, y + 1);
+                  else if (isEmpty(x + direction, y)) swap(x, y, x + direction, y);
+                  else if (isEmpty(x - direction, y)) swap(x, y, x - direction, y);
+                }
+                if (value === 4 && Math.random() > 0.985) grid[indexAt(x, y)] = 0;
+                if (value === 3 && y > 0 && !isEmpty(x, y + 1) && Math.random() > 0.996 && isEmpty(x, y - 1)) {
+                  grid[indexAt(x, y - 1)] = 3;
+                }
+              }
+            }
+          };
+          const draw = () => {
+            const image = ctx.createImageData(width, height);
+            for (let i = 0; i < grid.length; i += 1) {
+              const value = grid[i];
+              const pixel = i * 4;
+              const color = value === 0 ? [250, 246, 235] : colors[value];
+              const shade = value === 0 ? 0 : (i + frame) % 5;
+              image.data[pixel] = Math.max(0, color[0] - shade);
+              image.data[pixel + 1] = Math.max(0, color[1] - shade);
+              image.data[pixel + 2] = Math.max(0, color[2] - shade);
+              image.data[pixel + 3] = 255;
+            }
+            ctx.putImageData(image, 0, 0);
+          };
+          const animate = () => {
+            if (!canvas.isConnected) return;
+            step();
+            draw();
+            window.requestAnimationFrame(animate);
+          };
+          overlay.querySelectorAll("[data-sand]").forEach((button) => {
+            button.addEventListener("click", () => {
+              current = Number(button.dataset.sand);
+              overlay.querySelectorAll("[data-sand]").forEach((item) => item.classList.remove("is-selected"));
+              button.classList.add("is-selected");
+              this.updateWellnessLiveOutput(overlay, `已选择${materialNames[current]}，按住画布拖动即可。`);
+              this.recordWellnessLiveAction(recommendation, {
+                action: "sand_material",
+                label: materialNames[current],
+                result: `${current}`,
+              });
+            });
+          });
+          overlay.querySelector("[data-sand-clear]")?.addEventListener("click", () => {
+            grid.fill(0);
+            this.updateWellnessLiveOutput(overlay, "画布已清空，可以重新开始。");
+            this.recordWellnessLiveAction(recommendation, {
+              action: "sand_clear",
+              label: "清空",
+              result: "cleared",
+            });
+          });
+          canvas.addEventListener("pointerdown", (event) => {
+            drawing = true;
+            canvas.setPointerCapture(event.pointerId);
+            paint(event);
+            if (!recordedDraw) {
+              recordedDraw = true;
+              this.recordWellnessLiveAction(recommendation, {
+                action: "sand_draw",
+                label: materialNames[current],
+                result: "started",
+              });
+            }
+          });
+          canvas.addEventListener("pointermove", (event) => {
+            if (drawing) paint(event);
+          });
+          canvas.addEventListener("pointerup", () => {
+            drawing = false;
+          });
+          canvas.addEventListener("pointercancel", () => {
+            drawing = false;
+          });
+          draw();
+          animate();
+        }
+
         runPracticeAction(recommendation, result, color) {
           const { house, tool } = recommendation;
-          const p = this.worldPoint(house.x, house.y);
-          this.performHeroAction(p.x, p.y + 18, color, () => {
+          const p = this.wellnessPoint(house.x, house.y);
+          this.performHeroAction(p.x, p.y + 24, color, () => {
             if (result === "save" && !this.gameplay.savedTools.includes(tool.key)) {
               this.gameplay.savedTools.push(tool.key);
             }
             this.gameplay.selectedHouse = house.key;
             this.gameplay.selectedTool = tool.key;
+            this.gameplay.activeLiveTool = result === "try" ? tool.key : null;
             this.gameplay.actions.push({
               type: "practice_selected",
               house: house.key,
@@ -1619,6 +4107,8 @@
             });
             this.gameplay.hero.mood = result === "dismiss" ? "curious" : "focus";
             this.syncGameplayState();
+            if (result === "try") this.renderWellnessLiveOverlay(recommendation);
+            if (result === "dismiss") this.hideIntakeOverlay();
             if (result === "save") this.refreshDemoScene();
           }, { mood: result === "dismiss" ? "curious" : "focus" });
         }
@@ -1766,21 +4256,670 @@
         }
 
         addWellnessIsland(cx, cy) {
-          const g = this.worldGraphics(this.add.graphics().setDepth(120));
-          this.shadow(cx, cy + 86, 300, 52, 0.2, 88);
-          this.poly(g, [[cx, cy - 112], [cx + 164, cy - 34], [cx + 104, cy + 70], [cx - 28, cy + 118], [cx - 160, cy + 42], [cx - 126, cy - 58]], 0x516d5c, 1, P.outline, 3);
-          this.poly(g, [[cx, cy - 80], [cx + 118, cy - 24], [cx + 74, cy + 44], [cx - 20, cy + 80], [cx - 116, cy + 28], [cx - 86, cy - 40]], 0x8edab2, 0.38, 0xf6ecdf, 0.8);
-          g.lineStyle(2, 0xf0d8bc, 0.7);
-          g.lineBetween(cx - 76, cy + 22, cx + 64, cy - 44);
-          g.lineBetween(cx - 16, cy + 62, cx + 50, cy - 44);
-          this.drawTinyHouse(g, cx - 70, cy + 20, 0x8edab2);
-          this.drawTinyHouse(g, cx + 56, cy - 44, 0xf2b263);
-          this.drawTinyHouse(g, cx - 4, cy - 62, 0x9ebdff);
-          this.drawTinyHouse(g, cx + 70, cy + 34, 0xf593bb);
-          this.drawKeeper(g, cx - 42, cy + 58, 0x8edab2);
-          this.drawKeeper(g, cx + 84, cy - 8, 0xf2b263);
-          this.drawKeeper(g, cx + 22, cy - 26, 0x9ebdff);
-          this.drawKeeper(g, cx + 100, cy + 70, 0xf593bb);
+          const g = this.wellnessGraphics(this.add.graphics().setDepth(120));
+          const selectedHouse = this.gameplay.selectedHouse;
+          this.wellnessShadow(cx, cy + 128, 526, 88, 0.24, 88);
+          this.poly(g, [
+            [cx - 12, cy - 202],
+            [cx + 270, cy - 102],
+            [cx + 246, cy + 76],
+            [cx + 80, cy + 204],
+            [cx - 164, cy + 188],
+            [cx - 258, cy + 42],
+            [cx - 218, cy - 132],
+          ], 0x4d6758, 1, P.outline, 3);
+          this.poly(g, [
+            [cx - 8, cy - 164],
+            [cx + 222, cy - 82],
+            [cx + 198, cy + 58],
+            [cx + 58, cy + 160],
+            [cx - 134, cy + 150],
+            [cx - 210, cy + 28],
+            [cx - 174, cy - 102],
+          ], 0x8edab2, 0.42, 0xf6ecdf, 0.85);
+
+          this.drawTownWaterfront(g, cx, cy);
+          this.drawTownRoads(g, cx, cy, selectedHouse);
+          WELLNESS_HOUSES.forEach((house) => {
+            this.drawDistrictCourtyard(g, house, house.key === selectedHouse);
+          });
+
+          g.fillStyle(0x516d5c, 0.88);
+          g.fillEllipse(cx - 178, cy + 96, 54, 20);
+          g.fillEllipse(cx + 166, cy + 18, 48, 18);
+          g.fillStyle(0xf6ecdf, 0.62);
+          g.fillCircle(cx, cy + 16, 5);
+          g.fillStyle(0x050712, 0.16);
+          g.fillRoundedRect(cx - 48, cy + 31, 96, 17, 7);
+          this.drawTownPavers(g, cx, cy);
+          this.drawTownStreetDetails(g, cx, cy);
+          this.drawPlazaBench(g, cx - 74, cy + 62, 0x8edab2);
+          this.drawPlazaBench(g, cx + 76, cy - 30, 0xf2b263);
+          this.drawPlazaLantern(g, cx - 142, cy - 48, 0x9ebdff);
+          this.drawPlazaLantern(g, cx + 164, cy + 72, 0xf593bb);
+          this.drawPlazaLantern(g, cx - 22, cy - 78, 0x8edab2);
+          this.drawTownStall(g, cx - 118, cy + 16, 0x8edab2, "tcm");
+          this.drawTownStall(g, cx + 96, cy + 52, 0xf593bb, "art");
+          this.drawTownStall(g, cx + 84, cy - 72, 0xf2b263, "book");
+          WELLNESS_HOUSES.forEach((house) => {
+            this.drawDistrictMiniTown(g, house);
+          });
+          this.drawTownTree(g, cx - 176, cy - 46, 0x8edab2);
+          this.drawTownTree(g, cx + 178, cy - 12, 0x9ebdff);
+          this.drawTownTree(g, cx - 72, cy + 114, 0xf593bb);
+          this.drawTownTree(g, cx + 12, cy - 128, 0x9ebdff);
+          this.drawTownTree(g, cx + 206, cy + 58, 0xf2b263);
+          this.drawTownBridge(g, cx - 18, cy + 82, 0xf0d8bc);
+
+          WELLNESS_HOUSES
+            .slice()
+            .sort((a, b) => a.y - b.y)
+            .forEach((house) => {
+              this.drawWellnessRoom(g, house, house.x, house.y, house.key === selectedHouse);
+            });
+        }
+
+        drawTownWaterfront(g, cx, cy) {
+          const rocks = [
+            [cx - 204, cy - 100, 6], [cx - 234, cy + 6, 5], [cx - 182, cy + 152, 4],
+            [cx - 34, cy + 178, 5], [cx + 98, cy + 166, 4], [cx + 222, cy + 54, 5],
+            [cx + 232, cy - 70, 4], [cx + 72, cy - 176, 5], [cx - 86, cy - 170, 4],
+          ];
+          rocks.forEach(([x, y, r], index) => {
+            g.fillStyle(index % 2 ? 0xf0d8bc : 0xf6ecdf, 0.46);
+            g.fillEllipse(x, y, r * 2.2, r * 1.2);
+          });
+          const reeds = [
+            [cx - 232, cy + 48, 0x8edab2], [cx - 154, cy + 166, 0xf593bb],
+            [cx + 154, cy + 136, 0xf2b263], [cx + 238, cy - 10, 0x9ebdff],
+            [cx - 160, cy - 136, 0x8edab2],
+          ];
+          reeds.forEach(([x, y, color]) => {
+            g.lineStyle(1.2, color, 0.62);
+            g.lineBetween(x - 5, y + 8, x - 7, y - 6);
+            g.lineBetween(x, y + 8, x + 1, y - 9);
+            g.lineBetween(x + 5, y + 8, x + 8, y - 5);
+          });
+          this.drawMiniDock(g, cx + 166, cy + 112, 0xf0d8bc);
+          this.drawMiniDock(g, cx - 184, cy + 78, 0xf0d8bc, true);
+        }
+
+        drawTownRoads(g, cx, cy, selectedHouse) {
+          g.fillStyle(0xf0d8bc, 0.18);
+          g.fillEllipse(cx, cy + 16, 188, 104);
+          g.lineStyle(18, 0xf0d8bc, 0.12);
+          g.strokeEllipse(cx, cy + 16, 194, 106);
+          g.lineStyle(2.4, 0xf0d8bc, 0.58);
+          g.strokeEllipse(cx, cy + 16, 188, 102);
+          g.lineStyle(1, 0xf6ecdf, 0.24);
+          g.strokeEllipse(cx, cy + 16, 126, 70);
+          const roads = WELLNESS_HOUSES.map((house) => ({
+            house,
+            points: [[cx, cy + 18], [(cx + house.x) / 2, (cy + 22 + house.y) / 2], [house.x, house.y + 28]],
+          }));
+          roads.forEach(({ house, points }) => {
+            this.strokeTownPath(g, points, 17, 0xf0d8bc, 0.14);
+            this.strokeTownPath(g, points, 2.2, house.color, house.key === selectedHouse ? 0.78 : 0.36);
+          });
+          this.strokeTownPath(g, [[cx - 178, cy + 42], [cx - 74, cy + 72], [cx + 42, cy + 88], [cx + 146, cy + 48]], 10, 0xf0d8bc, 0.12);
+          this.strokeTownPath(g, [[cx - 96, cy - 104], [cx - 8, cy - 72], [cx + 102, cy - 78]], 10, 0xf0d8bc, 0.12);
+        }
+
+        strokeTownPath(g, points, width, color, alpha) {
+          g.lineStyle(width, color, alpha);
+          g.beginPath();
+          points.forEach(([x, y], index) => {
+            if (index === 0) g.moveTo(x, y);
+            else g.lineTo(x, y);
+          });
+          g.strokePath();
+        }
+
+        drawDistrictCourtyard(g, house, selected = false) {
+          g.fillStyle(house.color, selected ? 0.18 : 0.1);
+          g.fillEllipse(house.x, house.y + 22, 154, 88);
+          g.lineStyle(selected ? 2.4 : 1.2, selected ? 0xf6ecdf : house.color, selected ? 0.64 : 0.36);
+          g.strokeEllipse(house.x, house.y + 22, selected ? 164 : 146, selected ? 94 : 82);
+          const posts = [
+            [house.x - 58, house.y + 12], [house.x - 38, house.y + 48],
+            [house.x + 36, house.y + 54], [house.x + 62, house.y + 16],
+            [house.x, house.y - 22],
+          ];
+          posts.forEach(([x, y], index) => {
+            g.fillStyle(index % 2 ? house.color : 0xf6ecdf, 0.58);
+            g.fillRoundedRect(x - 2, y - 5, 4, 10, 2);
+          });
+        }
+
+        drawMiniDock(g, x, y, color, reverse = false) {
+          const slope = reverse ? -1 : 1;
+          g.lineStyle(7, 0x6b4d5f, 0.7);
+          g.lineBetween(x - 28 * slope, y + 10, x + 26 * slope, y - 8);
+          g.lineStyle(4, color, 0.58);
+          g.lineBetween(x - 28 * slope, y + 8, x + 26 * slope, y - 10);
+          for (let i = 0; i < 5; i += 1) {
+            const px = x - 22 * slope + i * 11 * slope;
+            g.lineStyle(1, 0xf6ecdf, 0.36);
+            g.lineBetween(px - 2 * slope, y + 4 - i * 3, px + 4 * slope, y + 12 - i * 3);
+          }
+        }
+
+        drawTownStreetDetails(g, cx, cy) {
+          const lanePavers = [
+            [cx - 136, cy + 20, -1], [cx - 102, cy + 32, -1], [cx - 68, cy + 43, -1],
+            [cx + 60, cy + 64, 1], [cx + 98, cy + 54, 1], [cx + 132, cy + 42, 1],
+            [cx - 72, cy - 78, 1], [cx - 34, cy - 70, 1], [cx + 8, cy - 68, 1],
+            [cx + 48, cy - 72, 1],
+          ];
+          lanePavers.forEach(([x, y, tilt], index) => {
+            g.fillStyle(index % 2 ? 0xf0d8bc : 0xf6ecdf, 0.2);
+            this.poly(g, [
+              [x - 7, y - 3],
+              [x + 7, y - 3 + tilt],
+              [x + 8, y + 4],
+              [x - 6, y + 4 - tilt],
+            ], index % 2 ? 0xf0d8bc : 0xf6ecdf, 0.18, 0xf6ecdf, 0);
+          });
+          const fences = [
+            [cx - 160, cy + 108, 5, 12, 0x8edab2],
+            [cx + 118, cy + 108, 5, 12, 0xf593bb],
+            [cx + 118, cy - 118, 4, 13, 0x9ebdff],
+            [cx - 126, cy - 126, 4, 13, 0xf2b263],
+          ];
+          fences.forEach(([x, y, count, gap, color]) => {
+            g.lineStyle(1, color, 0.46);
+            g.lineBetween(x, y, x + (count - 1) * gap, y - 8);
+            for (let i = 0; i < count; i += 1) {
+              g.fillStyle(0xf0d8bc, 0.58);
+              g.fillRoundedRect(x + i * gap - 1, y - i * 2 - 6, 3, 14, 2);
+            }
+          });
+        }
+
+        drawDistrictMiniTown(g, house) {
+          const layout = {
+            tcm: [
+              [-74, 12, "herbCart"], [-18, 82, "dryingRack"],
+              [68, 28, "mortar"], [-62, -34, "drawerHut"],
+            ],
+            meditation: [
+              [-62, 42, "cushionYard"], [62, 32, "bell"],
+              [78, -34, "lanternGate"], [-58, -30, "pond"],
+            ],
+            philosophy: [
+              [-74, 22, "bookKiosk"], [44, 62, "scrollRack"],
+              [82, -20, "thinkingBench"], [-38, -54, "miniStudy"],
+            ],
+            art: [
+              [-70, 18, "easel"], [58, 34, "pigmentCart"],
+              [4, 74, "sandTray"], [74, -34, "clothLine"],
+            ],
+          };
+          (layout[house.key] || []).forEach(([dx, dy, type]) => {
+            this.drawTownAccessory(g, house.x + dx, house.y + dy, house.color, type);
+          });
+        }
+
+        drawTownAccessory(g, x, y, color, type) {
+          if (type === "herbCart") {
+            this.drawTownStall(g, x, y, color, "tcm");
+            g.lineStyle(1.2, 0x6b4d5f, 0.7);
+            g.lineBetween(x + 21, y + 12, x + 32, y + 20);
+            g.fillStyle(0xf6ecdf, 0.7);
+            g.fillCircle(x - 18, y + 14, 3);
+            g.fillCircle(x + 18, y + 14, 3);
+            return;
+          }
+          if (type === "drawerHut" || type === "miniStudy") {
+            this.drawMiniTownHouse(g, x, y, color, type);
+            return;
+          }
+          if (type === "dryingRack") {
+            g.fillStyle(0x050712, 0.14);
+            g.fillEllipse(x, y + 18, 62, 13);
+            g.lineStyle(2, 0xf0d8bc, 0.7);
+            g.lineBetween(x - 28, y - 6, x + 28, y - 6);
+            g.lineBetween(x - 24, y - 6, x - 31, y + 18);
+            g.lineBetween(x + 24, y - 6, x + 31, y + 18);
+            for (let i = 0; i < 5; i += 1) {
+              g.lineStyle(1, i % 2 ? color : 0xf6ecdf, 0.62);
+              g.lineBetween(x - 18 + i * 9, y - 5, x - 20 + i * 9, y + 9);
+              g.fillStyle(i % 2 ? color : 0xf6ecdf, 0.58);
+              g.fillEllipse(x - 21 + i * 9, y + 10, 5, 9);
+            }
+            return;
+          }
+          if (type === "mortar") {
+            g.fillStyle(0x050712, 0.16);
+            g.fillEllipse(x, y + 16, 46, 11);
+            g.fillStyle(0xf0d8bc, 0.82);
+            g.fillRoundedRect(x - 18, y + 2, 36, 8, 3);
+            g.fillStyle(color, 0.85);
+            g.fillEllipse(x, y - 3, 22, 12);
+            g.lineStyle(2, 0xf6ecdf, 0.72);
+            g.lineBetween(x + 9, y - 10, x + 22, y - 22);
+            return;
+          }
+          if (type === "cushionYard") {
+            g.fillStyle(0x050712, 0.12);
+            g.fillEllipse(x, y + 18, 70, 20);
+            for (let i = 0; i < 5; i += 1) {
+              const angle = (Math.PI * 2 * i) / 5;
+              const px = x + Math.cos(angle) * 22;
+              const py = y + 5 + Math.sin(angle) * 8;
+              g.fillStyle(i % 2 ? color : 0xf6ecdf, 0.74);
+              g.fillEllipse(px, py, 18, 8);
+            }
+            g.fillStyle(0xf6ecdf, 0.66);
+            g.fillCircle(x, y + 5, 4);
+            return;
+          }
+          if (type === "bell") {
+            g.lineStyle(2, 0x6b4d5f, 0.88);
+            g.lineBetween(x - 16, y + 20, x - 16, y - 24);
+            g.lineBetween(x - 16, y - 24, x + 18, y - 24);
+            g.lineBetween(x + 18, y - 24, x + 18, y - 8);
+            g.fillStyle(color, 0.88);
+            g.fillEllipse(x + 18, y - 5, 14, 13);
+            g.fillStyle(0xf6ecdf, 0.72);
+            g.fillCircle(x + 18, y + 2, 2);
+            return;
+          }
+          if (type === "lanternGate") {
+            g.lineStyle(2.2, 0x2b2435, 0.92);
+            g.lineBetween(x - 22, y + 20, x - 22, y - 22);
+            g.lineBetween(x + 22, y + 20, x + 22, y - 22);
+            g.lineBetween(x - 28, y - 20, x + 28, y - 20);
+            [x - 14, x + 14].forEach((px) => {
+              g.fillStyle(color, 0.2);
+              g.fillCircle(px, y - 5, 13);
+              g.fillStyle(0xf6ecdf, 0.8);
+              g.fillCircle(px, y - 5, 4);
+            });
+            return;
+          }
+          if (type === "pond") {
+            g.fillStyle(0x274b5c, 0.64);
+            g.fillEllipse(x, y + 8, 58, 28);
+            g.lineStyle(1.4, color, 0.58);
+            g.strokeEllipse(x, y + 8, 58, 28);
+            g.fillStyle(0xf6ecdf, 0.52);
+            g.fillEllipse(x - 17, y + 4, 9, 4);
+            g.fillEllipse(x + 14, y + 13, 11, 4);
+            return;
+          }
+          if (type === "bookKiosk") {
+            this.drawTownStall(g, x, y, color, "book");
+            return;
+          }
+          if (type === "scrollRack") {
+            g.fillStyle(0x050712, 0.14);
+            g.fillEllipse(x, y + 17, 54, 12);
+            g.lineStyle(2, 0xf0d8bc, 0.76);
+            g.lineBetween(x - 24, y - 12, x - 24, y + 18);
+            g.lineBetween(x + 24, y - 12, x + 24, y + 18);
+            for (let i = 0; i < 4; i += 1) {
+              g.fillStyle(i % 2 ? color : 0xf6ecdf, 0.76);
+              g.fillRoundedRect(x - 17 + i * 10, y - 10, 7, 24, 3);
+            }
+            return;
+          }
+          if (type === "thinkingBench") {
+            this.drawPlazaBench(g, x, y, color);
+            g.fillStyle(color, 0.28);
+            g.fillCircle(x + 32, y - 22, 10);
+            g.fillStyle(0xf6ecdf, 0.7);
+            g.fillCircle(x + 28, y - 23, 1.8);
+            g.fillCircle(x + 32, y - 23, 1.8);
+            g.fillCircle(x + 36, y - 23, 1.8);
+            return;
+          }
+          if (type === "easel") {
+            g.lineStyle(2, 0x6b4d5f, 0.92);
+            g.lineBetween(x - 14, y + 22, x - 4, y - 14);
+            g.lineBetween(x + 14, y + 22, x + 4, y - 14);
+            g.lineBetween(x - 8, y + 6, x + 8, y + 6);
+            g.fillStyle(0xf6ecdf, 0.9);
+            g.fillRoundedRect(x - 12, y - 16, 24, 18, 2);
+            g.fillStyle(color, 0.7);
+            g.fillCircle(x - 3, y - 8, 3);
+            g.fillStyle(0xf2b263, 0.7);
+            g.fillCircle(x + 6, y - 5, 2.4);
+            return;
+          }
+          if (type === "pigmentCart") {
+            g.fillStyle(0x050712, 0.15);
+            g.fillEllipse(x, y + 17, 54, 12);
+            g.fillStyle(0xf0d8bc, 0.8);
+            g.fillRoundedRect(x - 24, y - 2, 48, 14, 4);
+            [0x9ebdff, 0xf2b263, 0x8edab2, color].forEach((paint, index) => {
+              g.fillStyle(paint, 0.84);
+              g.fillCircle(x - 14 + index * 10, y + 4, 3);
+            });
+            g.fillStyle(0x6b4d5f, 0.9);
+            g.fillCircle(x - 18, y + 14, 3);
+            g.fillCircle(x + 18, y + 14, 3);
+            return;
+          }
+          if (type === "sandTray") {
+            g.fillStyle(0x050712, 0.16);
+            g.fillEllipse(x, y + 16, 62, 13);
+            g.fillStyle(0xf0d8bc, 0.82);
+            g.fillRoundedRect(x - 28, y - 5, 56, 22, 4);
+            g.lineStyle(1, color, 0.62);
+            g.lineBetween(x - 20, y + 3, x + 18, y + 9);
+            g.lineBetween(x - 14, y + 11, x + 22, y + 1);
+            return;
+          }
+          if (type === "clothLine") {
+            g.lineStyle(2, 0x6b4d5f, 0.82);
+            g.lineBetween(x - 26, y - 8, x + 28, y - 16);
+            g.lineBetween(x - 22, y - 8, x - 28, y + 18);
+            g.lineBetween(x + 24, y - 15, x + 30, y + 12);
+            [color, 0xf2b263, 0x9ebdff].forEach((paint, index) => {
+              g.fillStyle(paint, 0.82);
+              g.fillRoundedRect(x - 18 + index * 16, y - 8 - index * 2, 10, 14, 2);
+            });
+          }
+        }
+
+        drawMiniTownHouse(g, x, y, color, type) {
+          g.fillStyle(0x050712, 0.15);
+          g.fillEllipse(x, y + 22, 56, 13);
+          this.poly(g, [[x - 25, y - 3], [x, y - 18], [x + 26, y - 3], [x, y + 12]], color, 0.72, P.outline, 1);
+          g.fillStyle(0x6b4d5f, 0.94);
+          g.fillRoundedRect(x - 18, y - 2, 36, 21, 4);
+          if (type === "drawerHut") {
+            for (let row = 0; row < 2; row += 1) {
+              for (let col = 0; col < 3; col += 1) {
+                g.fillStyle(0xf0d8bc, 0.78);
+                g.fillRoundedRect(x - 14 + col * 10, y + 2 + row * 8, 8, 5, 1);
+                g.fillStyle(color, 0.82);
+                g.fillCircle(x - 10 + col * 10, y + 5 + row * 8, 1);
+              }
+            }
+            return;
+          }
+          for (let i = 0; i < 4; i += 1) {
+            g.fillStyle(i % 2 ? 0x9ebdff : 0xf2b263, 0.8);
+            g.fillRoundedRect(x - 13 + i * 7, y + 1, 4, 14, 1);
+          }
+          g.fillStyle(0xf6ecdf, 0.72);
+          g.fillRoundedRect(x + 8, y + 5, 8, 7, 2);
+        }
+
+        drawTownPavers(g, cx, cy) {
+          const pavers = [
+            [cx - 44, cy - 12, 18, 9],
+            [cx - 14, cy - 28, 16, 8],
+            [cx + 24, cy - 6, 20, 9],
+            [cx - 66, cy + 30, 17, 8],
+            [cx + 52, cy + 34, 18, 8],
+            [cx - 8, cy + 54, 22, 9],
+            [cx + 94, cy - 20, 14, 7],
+            [cx - 112, cy - 16, 14, 7],
+          ];
+          pavers.forEach(([x, y, w, h], index) => {
+            g.fillStyle(index % 2 ? 0xf0d8bc : 0xf6ecdf, 0.22);
+            g.fillRoundedRect(x - w / 2, y - h / 2, w, h, 3);
+          });
+        }
+
+        drawTownStall(g, x, y, color, kind) {
+          g.fillStyle(0x050712, 0.16);
+          g.fillEllipse(x, y + 15, 48, 12);
+          g.fillStyle(0x6b4d5f, 0.96);
+          g.fillRoundedRect(x - 22, y - 4, 44, 18, 4);
+          g.fillStyle(color, 0.92);
+          g.fillRoundedRect(x - 25, y - 15, 50, 12, 4);
+          for (let i = 0; i < 4; i += 1) {
+            g.fillStyle(i % 2 ? 0xf6ecdf : color, 0.8);
+            g.fillRect(x - 22 + i * 11, y - 13, 9, 9);
+          }
+          if (kind === "tcm") {
+            g.fillStyle(0xf6ecdf, 0.82);
+            g.fillCircle(x - 10, y + 5, 3);
+            g.fillCircle(x, y + 4, 2.5);
+            g.fillCircle(x + 10, y + 5, 3);
+          } else if (kind === "book") {
+            g.fillStyle(0xf2b263, 0.9);
+            g.fillRoundedRect(x - 12, y + 3, 7, 10, 1);
+            g.fillStyle(0x9ebdff, 0.9);
+            g.fillRoundedRect(x - 2, y + 2, 7, 11, 1);
+            g.fillStyle(0xf6ecdf, 0.75);
+            g.fillRoundedRect(x + 8, y + 4, 10, 7, 2);
+          } else {
+            g.fillStyle(0x9ebdff, 0.88);
+            g.fillCircle(x - 8, y + 5, 3);
+            g.fillStyle(0xf2b263, 0.88);
+            g.fillCircle(x + 1, y + 5, 3);
+            g.fillStyle(0x8edab2, 0.88);
+            g.fillCircle(x + 10, y + 5, 3);
+          }
+        }
+
+        drawTownTree(g, x, y, color) {
+          g.fillStyle(0x050712, 0.15);
+          g.fillEllipse(x, y + 20, 34, 9);
+          g.fillStyle(0x6b4d5f, 0.95);
+          g.fillRoundedRect(x - 3, y + 3, 6, 18, 3);
+          g.fillStyle(color, 0.82);
+          g.fillCircle(x, y - 6, 13);
+          g.fillStyle(0xf6ecdf, 0.42);
+          g.fillCircle(x - 5, y - 11, 3);
+        }
+
+        drawTownBridge(g, x, y, color) {
+          g.lineStyle(5, color, 0.44);
+          g.lineBetween(x - 28, y + 8, x + 28, y - 8);
+          g.lineStyle(1.2, 0xf6ecdf, 0.42);
+          g.lineBetween(x - 24, y + 2, x + 24, y - 14);
+          g.lineBetween(x - 18, y + 14, x + 30, y - 2);
+        }
+
+        drawPlazaBench(g, x, y, color) {
+          g.fillStyle(0x050712, 0.18);
+          g.fillEllipse(x, y + 10, 56, 12);
+          g.fillStyle(0xf0d8bc, 0.76);
+          g.fillRoundedRect(x - 24, y - 2, 48, 8, 3);
+          g.lineStyle(1.2, color, 0.46);
+          g.lineBetween(x - 18, y + 6, x - 24, y + 14);
+          g.lineBetween(x + 18, y + 6, x + 24, y + 14);
+        }
+
+        drawPlazaLantern(g, x, y, color) {
+          g.lineStyle(2, 0x2b2435, 0.9);
+          g.lineBetween(x, y - 8, x, y + 24);
+          g.fillStyle(0xf6ecdf, 0.82);
+          g.fillCircle(x, y - 10, 5);
+          g.lineStyle(1.2, color, 0.68);
+          g.strokeCircle(x, y - 10, 10);
+          g.fillStyle(color, 0.22);
+          g.fillCircle(x, y - 10, 17);
+        }
+
+        drawWellnessRoom(g, house, x, y, selected = false) {
+          if (selected) {
+            g.lineStyle(3.2, 0xf6ecdf, 0.72);
+            g.strokeEllipse(x, y + 14, 116, 78);
+            g.lineStyle(1.5, house.color, 0.72);
+            g.strokeEllipse(x, y + 14, 138, 92);
+          }
+          g.fillStyle(0x050712, 0.22);
+          g.fillEllipse(x, y + 50, 110, 25);
+          const top = [x, y - 32];
+          const right = [x + 54, y - 4];
+          const bottom = [x, y + 30];
+          const left = [x - 54, y - 4];
+          const wallPeak = [x, y - 80];
+          this.poly(g, [left, top, wallPeak, [x - 54, y - 52]], 0x5a3655, 0.94, P.outline, 1.7);
+          this.poly(g, [top, right, [x + 54, y - 52], wallPeak], 0x323552, 0.96, P.outline, 1.7);
+          this.poly(g, [top, right, bottom, left], 0xa86983, 0.94, P.outline, 1.8);
+          this.poly(g, [[x, y - 18], [x + 36, y], [x, y + 20], [x - 36, y]], house.color, 0.18, 0xf6ecdf, 0.65);
+          g.lineStyle(0.9, 0xffffff, 0.2);
+          g.lineBetween(left[0] + 8, left[1] + 2, bottom[0], bottom[1] - 8);
+          g.lineBetween(right[0] - 8, right[1] + 2, bottom[0], bottom[1] - 8);
+          g.lineStyle(1.2, house.color, selected ? 0.84 : 0.48);
+          g.lineBetween(x - 42, y - 34, x - 12, y - 48);
+          g.lineBetween(x + 42, y - 34, x + 12, y - 48);
+          this.drawDistrictLandmark(g, house, x, y);
+          g.fillStyle(0x050712, 0.34);
+          g.fillRoundedRect(x + 25, y - 70, 28, 14, 5);
+          const count = Math.min(getHouseToolCount(house.key), 3);
+          for (let i = 0; i < count; i += 1) {
+            g.fillStyle(i === 0 ? 0xf6ecdf : house.color, 0.88);
+            g.fillCircle(x + 32 + i * 7, y - 63, 2.4);
+          }
+          if (house.key === "tcm") this.drawTcmInterior(g, x, y, house.color);
+          if (house.key === "meditation") this.drawMeditationInterior(g, x, y, house.color);
+          if (house.key === "philosophy") this.drawPhilosophyInterior(g, x, y, house.color);
+          if (house.key === "art") this.drawArtInterior(g, x, y, house.color);
+          this.drawKeeper(g, x + 42, y + 42, house.color);
+        }
+
+        drawDistrictLandmark(g, house, x, y) {
+          if (house.key === "tcm") {
+            g.fillStyle(0x8edab2, 0.96);
+            this.poly(g, [[x - 58, y - 55], [x - 16, y - 74], [x + 4, y - 62], [x - 40, y - 42]], 0x8edab2, 0.95, P.outline, 1.2);
+            g.fillStyle(0xf0d8bc, 0.92);
+            g.fillRoundedRect(x - 54, y - 38, 30, 11, 3);
+            g.lineStyle(1, 0x151524, 0.82);
+            g.lineBetween(x - 47, y - 36, x - 31, y - 36);
+            g.fillStyle(0xf593bb, 0.82);
+            g.fillCircle(x + 32, y - 48, 5);
+            g.fillStyle(0xf6ecdf, 0.75);
+            g.fillCircle(x + 32, y - 48, 2);
+            return;
+          }
+          if (house.key === "meditation") {
+            g.fillStyle(0x9ebdff, 0.22);
+            g.fillCircle(x + 4, y - 62, 28);
+            g.lineStyle(1.2, 0x9ebdff, 0.68);
+            g.strokeCircle(x + 4, y - 62, 28);
+            g.fillStyle(0xf6ecdf, 0.84);
+            g.fillCircle(x - 6, y - 68, 10);
+            g.fillStyle(0x323552, 0.98);
+            g.fillCircle(x - 1, y - 71, 10);
+            g.lineStyle(1, 0xf6ecdf, 0.38);
+            g.lineBetween(x + 28, y - 49, x + 38, y - 38);
+            g.lineBetween(x + 38, y - 38, x + 34, y - 28);
+            return;
+          }
+          if (house.key === "philosophy") {
+            g.fillStyle(0xf2b263, 0.92);
+            g.fillRoundedRect(x - 52, y - 61, 38, 16, 4);
+            g.fillStyle(0xf6ecdf, 0.82);
+            g.fillRoundedRect(x - 46, y - 56, 26, 5, 2);
+            for (let i = 0; i < 4; i += 1) {
+              g.fillStyle(i % 2 ? 0x9ebdff : 0xf2b263, 0.9);
+              g.fillRoundedRect(x + 23 + i * 6, y - 62, 4, 23, 1);
+            }
+            g.lineStyle(1, 0xf6ecdf, 0.42);
+            g.strokeCircle(x + 38, y - 50, 10);
+            return;
+          }
+          if (house.key === "art") {
+            g.fillStyle(0xf593bb, 0.95);
+            this.poly(g, [[x - 50, y - 55], [x - 8, y - 73], [x + 30, y - 55], [x - 12, y - 38]], 0xf593bb, 0.94, P.outline, 1.2);
+            g.fillStyle(0xf6ecdf, 0.76);
+            for (let i = 0; i < 4; i += 1) {
+              g.fillRect(x - 41 + i * 16, y - 50, 8, 10);
+            }
+            g.lineStyle(1.4, 0xf0d8bc, 0.82);
+            g.lineBetween(x + 38, y - 48, x + 24, y - 28);
+            g.lineBetween(x + 38, y - 48, x + 52, y - 28);
+          }
+        }
+
+        drawTcmInterior(g, x, y, color) {
+          for (let row = 0; row < 3; row += 1) {
+            for (let col = 0; col < 4; col += 1) {
+              g.fillStyle(row === 0 ? 0x9b674f : 0x6f4b46, 0.92);
+              g.fillRoundedRect(x - 42 + col * 10, y - 42 + row * 9, 8, 6, 1);
+              g.fillStyle(0xf6ecdf, 0.55);
+              g.fillCircle(x - 38 + col * 10, y - 39 + row * 9, 1.1);
+            }
+          }
+          g.lineStyle(1, color, 0.82);
+          g.lineBetween(x + 20, y - 42, x + 28, y - 34);
+          g.lineBetween(x + 28, y - 34, x + 21, y - 24);
+          g.fillStyle(color, 0.86);
+          g.fillCircle(x + 20, y - 42, 2.1);
+          g.fillCircle(x + 28, y - 34, 2.1);
+          g.fillCircle(x + 21, y - 24, 2.1);
+          g.fillStyle(0xf0d8bc, 0.86);
+          g.fillRoundedRect(x - 24, y + 5, 48, 7, 3);
+          g.fillStyle(color, 0.82);
+          g.fillEllipse(x + 14, y + 17, 19, 8);
+          g.fillStyle(0xf6ecdf, 0.74);
+          g.fillCircle(x + 9, y + 13, 2.2);
+          g.fillCircle(x + 17, y + 12, 1.8);
+        }
+
+        drawMeditationInterior(g, x, y, color) {
+          g.fillStyle(0x111b34, 0.76);
+          g.fillCircle(x - 28, y - 40, 10);
+          g.fillStyle(0xf6ecdf, 0.78);
+          g.fillCircle(x - 25, y - 43, 8);
+          g.fillStyle(0x323552, 0.9);
+          g.fillCircle(x - 22, y - 45, 8);
+          g.lineStyle(1.2, color, 0.72);
+          g.strokeCircle(x + 12, y - 28, 12);
+          g.strokeCircle(x + 12, y - 28, 21);
+          g.strokeCircle(x + 12, y - 28, 30);
+          g.fillStyle(color, 0.78);
+          g.fillEllipse(x, y + 18, 38, 12);
+          g.fillStyle(0xf6ecdf, 0.74);
+          g.fillCircle(x, y + 10, 5);
+          g.fillStyle(0x7f8db8, 0.82);
+          g.fillEllipse(x - 28, y + 5, 20, 7);
+          g.fillStyle(0xf6ecdf, 0.7);
+          g.fillCircle(x - 30, y + 1, 2);
+          g.fillCircle(x - 24, y + 1, 2);
+        }
+
+        drawPhilosophyInterior(g, x, y, color) {
+          const bookColors = [0xf2b263, 0x9ebdff, 0x8edab2, 0xf593bb];
+          for (let i = 0; i < 5; i += 1) {
+            g.fillStyle(bookColors[i % bookColors.length], 0.78);
+            g.fillRoundedRect(x - 42 + i * 8, y - 42, 5, 18 - (i % 2) * 4, 1);
+          }
+          g.fillStyle(0x6b4d5f, 0.82);
+          g.fillRoundedRect(x - 42, y - 22, 42, 5, 2);
+          g.fillRoundedRect(x - 22, y + 11, 44, 7, 2);
+          g.fillStyle(0xf6ecdf, 0.86);
+          g.fillRoundedRect(x - 20, y - 2, 18, 12, 3);
+          g.fillRoundedRect(x + 4, y - 3, 22, 13, 3);
+          g.lineStyle(1, color, 0.86);
+          g.lineBetween(x - 16, y + 2, x - 7, y + 2);
+          g.lineBetween(x + 9, y + 1, x + 20, y + 1);
+          g.strokeCircle(x + 32, y - 31, 8);
+          g.fillStyle(color, 0.9);
+          g.fillCircle(x + 32, y - 31, 2.5);
+        }
+
+        drawArtInterior(g, x, y, color) {
+          g.lineStyle(1.8, 0x6b4d5f, 0.9);
+          g.lineBetween(x - 21, y + 24, x - 8, y - 4);
+          g.lineBetween(x + 18, y + 24, x + 6, y - 4);
+          g.lineBetween(x - 13, y + 10, x + 14, y + 10);
+          g.fillStyle(0xf6ecdf, 0.9);
+          g.fillRoundedRect(x - 13, y - 7, 28, 20, 2);
+          g.fillStyle(color, 0.68);
+          g.fillCircle(x - 4, y + 2, 3.2);
+          g.fillStyle(0xf2b263, 0.72);
+          g.fillCircle(x + 7, y + 5, 2.6);
+          g.fillStyle(0x050712, 0.28);
+          g.fillRoundedRect(x - 42, y - 38, 26, 18, 3);
+          g.lineStyle(1, 0xf6ecdf, 0.38);
+          g.lineBetween(x - 38, y - 32, x - 20, y - 26);
+          g.lineBetween(x - 38, y - 26, x - 20, y - 34);
+          g.fillStyle(0x9ebdff, 0.82);
+          g.fillCircle(x + 20, y + 22, 3);
+          g.fillStyle(0xf2b263, 0.82);
+          g.fillCircle(x + 29, y + 21, 3);
+          g.fillStyle(0x8edab2, 0.82);
+          g.fillCircle(x + 25, y + 15, 2.6);
         }
 
         drawTinyHouse(g, x, y, color) {
@@ -2219,6 +5358,12 @@
 
         shadow(x, y, w, h, alpha, depth) {
           const g = this.worldGraphics(this.add.graphics().setDepth(depth));
+          g.fillStyle(0x050712, alpha);
+          g.fillEllipse(x, y, w, h);
+        }
+
+        wellnessShadow(x, y, w, h, alpha, depth) {
+          const g = this.wellnessGraphics(this.add.graphics().setDepth(depth));
           g.fillStyle(0x050712, alpha);
           g.fillEllipse(x, y, w, h);
         }
